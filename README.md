@@ -66,3 +66,4 @@ La cuenta estará sujeta a una serie de limitaciones para su control, de este mo
 * Control de los medios :floppy_disk:
 
 #### Mokups 
+![Funcionalidades](https://github.com/JuanDavid13/Astara/blob/main/images/Screenshot%20from%202021-03-30%2013-49-35.png)
