@@ -1,6 +1,6 @@
 # Astara
 ### Order is key to control the chaos 
----
+
 [//]: [![N|Solid](https://cldup.com/dTxpPi9lDf.thumb.png)](https://github.com/JuanDavid13/Astara)
 
 Astara is a web application which goal is to help people to manage their goals and tasks, giving them structure and control it tries to increase poeple performance.
@@ -8,7 +8,7 @@ Astara is a web application which goal is to help people to manage their goals a
 ## :heavy_exclamation_mark: Considerations
 Please note that this project is under development, so it may change over time.
 
-----
+
 ## Consideraciones para el profesorado
 #### Objetivo del proyecto :dart:
 Astara pretende ser una aplicacion de productividad, sencilla y clara con el objetivo de ayudar a las personas a organizar sus objetivos, tareas y hábitos para alcalzar una mayor productividad.
@@ -66,3 +66,8 @@ La cuenta estará sujeta a una serie de limitaciones para su control, de este mo
 * Control de los medios :floppy_disk:
 
 #### Mokups 
+![Landing](https://github.com/JuanDavid13/Astara/blob/main/images/Screenshot%20from%202021-03-30%2013-53-06.png)
+
+![Funcionalidades](https://github.com/JuanDavid13/Astara/blob/main/images/Screenshot%20from%202021-03-30%2013-49-35.png)
+
+![DashBoard](https://github.com/JuanDavid13/Astara/blob/main/images/Screenshot%20from%202021-03-30%2013-50-12.png)
