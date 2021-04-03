@@ -45,6 +45,8 @@ La cuenta estará sujeta a una serie de limitaciones para su control, de este mo
 * Control de eventos :date:
 * Control de habitos :loop:
 * Control de Calendario :calendar:
+* Reorganización de tareas :twisted_rightwards_arrows:
+* Seleccionar multiple :grapes:
 
 #### Limitaciones
 * 5MB de almacenamiento
@@ -53,8 +55,11 @@ La cuenta estará sujeta a una serie de limitaciones para su control, de este mo
 #### Funcionalidades Pro :heavy_dollar_sign:
 * Control de recordatorios :bell:
 * Control del tiempo :hourglass:
-* Control de notas :blue_book:
 * Prediccion de resultados :bar_chart:
+* Creación de carpetas para una mejor organización :file_folder:
+* Capacidad de agrupar tareas en una sola :inbox_tray:
+* Auto planificador :robot:
+* Control de etiquetas :tickets:
 
 #### Limitaciones Pro:
 * 15 MB de almacenamiento
@@ -64,6 +69,15 @@ La cuenta estará sujeta a una serie de limitaciones para su control, de este mo
 * Control de los clientes :busts_in_silhouette:
 * Control de ventas :chart_with_upwards_trend:
 * Control de los medios :floppy_disk:
+
+`:heavy_exclamation_mark: Es poco posible que añada una versión para equipos`
+
+#### Versión para equipos
+En esta versión de equipos se creará un nuevo rol, director, que permitirá crear proyectos (lo que en la versión personal serían objetivos) y subtareas, y asignar estas a diferentes personas. Se añadirá una "kanban board" y una "Gantt chart", además de un contador, que permitirá controlar el tiempo que ha conllevado la realización de la tarea asignada.
+
+* Los proyectos (objetivos) perderán la posibilidad de tener un progreso mediante cantidad
+* Las personas este plan solo contarán con proyectos y tareas, el resto de funcionalidades (areas, habitos, dayplanner, timer, ...) no estarán disponibles.
+* El "director" podrá crear status diferentes para los proyectos
 
 #### Mokups 
 ![Landing](https://github.com/JuanDavid13/Astara/blob/main/images/Screenshot%20from%202021-03-30%2013-53-06.png)
