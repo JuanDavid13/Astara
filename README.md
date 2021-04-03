@@ -71,7 +71,7 @@ La cuenta estará sujeta a una serie de limitaciones para su control, de este mo
 * Control de los medios :floppy_disk:
 
 #### Versión para equipos
-:heavy_exclamation_mark: `Es poco posible que añada una versión para equipos`
+:heavy_exclamation_mark: `Es muy poco posible que añada una versión para equipos`
 
 En esta versión de equipos se creará un nuevo rol, director, que permitirá crear proyectos (lo que en la versión personal serían objetivos) y subtareas, y asignar estas a diferentes personas. Se añadirá una "kanban board" y una "Gantt chart", además de un contador, que permitirá controlar el tiempo que ha conllevado la realización de la tarea asignada.
 
