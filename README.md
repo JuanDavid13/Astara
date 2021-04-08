@@ -29,7 +29,7 @@ La cuenta estará sujeta a una serie de limitaciones para su control, de este mo
 `Como he mencionado anteriormente el proyecto está sujeto a cambios y es posible que se añadan funciones a las ya existentes, o que estas sufran cambios.`
 
 #### Tecnologías :gear:
-* Laravel
+* Golang (Go)
 * Ajax
 * Jquery
 * Axios
