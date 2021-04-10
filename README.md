@@ -1,4 +1,4 @@
-# Astara
+# Astara 	:star2:
 ### Order is key to control the chaos 
 
 [//]: [![N|Solid](https://cldup.com/dTxpPi9lDf.thumb.png)](https://github.com/JuanDavid13/Astara)
@@ -26,7 +26,7 @@ Las tareas y objetivos podrán tener subtareas y además tendrán un progreso.
 
 La cuenta estará sujeta a una serie de limitaciones para su control, de este modo existirá una pasarela de pago a través de la cual el usuario podrá mejorar su cuenta a una versión Pro, la cual añadirá algunas funcionalidades extra y extenderá esas limitaciones. También existirá una prueba gratuita de la versión Pro, durante X tiempo.
 
-`Como he mencionado anteriormente el proyecto está sujeto a cambios y es posible que se añadan funciones a las ya existentes, o que estas sufran cambios.`
+:heavy_exclamation_mark: `Como he mencionado anteriormente el proyecto está sujeto a cambios y es posible que se añadan funciones a las ya existentes, o que estas sufran cambios.`
 
 #### Tecnologías :gear:
 * Golang (Go)
