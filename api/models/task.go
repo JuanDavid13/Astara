@@ -1,5 +1,5 @@
 package modelos;
 
-type Task struckt {
+type Task struct {
 
 }
