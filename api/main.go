@@ -3,21 +3,27 @@ package main;
 import (
 	//fiber http server
 	"github.com/gofiber/fiber/v2"
-
 	//cors
-	//"github.com/gofiber/fiber/v2/middleware/cors"
+	_ "github.com/gofiber/fiber/v2/middleware/cors"
 
 	//Json encoding
-	//"enconding/json"
+	_ "encoding/json"
 
-	"astara/commons"
+	C "astara/commons"
+	M "astara/models"
 
 )
 
 func main(){
 	//router := commons.Router{};
-	db := commons.Db{};
-	db.Open("root","")
+
+	db := C.Db{};
+	db.New();
+	datab := db.Open("root","");
+	
+	t := M.Target{};
+	t.GetAllTargets(datab);
+
 
 
 	app := fiber.New(fiber.Config{
