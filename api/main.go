@@ -24,14 +24,13 @@ func main(){
 	t := M.Target{};
 	t.GetAllTargets(datab);
 
-
-
 	app := fiber.New(fiber.Config{
 //		Prefork:				true,
 	});
 
 	app.Get("/api/v1/", func(c *fiber.Ctx) error{
-		return c.SendString("Hello world");
+		return c.JSON(t.GetAllTargets(datab));
+		//return c.SendString("Hello world");
 	});
 
 	app.Listen(":3000");
