@@ -10,9 +10,8 @@ export default{
   name: 'item',
   props:{
     name: String,
-    priority: String
+    priority: Number 
   }
-
 }
 </script>
 

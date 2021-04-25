@@ -30,10 +30,13 @@ export default {
   },
   methods: {
     clicked() {
-      axios.get('http://localhost:3000/api/v1/').then((response)=>{
+      axios.get('http://localhost:3000/api/v1/',{withCredentials: true}).then((response)=>{
         console.log(response);
+        console.log(response.headers['set-cookie']);
         this.$data.items = response.data;
-        console.log(this.$data);
+        //console.log(this.$data);
+        //document.cookie="name=nose";
+        console.log(document.cookie);
       });
       //console.log(this.$refs.input);
       //this.$refs.input.value = "has clickado";
