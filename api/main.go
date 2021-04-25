@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	//"go/token"
 	"os"
+	"time"
 
 	//fiber http server
 	"github.com/gofiber/fiber/v2"
@@ -12,11 +14,15 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/session"
 
 	//env access
-	"github.com/joho/godotenv"
+	env "github.com/joho/godotenv"
+
+	//jwt
+	//jwt "github.com/dgrijalva/jwt-go"
 
 	//Json encoding
 	_ "encoding/json"
 
+	"astara/commons"
 	C "astara/commons"
 	M "astara/models"
 )
@@ -24,7 +30,7 @@ import (
 func main(){
 	//router := commons.Router{};
 
-	err := godotenv.Load();
+	err := env.Load();
 	if err != nil {panic(err);}
 	fmt.Println(os.Getenv("SCRT"));
 
@@ -40,14 +46,39 @@ func main(){
 	});
 
 	app.Use(cors.New(cors.Config{
-		//AllowOrigins: "http://localhost:8081",
-		AllowOrigins: "http://localhost:8081",
+		AllowOrigins: os.Getenv("FRONT_BASE_URL"),
 		AllowCredentials: true,
 	}));
 
 	store := session.New();
 
 	app.Get("/api/v1/", func(c *fiber.Ctx) error{
+
+		tokenString := commons.CreateToken();
+		commons.CheckToken(tokenString);
+
+		//token := jwt.New(jwt.SigningMethodHS512);
+		//claims := token.Claims.(jwt.MapClaims);
+
+		//claims["authorized"] = true;
+		//claims["user"] = "Ronaldo";
+		//claims["exp"] = time.Now().Add(time.Minute*10).Unix();
+
+		//tokenString, err := token.SignedString([]byte(os.Getenv("SCRT")));
+		//if err != nil {panic(err);}
+
+		fmt.Println(tokenString);
+
+
+		//fmt.Println(c.Request().Header)
+		fmt.Println(c.Get("Authorization"))
+
+		cookie := new(fiber.Cookie);
+		cookie.Name = "token";
+		cookie.Value = "alguno";
+		cookie.Expires = time.Now().Add(1 * time.Hour);
+
+		c.Cookie(cookie);
 
 		sess, err := store.Get(c);
 		if err != nil{panic(err);}
