@@ -5,6 +5,7 @@ import (
 	//"go/token"
 	"os"
 	"time"
+	"reflect"
 
 	//fiber http server
 	"github.com/gofiber/fiber/v2"
@@ -22,7 +23,6 @@ import (
 	//Json encoding
 	_ "encoding/json"
 
-	"astara/commons"
 	C "astara/commons"
 	M "astara/models"
 )
@@ -32,7 +32,6 @@ func main(){
 
 	err := env.Load();
 	if err != nil {panic(err);}
-	fmt.Println(os.Getenv("SCRT"));
 
 	db := C.Db{};
 	db.New();
@@ -52,10 +51,19 @@ func main(){
 
 	store := session.New();
 
+	C.RouterSetUp(app);
+
 	app.Get("/api/v1/", func(c *fiber.Ctx) error{
 
-		tokenString := commons.CreateToken();
-		commons.CheckToken(tokenString);
+		tokenString := C.CreateToken();
+		claims := C.CheckToken(tokenString);
+		exp := claims["exp"];
+		fmt.Println(exp);
+		//fmt.Println(reflect.TypeOf(exp));
+		//fmt.Println(int64(exp.(float64)));
+		fmt.Println(C.CheckExpTime(claims))
+		fmt.Println(claims);
+		fmt.Println(reflect.TypeOf(C.CheckToken(tokenString)));
 
 		//token := jwt.New(jwt.SigningMethodHS512);
 		//claims := token.Claims.(jwt.MapClaims);
@@ -67,11 +75,11 @@ func main(){
 		//tokenString, err := token.SignedString([]byte(os.Getenv("SCRT")));
 		//if err != nil {panic(err);}
 
-		fmt.Println(tokenString);
+		//fmt.Println(tokenString);
 
 
 		//fmt.Println(c.Request().Header)
-		fmt.Println(c.Get("Authorization"))
+		//fmt.Println(c.Get("Authorization"))
 
 		cookie := new(fiber.Cookie);
 		cookie.Name = "token";
@@ -90,7 +98,7 @@ func main(){
 		//sess.Set("name","John");
 		//sess.Set("rol","1");
 
-		fmt.Print(sess.Get("name"));
+		//fmt.Print(sess.Get("name"));
 
 		
 		//name = sess.Get("name");

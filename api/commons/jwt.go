@@ -3,7 +3,7 @@ package commons
 import (
 	"os"
 	"time"
-	"fmt"
+//	"fmt"
 
 	jwt "github.com/dgrijalva/jwt-go"
 )
@@ -24,15 +24,18 @@ func CreateToken() string {
 		return tokenString;
 }
 
-func CheckToken(tokenString string) {
+func CheckToken(tokenString string) jwt.MapClaims{
 
 	claims := jwt.MapClaims{};
 	_ , _ = jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("SCRT")),nil
 	})
 
-	for key, val := range claims {
-		fmt.Printf("key: %v, value %v", key, val);
-	}
+	return claims;
+}
+
+func CheckExpTime(claims jwt.MapClaims) bool {
+	if int64(claims["exp"].(float64)) <= time.Now().Unix() {return false;}
+	return true;
 
 }
