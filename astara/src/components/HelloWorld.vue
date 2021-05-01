@@ -2,6 +2,7 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
     <p>Are you ready??</p>
+    <input type="text" name="name">
   </div>
 </template>
 
