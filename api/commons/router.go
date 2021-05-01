@@ -2,22 +2,25 @@ package commons;
 
 import (
 	"github.com/gofiber/fiber/v2"
+
+	c "astara/controllers"
 )
 
 //type Router struct{
 //	Nombre string;
 //}
 
-func Llega(c *fiber.Ctx) error{
-	return c.SendString("llega también");
-}
+//handler example
+//func Llega(c *fiber.Ctx) error{
+//	return c.SendString("llega también");
+//}
 
 //Router declarations
 func RouterSetUp(app *fiber.App){
 	api := app.Group("/api/v1");
 	login := api.Group("/login");
 
-	login.Get("/", Llega)
+	login.Post("/", c.Login);
 
 
 

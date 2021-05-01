@@ -24,7 +24,6 @@ import (
 	_ "encoding/json"
 
 	C "astara/commons"
-	M "astara/models"
 )
 
 func main(){
@@ -32,13 +31,6 @@ func main(){
 
 	err := env.Load();
 	if err != nil {panic(err);}
-
-	db := C.Db{};
-	db.New();
-	datab := db.Open("root","");
-	
-	t := M.Target{};
-	t.GetAllTargets(datab);
 
 	app := fiber.New(fiber.Config{
 //		Prefork:				true,
