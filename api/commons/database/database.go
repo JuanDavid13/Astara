@@ -1,4 +1,4 @@
-package commons;
+package database;
 
 import (
 	"database/sql"

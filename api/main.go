@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
+//	"fmt"
 	//"go/token"
 	"os"
 	"time"
-	"reflect"
+//	"reflect"
 
 	//fiber http server
 	"github.com/gofiber/fiber/v2"
@@ -23,7 +23,8 @@ import (
 	//Json encoding
 	_ "encoding/json"
 
-	C "astara/commons"
+//	. "astara/commons/jwt"
+	. "astara/commons/router"
 )
 
 func main(){
@@ -43,19 +44,19 @@ func main(){
 
 	store := session.New();
 
-	C.RouterSetUp(app);
+	RouterSetUp(app);
 
 	app.Get("/api/v1/", func(c *fiber.Ctx) error{
 
-		tokenString := C.CreateToken();
-		claims := C.CheckToken(tokenString);
-		exp := claims["exp"];
-		fmt.Println(exp);
-		//fmt.Println(reflect.TypeOf(exp));
-		//fmt.Println(int64(exp.(float64)));
-		fmt.Println(C.CheckExpTime(claims))
-		fmt.Println(claims);
-		fmt.Println(reflect.TypeOf(C.CheckToken(tokenString)));
+		//tokenString := CreateToken();
+		//claims := CheckToken(tokenString);
+		//exp := claims["exp"];
+		//fmt.Println(exp);
+		////fmt.Println(reflect.TypeOf(exp));
+		////fmt.Println(int64(exp.(float64)));
+		//fmt.Println(CheckExpTime(claims))
+		//fmt.Println(claims);
+		//fmt.Println(reflect.TypeOf(CheckToken(tokenString)));
 
 		//token := jwt.New(jwt.SigningMethodHS512);
 		//claims := token.Claims.(jwt.MapClaims);
@@ -84,22 +85,8 @@ func main(){
 		if err != nil{panic(err);}
 		defer sess.Save()
 
-		//name := sess.Get("name");
-		//fmt.Println(name);
-
-		//sess.Set("name","John");
-		//sess.Set("rol","1");
-
-		//fmt.Print(sess.Get("name"));
-
-		
-		//name = sess.Get("name");
-		//fmt.Println(name);
-
-		//sess.Destroy();
-
-		return c.JSON(t.GetAllTargets(datab));
-		//return c.SendString("Hello world");
+		//return c.JSON(t.GetAllTargets(datab));
+		return c.SendString("Hello world");
 	});
 
 	app.Listen(":3000");

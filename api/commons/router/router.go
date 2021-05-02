@@ -1,9 +1,9 @@
-package commons;
+package router;
 
 import (
 	"github.com/gofiber/fiber/v2"
 
-	c "astara/controllers"
+	 . "astara/controllers"
 )
 
 //type Router struct{
@@ -18,9 +18,14 @@ import (
 //Router declarations
 func RouterSetUp(app *fiber.App){
 	api := app.Group("/api/v1");
-	login := api.Group("/login");
 
-	login.Post("/", c.Login);
+	login := api.Group("/login");
+		login.Post("/", IsRegistered);
+		login.Post("/check", CheckCredentials);
+
+	auth := api.Group("/auth");
+		auth.Post("/", CheckToken);
+
 
 
 

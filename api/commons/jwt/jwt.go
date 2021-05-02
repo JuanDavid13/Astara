@@ -1,21 +1,18 @@
-package commons
+package jwt 
 
 import (
 	"os"
 	"time"
-//	"fmt"
+	"fmt"
 
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
-func CreateToken() string {
-
+func CreateToken(user int) string {
 		token := jwt.New(jwt.SigningMethodHS512);
-		
 		claims := token.Claims.(jwt.MapClaims);
-
 		claims["authorized"] = true;
-		claims["user"] = "Ronaldo";
+		claims["user"] = user;
 		claims["exp"] = time.Now().Add(time.Minute*10).Unix();
 
 		tokenString, err := token.SignedString([]byte(os.Getenv("SCRT")));
@@ -24,14 +21,20 @@ func CreateToken() string {
 		return tokenString;
 }
 
-func CheckToken(tokenString string) jwt.MapClaims{
+func CheckToken(tokenString string) /*jwt.MapClaims*/ bool {
 
 	claims := jwt.MapClaims{};
-	_ , _ = jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+	_ , err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("SCRT")),nil
 	})
 
-	return claims;
+	if err != nil{
+		fmt.Println("El token no es correcto");
+		return false;
+	}else{
+		fmt.Println("El token es correcto");
+		return true;
+	}
 }
 
 func CheckExpTime(claims jwt.MapClaims) bool {
@@ -39,3 +42,4 @@ func CheckExpTime(claims jwt.MapClaims) bool {
 	return true;
 
 }
+
