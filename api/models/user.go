@@ -10,7 +10,7 @@ import (
 
 type User struct {
   Id int `json:"id"`;
-  Name string `json:"name"`;
+  User string `json:"user"`;
   Pass string `json:"pwd"`;
   //Token jwt.Token `json:token`;
 }
@@ -19,18 +19,18 @@ type User struct {
     
 //}
 
-func (u *User) IsRegistered() bool {
+func IsRegistered(user string) bool {
   Db := db.Db{};
   Db.New();
   db := Db.Open(os.Getenv("DB_NOUSER_USER"), os.Getenv("DB_NOUSER_PWD"));
   
   defer db.Close();
 
-  query := "SELECT id FROM `Users` WHERE `Name` LIKE ?";
+  query := "SELECT id FROM `Users` WHERE (`Name` LIKE ? OR `Email` LIKE ?)";
   stmt, err := db.Prepare(query);
   if err != nil{panic(err);}
 
-  row := stmt.QueryRow(u.Name);
+  row := stmt.QueryRow(user, user);
   defer stmt.Close();
 
   var id int;
@@ -41,18 +41,18 @@ func (u *User) IsRegistered() bool {
   return false;
 }
 
-func (u *User) CheckCredentials() int {
+func CheckCredentials(user, pass string) int {
   Db := db.Db{};
   Db.New();
   db := Db.Open(os.Getenv("DB_NOUSER_USER"), os.Getenv("DB_NOUSER_PWD"));
   
   defer db.Close();
 
-  query := "SELECT id FROM `Users` WHERE `Name` LIKE ? AND `Password` LIKE ?";
+  query := "SELECT id FROM `Users` WHERE (`Name` LIKE ? OR `Email` LIKE ?) AND `Password` LIKE ?";
   stmt, err := db.Prepare(query);
   if err != nil{panic(err);}
 
-  row := stmt.QueryRow(u.Name, u.Pass);
+  row := stmt.QueryRow(user,user,pass);
   defer stmt.Close();
 
   var id int;

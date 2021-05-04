@@ -6,6 +6,8 @@ import (
 	"fmt"
 
 	jwt "github.com/dgrijalva/jwt-go"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func CreateToken(user int) string {
@@ -40,6 +42,19 @@ func CheckToken(tokenString string) /*jwt.MapClaims*/ bool {
 func CheckExpTime(claims jwt.MapClaims) bool {
 	if int64(claims["exp"].(float64)) <= time.Now().Unix() {return false;}
 	return true;
+}
 
+func Validate(c *fiber.Ctx) error{
+	if CheckToken(c.Cookies("token")) {
+		c.Status(200);
+		return c.JSON(fiber.Map{
+			"valid":"true",
+		});
+	}else{
+		c.Status(200);
+		return c.JSON(fiber.Map{
+			"valid":"false",
+		});
+	}
 }
 
