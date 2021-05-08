@@ -10,51 +10,70 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+type Claims struct{
+	Authorized bool `json:"authorized"`;
+	Exp int64 `json:"exp"`;
+	User int `json:"user"`;
+	jwt.StandardClaims
+}
+
 func CreateToken(user int) string {
-		token := jwt.New(jwt.SigningMethodHS512);
-		claims := token.Claims.(jwt.MapClaims);
-		claims["authorized"] = true;
-		claims["user"] = user;
-		claims["exp"] = time.Now().Add(time.Minute*10).Unix();
+		
+	//this can be part of a "NewClaim function"
+	claims := Claims{
+		true,
+		time.Now().Add(time.Minute*10).Unix(),
+		user,
+		jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(time.Minute*10).Unix(),
+		},
+	}
+		
+		token := jwt.NewWithClaims(jwt.SigningMethodHS512,claims);
 
 		tokenString, err := token.SignedString([]byte(os.Getenv("SCRT")));
 		if err != nil {panic(err);}
 
+	fmt.Println("CreateToken - Este es el token generado:");
+	fmt.Println(tokenString);
+
 		return tokenString;
 }
 
-func CheckToken(tokenString string) /*jwt.MapClaims*/ bool {
+func CheckToken(tokenString string) (bool) {
+	fmt.Println("CheckToken - llega esto:");
+	fmt.Println(tokenString);
 
-	claims := jwt.MapClaims{};
-	_ , err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+	token , err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("SCRT")),nil
-	})
+	});
+	if err != nil{panic(err);}
 
-	if err != nil{
-		fmt.Println("El token no es correcto");
-		return false;
-	}else{
-		fmt.Println("El token es correcto");
-		return true;
-	}
+	_ ,ok := token.Claims.(*Claims);
+	if !ok {panic(ok)}
+
+
+	return true;
 }
 
-func CheckExpTime(claims jwt.MapClaims) bool {
-	if int64(claims["exp"].(float64)) <= time.Now().Unix() {return false;}
+func CheckExpTime(exp int64) bool {
+	if exp <= time.Now().Unix() {return false;}
+	return true;
+}
+
+func IsEmpty(cookie string) bool {
+	if cookie != "" { return false; }
 	return true;
 }
 
 func Validate(c *fiber.Ctx) error{
-	if CheckToken(c.Cookies("token")) {
-		c.Status(200);
-		return c.JSON(fiber.Map{
-			"valid":"true",
-		});
-	}else{
-		c.Status(200);
-		return c.JSON(fiber.Map{
-			"valid":"false",
-		});
+	fmt.Println("validate:");
+	if !IsEmpty(c.Cookies("token")){
+		if CheckToken(c.Cookies("token")) {
+			c.Status(200);
+			return c.JSON(fiber.Map{"valid":"true"});
+		}
 	}
+	c.Status(403);
+	return c.JSON(fiber.Map{"valid":"false"});
 }
-

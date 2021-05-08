@@ -1,7 +1,6 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Orus"/>
+    <Sidebar :name=found />
     <form @submit.prevent class="form">
       <input type="text" ref="input" v-model="name" placeholder="Nombre de usuario">
       <input v-if="found" type="text" v-model="pass" placeholder="contraseña">
@@ -15,16 +14,27 @@
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
 import item from '@/components/item.vue'
+import Sidebar from '@/components/main/Sidebar.vue'
 
 const axios = require('axios');
+const Axios = axios.create({
+  baseURL: 'http://localhost:80801/',
+  //headers:{'Accept':'application/json','Accept-Charset':'utf-8'},
+  //headers:{'Authorization':'Bearer {Token}},
+  timeout: 1000,
+  widthCredentials: true,
+  //responseType: 'json',
+  //responseEncoding: 'utf8',
+
+
+});
 
 export default {
   name: 'Home',
   components: {
-    HelloWorld,
-    item
+    item,
+    Sidebar
   },
   data() {
     return{
@@ -46,21 +56,37 @@ export default {
       //});
       ////console.log(this.$refs.input);
       ////this.$refs.input.value = "has clickado";
-      axios.post('http://localhost:3000/api/v1/login',{
-        name:this.name
-      }).then((res)=>{
-        if(res.data.Found == "true")
-          this.found = true;
-        else
-          this.found = false;
+      Axios.post('/login',{name:this.name}).then((res)=>{
+        this.found = res.data.found.value;
       })
-      //this.found = res.data.found.value;
+    },
+    getAreas(){
+      Axios.get('/areas').then((res)=>{
+        console.log(res);
+      });
     }
-  }
+
+  },
+  created(){
+   this.getAreas();
+  },
 }
 </script>
 
 <style scoped lang="scss">
+$black:#242423;
+$lightB:#333533;
+
+.home{
+  color:white;
+  background-color:$black;
+  min-height:100vh;
+
+  display:grid;
+  grid-template-columns: 1fr 4fr;
+  grid-template-rows:1fr;
+}
+
 .form{
     display:flex;
     flex-direction:column;

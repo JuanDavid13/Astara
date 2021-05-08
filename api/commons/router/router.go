@@ -1,13 +1,11 @@
-package router;
+package router
 
 import (
-
 	"github.com/gofiber/fiber/v2"
 
-	 . "astara/controllers"
-	 . "astara/commons/jwt"
+	. "astara/commons/jwt"
+	. "astara/controllers"
 )
-
 
 //Router declarations
 func RouterSetUp(app *fiber.App){
@@ -17,4 +15,8 @@ func RouterSetUp(app *fiber.App){
 		login.Post("/", CheckUser);
 		login.Post("/check", Check);
 		login.Get("/validate", Validate);
+		//login.Get("/parse", jwt.CheckToken);
+
+	user:= api.Group("/user");
+		user.Get("/areas",GetAreas);
 }
