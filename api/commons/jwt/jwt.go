@@ -17,10 +17,8 @@ type Claims struct{
 	jwt.StandardClaims
 }
 
-func CreateToken(user int) string {
-		
-	//this can be part of a "NewClaim function"
-	claims := Claims{
+func newClaim(user int) Claims {
+	return Claims{
 		true,
 		time.Now().Add(time.Minute*10).Unix(),
 		user,
@@ -28,21 +26,26 @@ func CreateToken(user int) string {
 			ExpiresAt: time.Now().Add(time.Minute*10).Unix(),
 		},
 	}
+}
+
+func CreateToken(user int) string {
 		
-		token := jwt.NewWithClaims(jwt.SigningMethodHS512,claims);
+	claims := newClaim(user);
+		
+	token := jwt.NewWithClaims(jwt.SigningMethodHS512,claims);
 
-		tokenString, err := token.SignedString([]byte(os.Getenv("SCRT")));
-		if err != nil {panic(err);}
+	tokenString, err := token.SignedString([]byte(os.Getenv("SCRT")));
+	if err != nil {panic(err);}
 
-	fmt.Println("CreateToken - Este es el token generado:");
-	fmt.Println(tokenString);
+	fmt.Println("CreateToken");
+	//fmt.Println(tokenString);
 
-		return tokenString;
+	return tokenString;
 }
 
 func CheckToken(tokenString string) (bool) {
-	fmt.Println("CheckToken - llega esto:");
-	fmt.Println(tokenString);
+	fmt.Println("CheckToken");
+	//fmt.Println(tokenString);
 
 	token , err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("SCRT")),nil
@@ -67,13 +70,30 @@ func IsEmpty(cookie string) bool {
 }
 
 func Validate(c *fiber.Ctx) error{
-	fmt.Println("validate:");
+	fmt.Println("validate");
+	//fmt.Println(c.Cookies("token"));
+
 	if !IsEmpty(c.Cookies("token")){
 		if CheckToken(c.Cookies("token")) {
 			c.Status(200);
 			return c.JSON(fiber.Map{"valid":"true"});
 		}
 	}
-	c.Status(403);
+	c.Status(200);
 	return c.JSON(fiber.Map{"valid":"false"});
+}
+
+func GetUser(tokenString string) int {
+	fmt.Println("GetUser");
+	//fmt.Println(tokenString);
+
+	token , err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("SCRT")),nil
+	});
+	if err != nil{panic(err);}
+
+	claims ,ok := token.Claims.(*Claims);
+	if !ok {panic(ok)}
+
+	return claims.User;
 }

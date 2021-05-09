@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <Sidebar :name=found />
+    <Sidebar :areas=areas />
     <form @submit.prevent class="form">
       <input type="text" ref="input" v-model="name" placeholder="Nombre de usuario">
       <input v-if="found" type="text" v-model="pass" placeholder="contraseña">
@@ -19,15 +19,13 @@ import Sidebar from '@/components/main/Sidebar.vue'
 
 const axios = require('axios');
 const Axios = axios.create({
-  baseURL: 'http://localhost:80801/',
+  baseURL: 'http://localhost:3000/api/v1',
   //headers:{'Accept':'application/json','Accept-Charset':'utf-8'},
   //headers:{'Authorization':'Bearer {Token}},
   timeout: 1000,
-  widthCredentials: true,
+  withCredentials: true,
   //responseType: 'json',
   //responseEncoding: 'utf8',
-
-
 });
 
 export default {
@@ -38,10 +36,10 @@ export default {
   },
   data() {
     return{
-      name:"",
-      pass:"",
+      name: "",
       found: false,
-      items: []
+      items: [],
+      areas: []
     }
   },
   methods: {
@@ -61,8 +59,10 @@ export default {
       })
     },
     getAreas(){
-      Axios.get('/areas').then((res)=>{
+      Axios.get('/user/areas').then((res)=>{
         console.log(res);
+        this.areas = res.data;
+        console.log(this.areas);
       });
     }
 

@@ -19,23 +19,12 @@ func CheckUser(c *fiber.Ctx) error {
 	c.Status(200);
 
 	if IsRegistered(u.User){
-		return c.JSON(fiber.Map{
-			"found":"true",
-		})
+		return c.JSON(fiber.Map{"found":"true",})
 	}else{
-		return c.JSON(fiber.Map{
-			"found":"false",
-		})
-	}
-
+		return c.JSON(fiber.Map{"found":"false",})}
 }
 
 func Check(c *fiber.Ctx) error {
-	//u := User{};
-	//tambien se puede hacer con BodyParser
-	//if err := json.Unmarshal(c.Body(),&u); err != nil{return err;}
-	
-	//se puede cambiar por u := User{};
 	type response struct{
 		User string `json:"user"`
 		Pass string `json:"pass"`
@@ -43,14 +32,9 @@ func Check(c *fiber.Ctx) error {
 	res := response{};
 	if err := json.Unmarshal(c.Body(),&res); err != nil{return err;}
 
-	//sanitize this
-	//res.user
-	//res.pass
-
 	id := CheckCredentials(res.User, res.Pass);
 
-	if( id != -1){ // se ha encontrado
-
+	if( id != -1){
 		token := jwt.CreateToken(id);
 
 		cookie := new(fiber.Cookie);
@@ -63,30 +47,20 @@ func Check(c *fiber.Ctx) error {
 		c.Cookie(cookie);
 
 		c.Status(200);
-		return c.JSON(fiber.Map{
-			"logged":"true",
-		});
+		return c.JSON(fiber.Map{"logged":"true"});
 	}else{
 		c.Status(200);
-		return c.JSON(fiber.Map{
-			"logged":"false",
-		});
+		return c.JSON(fiber.Map{"logged":"false"});
 	}
-	
-	//type Response struct{
-	//	Token string `json:"token"`;
-	//}
-	//response := Response{};
-	//c.BodyParser(&response);
 }
 
 func GetAreas(c *fiber.Ctx) error {
-	fmt.Println("GetAreas - yo envio esto:");
-	fmt.Println(c.Cookies("token"));
-	//if jwt.CheckToken(c.Cookies("token")){
-	//	//fmt.Println(jwt.GetUser(c.Cookies("token")));
-	//	fmt.Println("what the fuck");
-	//}
+	fmt.Println("GetAreas");
+	//fmt.Println(c.Cookies("token"));
 
-	return c.SendStatus(200);
+	user := jwt.GetUser(c.Cookies("token"))
+	areas := GetUserAreas(user);
+
+	c.Status(fiber.StatusAccepted);
+	return c.JSON(areas);
 }
