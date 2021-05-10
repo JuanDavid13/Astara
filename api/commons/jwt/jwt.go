@@ -85,7 +85,7 @@ func Validate(c *fiber.Ctx) error{
 
 func GetUser(tokenString string) int {
 	fmt.Println("GetUser");
-	//fmt.Println(tokenString);
+	fmt.Println(tokenString);
 
 	token , err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("SCRT")),nil

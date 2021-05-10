@@ -19,4 +19,5 @@ func RouterSetUp(app *fiber.App){
 
 	user:= api.Group("/user");
 		user.Get("/areas",GetAreas);
+		user.Get("/targets",GetTargets);
 }

@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"time"
-	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 
@@ -52,15 +51,4 @@ func Check(c *fiber.Ctx) error {
 		c.Status(200);
 		return c.JSON(fiber.Map{"logged":"false"});
 	}
-}
-
-func GetAreas(c *fiber.Ctx) error {
-	fmt.Println("GetAreas");
-	//fmt.Println(c.Cookies("token"));
-
-	user := jwt.GetUser(c.Cookies("token"))
-	areas := GetUserAreas(user);
-
-	c.Status(fiber.StatusAccepted);
-	return c.JSON(areas);
 }
