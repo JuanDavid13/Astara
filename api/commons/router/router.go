@@ -18,6 +18,10 @@ func RouterSetUp(app *fiber.App){
 		//login.Get("/parse", jwt.CheckToken);
 
 	user:= api.Group("/user");
-		user.Get("/areas",GetAreas);
+		//user.Get("/areas",GetAreas);
 		user.Get("/targets",GetTargets);
+
+	area := api.Group("/area");
+		area.Get("/",GetAreas);
+		area.Post("/correspond",AreaCheck);
 }

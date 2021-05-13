@@ -3,7 +3,6 @@ package jwt
 import (
 	"os"
 	"time"
-	"fmt"
 
 	jwt "github.com/dgrijalva/jwt-go"
 
@@ -37,15 +36,10 @@ func CreateToken(user int) string {
 	tokenString, err := token.SignedString([]byte(os.Getenv("SCRT")));
 	if err != nil {panic(err);}
 
-	fmt.Println("CreateToken");
-	//fmt.Println(tokenString);
-
 	return tokenString;
 }
 
 func CheckToken(tokenString string) (bool) {
-	fmt.Println("CheckToken");
-	//fmt.Println(tokenString);
 
 	token , err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("SCRT")),nil
@@ -70,8 +64,6 @@ func IsEmpty(cookie string) bool {
 }
 
 func Validate(c *fiber.Ctx) error{
-	fmt.Println("validate");
-	//fmt.Println(c.Cookies("token"));
 
 	if !IsEmpty(c.Cookies("token")){
 		if CheckToken(c.Cookies("token")) {
@@ -84,8 +76,6 @@ func Validate(c *fiber.Ctx) error{
 }
 
 func GetUser(tokenString string) int {
-	fmt.Println("GetUser");
-	fmt.Println(tokenString);
 
 	token , err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("SCRT")),nil

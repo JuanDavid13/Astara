@@ -3,8 +3,9 @@
     <div class="logo">Astara</div>
     <p>AREAS</p>
     <div id="areas">
+      <router-link :to="{name: 'Main'}" >MAIN</router-link>
       <div class="area" v-for="area in areas" :key="area.id" >
-        {{area.name}}
+        <router-link :to="{ name: 'Area', params: { name: area.slug} }" >{{area.name}}</router-link>
         <span class="deleteable" v-if="area.deleteable">X</span>
       </div>
     </div> 
@@ -47,6 +48,11 @@ $lightB:#333533;
     position:sticky;
     top:0;
 
+    a{
+      color:white;
+      text-decoration:none;
+    }
+
     & > div:first-child {
       color:goldenrod;
       margin-bottom:3vh;
@@ -69,9 +75,7 @@ $lightB:#333533;
         color:$black;
         transition: color .25s ease;
       }
-      
       &:hover .deleteable{ color:gray; }
-
     }
 
   }

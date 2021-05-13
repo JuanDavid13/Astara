@@ -1,13 +1,33 @@
 import { createRouter, createWebHistory } from 'vue-router'
+
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
+
+//import Main from '../views/Main.vue'
+import Main from '../components/main/Main.vue'
+
+//import Area from '../views/Area.vue'
+import Area from '../components/area/Area.vue'
 
 const routes = [
   {
     path: '/',
     name: 'Home',
     component: Home,
-    meta: { auth: true }
+    redirect: '/', //little trick here
+    meta: { auth: true },
+    children: [
+      {
+        path: '/area/:name',
+        name: 'Area',
+        component: Area,
+      },
+      {
+        path: '',
+        name: 'Main',
+        component: Main
+      }
+    ]
   },
   {
     path: '/about',
@@ -33,11 +53,6 @@ const router = createRouter({
 
 router.beforeEach( async (to,from,next)=>{
   const Auth = require('../auth/auth');
-  //let response = await Auth.validate();
-  //if(response){
-  //  console.log("algo");
-  //  console.log(response);
-  //}
   let isAuthenticated = await Auth.validate();
   if(to.meta.auth && !isAuthenticated)
     next({name: 'Login'});

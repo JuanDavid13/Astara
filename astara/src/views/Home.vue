@@ -1,14 +1,13 @@
 <template>
   <div class="home">
     <Sidebar :areas=areas />
-    <Main :Items=goals />
+    <router-view :key="$route.fullPath"></router-view>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import Sidebar from '@/components/main/Sidebar.vue'
-import Main from '@/components/main/Main.vue'
 
 const axios = require('axios');
 const Axios = axios.create({
@@ -25,7 +24,7 @@ export default {
   name: 'Home',
   components: {
     Sidebar,
-    Main
+ //   Main
   },
   data() {
     return{
@@ -35,24 +34,13 @@ export default {
   },
   methods: {
     getAreas(){
-      Axios.get('/user/areas').then((res)=>{
-        console.log(res);
+      Axios.get('/area').then((res)=>{
         this.areas = JSON.parse(res.data);
-        console.log(this.areas);
-      });
-    },
-    getTargets(){
-      Axios.get('/user/targets').then((res)=>{
-        console.log(res);
-        this.goals = JSON.parse(res.data);
-        console.log(this.goals);
       });
     }
-
   },
   created(){
    this.getAreas();
-   this.getTargets();
   },
 }
 </script>
@@ -81,32 +69,5 @@ $lightB:#333533;
   display:grid;
   grid-template-columns: 1fr 4.5fr;
   grid-template-rows:1fr;
-}
-
-.form{
-    display:flex;
-    flex-direction:column;
-    width:60%;
-    margin:0 auto;
-
-     input{
-        border:1px solid grey;
-        margin-bottom:10px;
-        padding:5px;
-
-        &:focus{
-          outline:2px solid #42b983;
-        }
-     }
-
-     button{
-       background-color:#42b983;
-       padding:5px;
-       border:none;
-
-       &:focus{
-          outline:2px solid #2c3e50;
-       }
-     }
 }
 </style>
