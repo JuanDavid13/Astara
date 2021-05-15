@@ -1,11 +1,19 @@
 package router
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 
 	. "astara/commons/jwt"
 	. "astara/controllers"
 )
+
+func middleware(c *fiber.Ctx) error {
+	fmt.Println("middleware");
+	if !Validate(c) { return c.SendStatus(/*401*/200);	}
+		return c.Next();
+}
 
 //Router declarations
 func RouterSetUp(app *fiber.App){
@@ -14,14 +22,17 @@ func RouterSetUp(app *fiber.App){
 	login := api.Group("/login");
 		login.Post("/", CheckUser);
 		login.Post("/check", Check);
-		login.Get("/validate", Validate);
-		//login.Get("/parse", jwt.CheckToken);
+
+	auth := api.Group("/auth");
+		auth.Get("/validate",AuthValidate);
 
 	user:= api.Group("/user");
-		//user.Get("/areas",GetAreas);
+		user.Use(middleware);
 		user.Get("/targets",GetTargets);
 
 	area := api.Group("/area");
+		area.Use(middleware);
 		area.Get("/",GetAreas);
 		area.Post("/correspond",AreaCheck);
 }
+

@@ -11,12 +11,12 @@ import (
 
 func GetTargets(c *fiber.Ctx) error {
 
-	user := jwt.GetUser(c.Cookies("token"));
+	user := jwt.GetUser(c);
 	targets := GetTargetsById(user)
 
 	Targets, err := json.Marshal(targets);
 	if err != nil { panic(err); }
 
-	c.Status(fiber.StatusOK);
+	c.Status(fiber.StatusOK); // Equivalent to c.SendStatus(200)
 	return c.JSON(string(Targets));
 }

@@ -8,22 +8,21 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
+	cookie "astara/commons/cookie"
 	jwt "astara/commons/jwt"
 	. "astara/models"
 )
 
 func GetAreas(c *fiber.Ctx) error {
 
-	user := jwt.GetUser(c.Cookies("token"))
+	fmt.Println("get area");
+	fmt.Println(c.Locals("token"));
+
+	user := jwt.GetUser(c);
 	areas := GetAreasById(user);
 
 	Areas,err := json.Marshal(areas);
 	if err != nil{ panic(err); }
-
-	for i:=0; i< len(areas); i++ {
-		fmt.Println(areas[i].Name);
-		fmt.Println(NameToSlug(areas[i].Name));
-	}
 
 	c.Status(fiber.StatusOK);
 	return c.JSON(string(Areas));
@@ -41,25 +40,23 @@ func AreaCheck(c *fiber.Ctx) error {
 
 	if err := json.Unmarshal(c.Body(),&n); err != nil{return err;}
 
-	fmt.Println(n);
-	fmt.Println(n.Name);
-
-	//a cookie controler needs to be done
-	if c.Cookies("token") == ""{ return c.SendStatus(401); }
-	user := jwt.GetUser(c.Cookies("token"))
-
+	//if c.Cookies("token") == "" { return c.SendStatus(401); }
+	c.Status(200);
+	if cookie.CheckIsEmpty(c.Cookies("token")) {
+		return c.JSON(fiber.Map{
+			"correspond":false,
+		})
+	}
+	//usar c.Locals("claims")
+	user := jwt.GetUser(c)
 	targets, found := CheckUserArea(user,n.Name)
 
 	if  found { 
-		c.Status(200);
 		return c.JSON(fiber.Map{
 			"correspond":true,
 			"targets":targets,
 		}); 
 	}
 
-	c.Status(200);
-	return c.JSON(fiber.Map{
-		"correspond":false,
-	}); 
+	return c.JSON(fiber.Map{ "correspond":false,}); 
 }
