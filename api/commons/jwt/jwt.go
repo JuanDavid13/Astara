@@ -2,14 +2,17 @@ package jwt
 
 import (
 	"fmt"
-	"reflect"
+	//"reflect"
 
 	"os"
 	"time"
+	str "strconv"
 
 	jwt "github.com/dgrijalva/jwt-go"
 
 	"github.com/gofiber/fiber/v2"
+
+	"astara/commons/cookie"
 )
 
 type Claims struct{
@@ -19,15 +22,14 @@ type Claims struct{
 	jwt.StandardClaims
 }
 
-var expTime = time.Minute*10;
-
 func newClaim(user int) Claims {
+	dur, _ := str.Atoi(os.Getenv("CK_DUR"));
 	return Claims{
 		true,
-		time.Now().Add(expTime).Unix(),
+		time.Now().Add(time.Duration(dur)).Unix(),
 		user,
 		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(expTime).Unix(),
+			ExpiresAt: time.Now().Add(time.Duration(dur)).Unix(),
 		},
 	}
 }
@@ -71,11 +73,18 @@ func ParseToken(tokenString string) (*Claims, bool){
 }*/
 
 func IsEmpty(cookieString string) bool {
-	fmt.Println(cookieString);
-	if cookieString != "" { return false; }
+	fmt.Println("IsEmpty");
+	if cookieString != "" { 
+		fmt.Println(false);
+		fmt.Println();
+		return false; 
+	}
+	fmt.Println(false);
+	fmt.Println();
 	return true;
 }
 
+//resource validation
 func Validate(c *fiber.Ctx) bool {
 	fmt.Println("validate");
 	//fmt.Println(string(c.Request().Header.Peek("Origin")));
@@ -83,41 +92,65 @@ func Validate(c *fiber.Ctx) bool {
 	valid := false;
 	if !IsEmpty(c.Cookies("token")){
 		claims, valid := ParseToken(c.Cookies("token"));
-		fmt.Printf("%+v\n",claims);
-		if valid { c.Locals("claims", claims); }
+		cl := Claims(*claims);
+		//fmt.Printf("%+v\n",claims);
+		if valid { 
+			c.Locals("claims", cl);
+
+			newToken := CreateToken(cl.User);
+			newCookie := cookie.CreateCookie(newToken);
+			c.Cookie(newCookie);
+
+			valid = true;
+		}
+		fmt.Println(valid);
+		fmt.Println();
+		return valid;
 	}
+	fmt.Println(valid);
+	fmt.Println();
 	return valid;
 }
 
+//page validation
 func AuthValidate(c *fiber.Ctx) error {
 	fmt.Println("Auth validation");
 
 	if !IsEmpty(c.Cookies("token")){
-		fmt.Println("no está vacio");
-		if _, valid := ParseToken(c.Cookies("token")); valid { return c.SendStatus(204); }
+		if _, valid := ParseToken(c.Cookies("token")); valid { 
+			fmt.Println(200);
+			fmt.Println();
+			return c.SendStatus(200); 
+		}
 	}
+
+	fmt.Println(401);
+	fmt.Println();
 	return c.SendStatus(401);
 }
 
 func GetUser(c *fiber.Ctx) int { 
 	fmt.Println("trying to get the user");
-	token := c.Locals("token");
-	fmt.Println(reflect.TypeOf(token));
+	//fmt.Println(reflect.TypeOf(token));
 	//claims := token.Claims.(*Claims);
 	//return claims.User; 
 	return 0;
 }
+
 //re-enfocar
 func GetExp(claims Claims) int { return int(claims.Exp); }
 
-func RenewExp(token *jwt.Token) string{
-	claims := token.Claims.(*Claims);
+func RenewExp(claims *Claims) string{
+	//claims := token.Claims.(*Claims);
 
-	claims.Exp = time.Now().Add(expTime).Unix();
-	claims.StandardClaims.ExpiresAt = time.Now().Add(expTime).Unix(); //me lo puedo saltar si quiero
+	//dur, _ := str.Atoi(os.Getenv("CK_DUR"));
 
-	tokenString, err := token.SignedString([]byte(os.Getenv("SCRT")));
-	if err != nil { panic(err); }
+	//claims.Exp = time.Now().Add(time.Duration(dur)).Unix();
+	//claims.StandardClaims.ExpiresAt = time.Now().Add(time.Duration(dur)).Unix(); //me lo puedo saltar si quiero
 
-	return tokenString;
+	//
+	//tokenString, err := token.SignedString([]byte(os.Getenv("SCRT")));
+	//if err != nil { panic(err); }
+
+	return "tokenString";
 }

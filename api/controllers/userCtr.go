@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"fmt"
-	"reflect"
+	//"reflect"
 
 	"encoding/json"
 
@@ -15,6 +15,7 @@ import (
 
 //sanitize
 func CheckUser(c *fiber.Ctx) error {
+	fmt.Println("Check user");
 	u := User{};
 	if err := json.Unmarshal(c.Body(),&u); err != nil{return err;}
 
@@ -45,8 +46,6 @@ func Check(c *fiber.Ctx) error {
 
 	token := jwt.CreateToken(id); // Create a token
 	cookie := cookie.CreateCookie(token); // Create a cookie with that token value
-	fmt.Println(reflect.TypeOf(cookie));
-	fmt.Println(cookie.Value);
 	c.Cookie(cookie); // Set the cookie
 
 	return c.JSON(fiber.Map{"logged":"true"});

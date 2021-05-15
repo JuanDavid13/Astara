@@ -10,9 +10,14 @@ import (
 )
 
 func middleware(c *fiber.Ctx) error {
+	fmt.Println();
 	fmt.Println("middleware");
-	if !Validate(c) { return c.SendStatus(/*401*/200);	}
-		return c.Next();
+	//if !Validate(c) { return c.SendStatus(401);	}
+	//return c.Next();
+	if Validate(c) { 
+		return c.Next(); 
+	}
+	return c.SendStatus(401);
 }
 
 //Router declarations

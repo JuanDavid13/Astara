@@ -20,21 +20,21 @@ const routes = [
     meta: { auth: true },
     beforeEnter: async (to, from, next) => {
       let isAuthenticated = await Auth.Validate();
-      if(/*to.meta.auth &&*/ !isAuthenticated)
-        next({name: 'Login'});
-      else
+      if(/*to.meta.auth &&*/ isAuthenticated)
         next();
+      else
+        next({name: 'Login'});
     },
     children: [
-      {
-        path: '/area/:name',
-        name: 'Area',
-        component: Area,
-      },
       {
         path: '',
         name: 'Main',
         component: Main
+      },
+      {
+        path: '/area/:name',
+        name: 'Area',
+        component: Area,
       }
     ]
   },

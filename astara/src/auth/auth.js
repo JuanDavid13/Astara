@@ -9,21 +9,23 @@ const Axios = axios.create({
 
 //interceptor
 Axios.interceptors.response.use((res)=>{
-  console.log(res);
-},(error)=>{
-  console.log("next");
-  console.log(router);
+  //console.log(res);
+  return res;
+},(/*error*/)=>{ 
   router.push({name:'Login'});
-  console.log(error);
+  //return Promise.reject(error);
 });
 
 //this function complements the interceptor
 function Validate() {
   return Axios.get("/auth/validate").then((res)=>{
-    console.log("validate");
-    console.log(res);
-    //return res.data;
-    return true;
+    if (/2.{2}/.test(res.status)){
+      console.log(true);
+      return true;
+    }else{
+      console.log(false);
+      return false;
+    }
   });
 }
 
