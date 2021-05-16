@@ -33,4 +33,35 @@
     }
   }
 }
+
+.checkBox {
+  position:absolute;
+  height:0;
+  width:0;
+  opacity:0;
+  cursor:pointer;
+}
+
+.custCheck {
+  position: absolute;
+  top:0;
+  left:0;
+  height:20px;
+  width:20px;
+  border:1px solid grey;
+}
+
+.checkWrap {
+  position:relative;
+  cursor:pointer;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+}
+
+.checkWrap input:checked ~ .custCheck{
+  background-color:grey;
+}
+
 </style>
