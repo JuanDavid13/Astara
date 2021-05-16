@@ -2,7 +2,7 @@ package models
 
 import (
 	"database/sql"
-	"os"
+	//"os"
   "fmt"
 
 	db "astara/commons/database"
@@ -24,10 +24,11 @@ type areaDb struct {
 }
 
 func GetAreasById (user int) []Area {
-  Db := db.Db{};
-  Db.New();
-  db := Db.Open(os.Getenv("DB_USER_USER"),os.Getenv("DB_USER_PWD"));
-  defer db.Close();
+  //Db := db.Db{};
+  //Db.New();
+  //db := Db.Open(os.Getenv("DB_USER_USER"),os.Getenv("DB_USER_PWD"));
+  db := db.GetDb();
+  //defer db.Close();
 
   query := "SELECT `Name`,`Slug`,`Deleteable` FROM `Areas` WHERE `Id_user` LIKE ?;";
   stmt, err := db.Prepare(query);
@@ -60,10 +61,11 @@ func GetAreasById (user int) []Area {
 }
 
 func CheckUserArea(user int, slug string) (string,bool){
-  Db := db.Db{};
-  Db.New();
-  db := Db.Open(os.Getenv("DB_USER_USER"),os.Getenv("DB_USER_PWD"));
-  defer db.Close();
+  //Db := db.Db{};
+  //Db.New();
+  //db := Db.Open(os.Getenv("DB_USER_USER"),os.Getenv("DB_USER_PWD"));
+  db := db.GetDb();
+  //defer db.Close();
 
   query := "SELECT `Id` FROM `Areas` WHERE `Id_user` LIKE ? AND `Slug` LIKE ?;";
   stmt, err := db.Prepare(query);

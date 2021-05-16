@@ -1,7 +1,7 @@
 package models
 
 import (
-	"os"
+	//"os"
 
 	db "astara/commons/database"
 	//jwt "github.com/dgrijalva/jwt-go"
@@ -14,11 +14,11 @@ type User struct {
 }
 
 func IsRegistered(user string) bool {
-  Db := db.Db{};
-  Db.New();
-  db := Db.Open(os.Getenv("DB_NOUSER_USER"), os.Getenv("DB_NOUSER_PWD"));
-  
-  defer db.Close();
+  //Db := db.Db{};
+  //Db.New();
+  //db := Db.Open(os.Getenv("DB_NOUSER_USER"), os.Getenv("DB_NOUSER_PWD"));
+  db := db.GetDb();
+  //defer db.Close();
 
   query := "SELECT id FROM `Users` WHERE (`Name` LIKE ? OR `Email` LIKE ?)";
   stmt, err := db.Prepare(query);
@@ -36,11 +36,11 @@ func IsRegistered(user string) bool {
 }
 
 func CheckCredentials(user, pass string) int {
-  Db := db.Db{};
-  Db.New();
-  db := Db.Open(os.Getenv("DB_NOUSER_USER"), os.Getenv("DB_NOUSER_PWD"));
-  
-  defer db.Close();
+  //Db := db.Db{};
+  //Db.New();
+  //db := Db.Open(os.Getenv("DB_NOUSER_USER"), os.Getenv("DB_NOUSER_PWD"));
+  db := db.GetDb();
+  //defer db.Close();
 
   query := "SELECT id FROM `Users` WHERE (`Name` LIKE ? OR `Email` LIKE ?) AND `Password` LIKE ?";
   stmt, err := db.Prepare(query);

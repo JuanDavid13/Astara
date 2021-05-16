@@ -5,7 +5,7 @@ import (
 
 	"database/sql"
 	"encoding/json"
-	"os"
+	//"os"
 
 	db "astara/commons/database"
 )
@@ -33,11 +33,12 @@ type targetSql struct  {
 	}
 
 func GetTargetsById(user int) []Target {
-	Db := db.Db{};
-	Db.New();
-	db := Db.Open(os.Getenv("DB_USER_USER"),os.Getenv("DB_USER_PWD"));
+	//Db := db.Db{};
+	//Db.New();
+	//db := Db.Open(os.Getenv("DB_USER_USER"),os.Getenv("DB_USER_PWD"));
 
-	defer db.Close();
+	db := db.GetDb();
+	//defer db.Close();
 
 	query := "SELECT * FROM `Targets` WHERE `Id_usu` LIKE ?";
 
@@ -88,11 +89,12 @@ type UserAreaDB struct {
 }
 
 func GetTargetsUserArea(user, areaid int) []UserArea {
-	Db := db.Db{};
-	Db.New();
-	db := Db.Open(os.Getenv("DB_USER_USER"),os.Getenv("DB_USER_PWD"));
+	//Db := db.Db{};
+	//Db.New();
+	//db := Db.Open(os.Getenv("DB_USER_USER"),os.Getenv("DB_USER_PWD"));
 
-	defer db.Close();
+	db := db.GetDb();
+	//defer db.Close();
 
 	query := "SELECT `Name`, `Deadline`, `Id_status` FROM `Targets` WHERE `Id_usu` LIKE ? AND `Id_area` LIKE ?";
 
