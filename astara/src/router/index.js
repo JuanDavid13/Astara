@@ -9,6 +9,8 @@ import Main from '../components/main/Main.vue'
 //import Area from '../views/Area.vue'
 import Area from '../components/area/Area.vue'
 
+const Auth = require('../auth/auth');
+
 const routes = [
   {
     path: '/',
@@ -16,16 +18,23 @@ const routes = [
     component: Home,
     redirect: '/', //little trick here
     meta: { auth: true },
+    beforeEnter: async (to, from, next) => {
+      let isAuthenticated = await Auth.Validate();
+      if(/*to.meta.auth &&*/ isAuthenticated)
+        next();
+      else
+        next({name: 'Login'});
+    },
     children: [
-      {
-        path: '/area/:name',
-        name: 'Area',
-        component: Area,
-      },
       {
         path: '',
         name: 'Main',
         component: Main
+      },
+      {
+        path: '/area/:name',
+        name: 'Area',
+        component: Area,
       }
     ]
   },
@@ -51,14 +60,16 @@ const router = createRouter({
   routes
 })
 
+/*
 router.beforeEach( async (to,from,next)=>{
   const Auth = require('../auth/auth');
-  let isAuthenticated = await Auth.validate();
+  let isAuthenticated = await Auth.Validate();
   if(to.meta.auth && !isAuthenticated)
     next({name: 'Login'});
   else
     next();
-})
+});
+*/
 
 
 export default router
