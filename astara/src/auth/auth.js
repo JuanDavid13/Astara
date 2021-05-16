@@ -19,19 +19,13 @@ Axios.interceptors.response.use((res)=>{
 //this function complements the interceptor
 function Validate() {
   return Axios.get("/auth/validate").then((res)=>{
-    if (/2.{2}/.test(res.status)){
-      console.log(true);
-      return true;
-    }else{
-      console.log(false);
-      return false;
-    }
+    if (/2.{2}/.test(res.status)){ return true;
+    }else{ return false; }
   });
 }
 
 function AreaCorrespond(Area) {
   return Axios.post("/area/correspond",{name:Area}).then((res)=>{
-    console.log(res);
     return res.data;
   });
 }
