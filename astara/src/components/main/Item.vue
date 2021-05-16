@@ -1,8 +1,11 @@
 <template>
   <div class="item">
     <!--{{done}}-->
-    <input v-if="done" type="checkbox" checked >
-    <input v-else type="checkbox">
+    <label class="checkWrap">
+      <input class="checkBox" v-if="done" type="checkbox" checked >
+      <input class="checkBox" v-else type="checkbox">
+      <span class="custCheck noselect"></span>
+    </label>
     <!--<input type="checkbox" >-->
     <span>{{name}}</span>
     <span>{{deadline}}</span>

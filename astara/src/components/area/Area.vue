@@ -38,13 +38,10 @@ export default {
   },
   async created() {
     const slug = this.$router.currentRoute._value.params.name;
-    console.log("created: ",slug);
     let data = await auth.AreaCorrespond(slug)
-    //console.log(typeof(JSON.parse(data.targets)));
-    this.Items = JSON.parse(data.targets);
-    console.log(this.Items);
-    if(!data.correspond)
-      this.$router.push({'name':'Main'});
+    console.log("data");
+    console.log(data);
+    this.Items = JSON.parse(data);
   }
 }
 </script>

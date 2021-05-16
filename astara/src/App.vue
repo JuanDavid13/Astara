@@ -13,6 +13,7 @@
   padding:0;
   box-sizing:border-box;
 }
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -48,20 +49,24 @@
   left:0;
   height:20px;
   width:20px;
-  border:1px solid grey;
+  border:2px solid lightgrey;
+  transition:background-color .25s ease;
 }
 
 .checkWrap {
   position:relative;
   cursor:pointer;
+}
+
+.checkWrap input:checked ~ .custCheck{
+  background-color:lightgrey;
+}
+
+.noselect{
   -webkit-user-select:none;
   -moz-user-select:none;
   -ms-user-select:none;
   user-select:none;
-}
-
-.checkWrap input:checked ~ .custCheck{
-  background-color:grey;
 }
 
 </style>

@@ -10,13 +10,8 @@ import (
 )
 
 func middleware(c *fiber.Ctx) error {
-	fmt.Println();
 	fmt.Println("middleware");
-	//if !Validate(c) { return c.SendStatus(401);	}
-	//return c.Next();
-	if Validate(c) { 
-		return c.Next(); 
-	}
+	if Validate(c) { return c.Next(); }
 	return c.SendStatus(401);
 }
 
@@ -34,10 +29,15 @@ func RouterSetUp(app *fiber.App){
 	user:= api.Group("/user");
 		user.Use(middleware);
 		user.Get("/targets",GetTargets);
+		//user.Post("/create",)
+		//user.Post("/logout",)
 
 	area := api.Group("/area");
 		area.Use(middleware);
 		area.Get("/",GetAreas);
 		area.Post("/correspond",AreaCheck);
+		//area.Post("/create",)
+		//area.Post("/delete",)
+		//area.Post("/edit",)
 }
 

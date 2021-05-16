@@ -15,9 +15,7 @@ import (
 
 func GetAreas(c *fiber.Ctx) error {
 	fmt.Println("get area");
-	fmt.Println(c.Locals("claims"));
 	cl := c.Locals("claims").(jwt.Claims);
-	fmt.Println(cl.User);
 
 	//user := jwt.GetUser(c);
 	areas := GetAreasById(cl.User);
@@ -42,21 +40,24 @@ func AreaCheck(c *fiber.Ctx) error {
 	if err := json.Unmarshal(c.Body(),&n); err != nil{return err;}
 
 	//if c.Cookies("token") == "" { return c.SendStatus(401); }
-	c.Status(200);
 	if cookie.CheckIsEmpty(c.Cookies("token")) {
-		return c.JSON(fiber.Map{
-			"correspond":false,
-		})
+		//return c.JSON(fiber.Map{
+		//	"correspond":false,
+		//})
+		return c.SendStatus(401);
 	}
 	cl := c.Locals("claims").(jwt.Claims);
-	targets, found := CheckUserArea(cl.User,n.Name)
-
-	if  found { 
+	if targets, found := CheckUserArea(cl.User,n.Name); found {
+		c.Status(200);
 		return c.JSON(fiber.Map{
 			"correspond":true,
 			"targets":targets,
 		}); 
+	}else{
+		c.Status(200);
+		return c.JSON(fiber.Map{
+			"correspond":false,
+		}); 
 	}
-
-	return c.JSON(fiber.Map{ "correspond":false,}); 
+	//return c.SendStatus(400);
 }

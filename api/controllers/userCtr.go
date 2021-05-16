@@ -34,19 +34,18 @@ func Check(c *fiber.Ctx) error {
 		User string `json:"user"`
 		Pass string `json:"pass"`
 	}
-	
 	res := response{};
-	if err := json.Unmarshal(c.Body(),&res); err != nil{return err;}
 
-	id := CheckCredentials(res.User, res.Pass);
+	if err := json.Unmarshal(c.Body(),&res); err != nil{/*return err;*/ c.SendStatus(400);}
 
 	c.Status(200);
+	if id := CheckCredentials(res.User, res.Pass); id == -1 {
+		return c.JSON(fiber.Map{"logged":"false"});
+	}else{
+		token := jwt.CreateToken(id); // Create a token
+		cookie := cookie.CreateCookie(token); // Create a cookie with that token value
+		c.Cookie(cookie); // Set the cookie
 
-	if id == -1 { return c.JSON(fiber.Map{"logged":"false"}); }
-
-	token := jwt.CreateToken(id); // Create a token
-	cookie := cookie.CreateCookie(token); // Create a cookie with that token value
-	c.Cookie(cookie); // Set the cookie
-
-	return c.JSON(fiber.Map{"logged":"true"});
+		return c.JSON(fiber.Map{"logged":"true"});
+	}
 }

@@ -11,7 +11,6 @@ type User struct {
   Id int `json:"id"`;
   User string `json:"user"`;
   Pass string `json:"pwd"`;
-  //Token jwt.Token `json:token`;
 }
 
 func IsRegistered(user string) bool {

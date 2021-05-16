@@ -75,12 +75,8 @@ func ParseToken(tokenString string) (*Claims, bool){
 func IsEmpty(cookieString string) bool {
 	fmt.Println("IsEmpty");
 	if cookieString != "" { 
-		fmt.Println(false);
-		fmt.Println();
 		return false; 
 	}
-	fmt.Println(false);
-	fmt.Println();
 	return true;
 }
 
@@ -97,18 +93,15 @@ func Validate(c *fiber.Ctx) bool {
 		if valid { 
 			c.Locals("claims", cl);
 
+			//token := renewtoken(cl.User);
 			newToken := CreateToken(cl.User);
 			newCookie := cookie.CreateCookie(newToken);
 			c.Cookie(newCookie);
 
 			valid = true;
 		}
-		fmt.Println(valid);
-		fmt.Println();
 		return valid;
 	}
-	fmt.Println(valid);
-	fmt.Println();
 	return valid;
 }
 
@@ -118,17 +111,13 @@ func AuthValidate(c *fiber.Ctx) error {
 
 	if !IsEmpty(c.Cookies("token")){
 		if _, valid := ParseToken(c.Cookies("token")); valid { 
-			fmt.Println(200);
-			fmt.Println();
 			return c.SendStatus(200); 
 		}
 	}
-
-	fmt.Println(401);
-	fmt.Println();
 	return c.SendStatus(401);
 }
 
+//delete from this
 func GetUser(c *fiber.Ctx) int { 
 	fmt.Println("trying to get the user");
 	//fmt.Println(reflect.TypeOf(token));
@@ -138,6 +127,7 @@ func GetUser(c *fiber.Ctx) int {
 }
 
 //re-enfocar
+//delete from this
 func GetExp(claims Claims) int { return int(claims.Exp); }
 
 func RenewExp(claims *Claims) string{
