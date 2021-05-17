@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"sync"
-	"fmt"
+	//"fmt"
 	//"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -66,22 +66,17 @@ func (db *db) open(user, pwd string) *sql.DB {
 }
 
 func setInstance(instance *sql.DB, rol string) {
-	fmt.Println("set instance");
 	switch rol {
 		case "nouser": { nonUserInstance = instance	}
 		case "user": { userInstance = instance	}
 		case "admin": { adminUserInstance = instance }
 		default: {}
 	}
-
-	fmt.Println(&instance);
 }
 
 func GetDb(rol string) *sql.DB {
-	fmt.Println("get db instance");
-
+	//fmt.Println("get db instance");
 	var instance **sql.DB;
-
 	switch rol {
 		case "nonuser":{ instance = &nonUserInstance; } //logger
 		case "user":{ instance = &userInstance; }
@@ -91,17 +86,11 @@ func GetDb(rol string) *sql.DB {
 
 	if *instance == nil {
 		once.Do(func(){
-			fmt.Println("Creating a instance of type", rol);
+			//fmt.Println("Creating a instance of type", rol);
 			newInstance := db{}.newdb(rol)
 			//instance = db{}.newdb(rol);
 			*instance = newInstance;
 		});
-	}else{ 
-		fmt.Println("Already has been created"); 
-	}
-
-	fmt.Println("instance before return");
-	fmt.Println(instance);
-
+	} //else{ fmt.Println("Already has been created"); }
 	return *instance;
 }

@@ -2,7 +2,6 @@ package jwt
 
 import (
 	"fmt"
-	"reflect"
 
 	"os"
 	"time"
@@ -24,7 +23,6 @@ type Claims struct{
 }
 
 func newClaim(user int, rol string) Claims {
-	fmt.Println(reflect.TypeOf(os.Getenv("CK_DU")));
 	dur, _ := str.Atoi(os.Getenv("CK_DUR"));
 	return Claims{
 		true,
@@ -73,7 +71,6 @@ func ParseToken(tokenString string) (*Claims, bool){
 }*/
 
 func IsEmpty(cookieString string) bool {
-	fmt.Println("IsEmpty");
 	if cookieString != "" { 
 		return false; 
 	}
@@ -85,20 +82,21 @@ func Validate(c *fiber.Ctx) bool {
 	fmt.Println("validate");
 	//fmt.Println(string(c.Request().Header.Peek("Origin")));
 
-	valid := false;
+	isValid := false;
 	if !IsEmpty(c.Cookies("token")){
 		if claims, valid := ParseToken(c.Cookies("token")); valid {
 			cl := Claims(*claims);
 			c.Locals("claims", cl);
 
+			//renew the token
 			newToken := CreateToken(cl.User, cl.Rol);
 			newCookie := cookie.CreateCookie(newToken);
 			c.Cookie(newCookie);
 
-			valid = true;
+			isValid = true;
 		}
 	}
-	return valid;
+	return isValid;
 }
 
 //page validation
@@ -110,6 +108,7 @@ func AuthValidate(c *fiber.Ctx) error {
 			return c.SendStatus(200); 
 		}
 	}
+	fmt.Println(IsEmpty(c.Cookies("token")));
 	return c.SendStatus(401);
 }
 
