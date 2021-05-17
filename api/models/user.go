@@ -20,19 +20,18 @@ func IsRegistered(user string) bool {
   db := db.GetDb("nonuser");
   query := "SELECT `id`  FROM `Users` WHERE (`Name` LIKE ? OR `Email` LIKE ?)";
   stmt, err := db.Prepare(query);
-
   if err != nil{
-    fmt.Println("panic");
     panic(err);
   }
 
   var id int;
   err = stmt.QueryRow(user, user).Scan(&id);
-  if err != nil && err != sql.ErrNoRows {panic(err);}
   defer stmt.Close();
-
+  if err != nil && err != sql.ErrNoRows {
+    return false;
+    //panic(err);
+  }
   if id != 0 {return true;}
-
   return false;
 }
 
@@ -49,11 +48,13 @@ func CheckCredentials(user, pass string) (int,string){
     rol string; 
   )
   err = stmt.QueryRow(user,user,pass).Scan(&id,&rol);
-  if err != nil { panic(err); }
-
   defer stmt.Close();
+  //if err != nil { panic(err); }
+  if err != nil && err != sql.ErrNoRows {
+    return -1,"";
+    //panic(err);
+  }
 
   if id != 0 { return id,rol; }
-
   return -1,"";
 }
