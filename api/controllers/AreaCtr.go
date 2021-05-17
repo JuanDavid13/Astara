@@ -18,7 +18,7 @@ func GetAreas(c *fiber.Ctx) error {
 	cl := c.Locals("claims").(jwt.Claims);
 
 	//user := jwt.GetUser(c);
-	areas := GetAreasById(cl.User);
+	areas := GetAreasById(cl.User,cl.Rol);
 
 	Areas,err := json.Marshal(areas);
 	if err != nil{ panic(err); }
@@ -47,7 +47,7 @@ func AreaCheck(c *fiber.Ctx) error {
 		return c.SendStatus(401);
 	}
 	cl := c.Locals("claims").(jwt.Claims);
-	if targets, found := CheckUserArea(cl.User,n.Name); found {
+	if targets, found := CheckUserArea(cl.User,n.Name,cl.Rol); found {
 		c.Status(200);
 		return c.JSON(fiber.Map{
 			"correspond":true,

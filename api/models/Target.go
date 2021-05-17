@@ -32,14 +32,10 @@ type targetSql struct  {
 		children sql.NullInt32;
 	}
 
-func GetTargetsById(user int) []Target {
-	//Db := db.Db{};
-	//Db.New();
-	//db := Db.Open(os.Getenv("DB_USER_USER"),os.Getenv("DB_USER_PWD"));
+func GetTargetsById(user int, rol string) []Target {
+	if rol == ""{ return nil; }
 
-	db := db.GetDb();
-	//defer db.Close();
-
+	db := db.GetDb(rol);
 	query := "SELECT * FROM `Targets` WHERE `Id_usu` LIKE ?";
 
 	stmt, err := db.Prepare(query);
@@ -71,7 +67,6 @@ func GetTargetsById(user int) []Target {
 
 			targets = append(targets, target);
 		}
-
 	}
 	return targets;	
 }
@@ -88,14 +83,9 @@ type UserAreaDB struct {
 	id_status sql.NullInt32;
 }
 
-func GetTargetsUserArea(user, areaid int) []UserArea {
-	//Db := db.Db{};
-	//Db.New();
-	//db := Db.Open(os.Getenv("DB_USER_USER"),os.Getenv("DB_USER_PWD"));
+func GetTargetsUserArea(user, areaid int, rol string) []UserArea {
 
-	db := db.GetDb();
-	//defer db.Close();
-
+	db := db.GetDb(rol);
 	query := "SELECT `Name`, `Deadline`, `Id_status` FROM `Targets` WHERE `Id_usu` LIKE ? AND `Id_area` LIKE ?";
 
 	stmt, err := db.Prepare(query);
@@ -129,13 +119,15 @@ func GetTargetsUserArea(user, areaid int) []UserArea {
 	return userArea;
 }
 
-func TargetMarshal(v interface{}) string{
-	json, err := json.Marshal(v);
-	if err != nil { panic(err); }
-
-	return string(json);
+func targetMarshal(v interface{}) string{
+	if json, err := json.Marshal(v); err != nil { 
+		//panic(err)
+		return "";
+	}else{
+		return string(json);
+	}
 }
 
-func GetFormatedUserAreas(user, areaid int) string {
-	return TargetMarshal(GetTargetsUserArea(user,areaid));
+func GetFormatedUserAreas(user, areaid int, rol string) string {
+	return targetMarshal(GetTargetsUserArea(user,areaid, rol));
 }

@@ -1,9 +1,12 @@
 package models
 
 import (
+	"fmt"
+	//"reflect"
 	//"os"
 
 	db "astara/commons/database"
+	"database/sql"
 	//jwt "github.com/dgrijalva/jwt-go"
 )
 
@@ -14,45 +17,43 @@ type User struct {
 }
 
 func IsRegistered(user string) bool {
-  //Db := db.Db{};
-  //Db.New();
-  //db := Db.Open(os.Getenv("DB_NOUSER_USER"), os.Getenv("DB_NOUSER_PWD"));
-  db := db.GetDb();
-  //defer db.Close();
-
-  query := "SELECT id FROM `Users` WHERE (`Name` LIKE ? OR `Email` LIKE ?)";
+  db := db.GetDb("nonuser");
+  query := "SELECT `id`  FROM `Users` WHERE (`Name` LIKE ? OR `Email` LIKE ?)";
   stmt, err := db.Prepare(query);
-  if err != nil{panic(err);}
 
-  row := stmt.QueryRow(user, user);
-  defer stmt.Close();
+  if err != nil{
+    fmt.Println("panic");
+    panic(err);
+  }
 
   var id int;
-  row.Scan(&id)
+  err = stmt.QueryRow(user, user).Scan(&id);
+  if err != nil && err != sql.ErrNoRows {panic(err);}
+  defer stmt.Close();
 
-  if(id != 0){return true;}
+  if id != 0 {return true;}
 
   return false;
 }
 
-func CheckCredentials(user, pass string) int {
-  //Db := db.Db{};
-  //Db.New();
-  //db := Db.Open(os.Getenv("DB_NOUSER_USER"), os.Getenv("DB_NOUSER_PWD"));
-  db := db.GetDb();
-  //defer db.Close();
+func CheckCredentials(user, pass string) (int,string){
+  fmt.Println("is registered:")
 
-  query := "SELECT id FROM `Users` WHERE (`Name` LIKE ? OR `Email` LIKE ?) AND `Password` LIKE ?";
+  db := db.GetDb("nonuser");
+  query := "SELECT U.`Id`, R.`Name` FROM `Users` AS U JOIN `Rols` AS R ON (U.`Id_rol` = R.`Id` ) WHERE (U.`Name` LIKE ? OR U.`Email` LIKE ?) AND U.`Password` LIKE ?";
   stmt, err := db.Prepare(query);
   if err != nil{panic(err);}
 
-  row := stmt.QueryRow(user,user,pass);
+  var ( 
+    id int;
+    rol string; 
+  )
+  err = stmt.QueryRow(user,user,pass).Scan(&id,&rol);
+  if err != nil { panic(err); }
+
   defer stmt.Close();
 
-  var id int;
-  row.Scan(&id)
+  if id != 0 { return id,rol; }
 
-  if(id != 0){return id;}
-
-  return -1;
+  return -1,"";
 }

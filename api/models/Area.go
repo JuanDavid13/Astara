@@ -2,8 +2,6 @@ package models
 
 import (
 	"database/sql"
-	//"os"
-  "fmt"
 
 	db "astara/commons/database"
 )
@@ -23,12 +21,8 @@ type areaDb struct {
   Deleteable sql.NullInt64;
 }
 
-func GetAreasById (user int) []Area {
-  //Db := db.Db{};
-  //Db.New();
-  //db := Db.Open(os.Getenv("DB_USER_USER"),os.Getenv("DB_USER_PWD"));
-  db := db.GetDb();
-  //defer db.Close();
+func GetAreasById (user int, rol string) []Area {
+  db := db.GetDb(rol);
 
   query := "SELECT `Name`,`Slug`,`Deleteable` FROM `Areas` WHERE `Id_user` LIKE ?;";
   stmt, err := db.Prepare(query);
@@ -60,12 +54,8 @@ func GetAreasById (user int) []Area {
   return areas;
 }
 
-func CheckUserArea(user int, slug string) (string,bool){
-  //Db := db.Db{};
-  //Db.New();
-  //db := Db.Open(os.Getenv("DB_USER_USER"),os.Getenv("DB_USER_PWD"));
-  db := db.GetDb();
-  //defer db.Close();
+func CheckUserArea(user int, slug,rol string) (string,bool){
+  db := db.GetDb(rol);
 
   query := "SELECT `Id` FROM `Areas` WHERE `Id_user` LIKE ? AND `Slug` LIKE ?;";
   stmt, err := db.Prepare(query);
@@ -78,11 +68,7 @@ func CheckUserArea(user int, slug string) (string,bool){
   
   var id int;
   row.Scan(&id);
-  fmt.Println(id);
-  if id != 0 { 
-    //fmt.Printf("%+v",GetTargetsUserArea(user,id));
-    return GetFormatedUserAreas(user,id),true; 
-  }
+  if id != 0 { return GetFormatedUserAreas(user,id,rol),true;  }
 
   return "",false;
 }

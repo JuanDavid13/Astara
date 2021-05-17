@@ -12,7 +12,7 @@ import (
 func GetTargets(c *fiber.Ctx) error {
 
 	cl := c.Locals("claims").(jwt.Claims);
-	targets := GetTargetsById(cl.User);
+	targets := GetTargetsById(cl.User, cl.Rol);
 
 	Targets, err := json.Marshal(targets);
 	if err != nil { panic(err); }

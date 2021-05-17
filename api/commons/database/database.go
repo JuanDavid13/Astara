@@ -17,22 +17,21 @@ type db struct{
 }
 
 var (
-	nonUserInstance *sql.DB;
+	nonUserInstance *sql.DB; //logger
 	userInstance *sql.DB;
 	adminUserInstance *sql.DB;
-	loggerInstance *sql.DB;
+	//loggerInstance *sql.DB;
 )
 
 var once sync.Once;
 
 //"Constructor"
 func (db db) newdb(group string) *sql.DB{
+
 	db.driver = "mysql";
 	db.dbName = os.Getenv("DB_NAME");
 
-	var (
-		user, pwd string
-	)
+	var (	user, pwd string )
 
 	switch group {
 		case "nouser": { 
@@ -52,8 +51,11 @@ func (db db) newdb(group string) *sql.DB{
 			pwd = os.Getenv("DB_NOUSER_PWD");
 		}
 	}//breaks are added automatically
-		
-	return db.open(user,pwd);
+
+	instance := db.open(user,pwd);
+	//setInstance(instance, group);
+
+	return instance;
 }
 
 
@@ -63,23 +65,43 @@ func (db *db) open(user, pwd string) *sql.DB {
 	}else{ return db }
 }
 
-func (Db *db) CheckPool(db *sql.DB) bool {
-	if db.Ping() == nil{
-		return true;
-	}else{
-		return false;
+func setInstance(instance *sql.DB, rol string) {
+	fmt.Println("set instance");
+	switch rol {
+		case "nouser": { nonUserInstance = instance	}
+		case "user": { userInstance = instance	}
+		case "admin": { adminUserInstance = instance }
+		default: {}
 	}
+
+	fmt.Println(&instance);
 }
 
-func GetDb() *sql.DB {
-	if userInstance == nil {
-		once.Do(func(){
-			fmt.Println("Creating a instance");
-			DB := db{}.newdb("user");
-			userInstance = DB;
-		});
-	}else{
-		fmt.Println("Already has been created");
+func GetDb(rol string) *sql.DB {
+	fmt.Println("get db instance");
+
+	var instance **sql.DB;
+
+	switch rol {
+		case "nonuser":{ instance = &nonUserInstance; } //logger
+		case "user":{ instance = &userInstance; }
+		case "admin":{ instance = &adminUserInstance; }
+		default: { instance = &nonUserInstance; }
 	}
-	return userInstance
+
+	if *instance == nil {
+		once.Do(func(){
+			fmt.Println("Creating a instance of type", rol);
+			newInstance := db{}.newdb(rol)
+			//instance = db{}.newdb(rol);
+			*instance = newInstance;
+		});
+	}else{ 
+		fmt.Println("Already has been created"); 
+	}
+
+	fmt.Println("instance before return");
+	fmt.Println(instance);
+
+	return *instance;
 }

@@ -33,6 +33,4 @@ func CreateCookie(tokenString string) *fiber.Cookie {
 	return cookie;
 }
 
-func CheckIsEmpty(cookieString string) bool {
-	return cookieString == "";
-}
+func CheckIsEmpty(cookieString string) bool { return cookieString == ""; }

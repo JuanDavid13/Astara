@@ -2,7 +2,7 @@ package jwt
 
 import (
 	"fmt"
-	//"reflect"
+	"reflect"
 
 	"os"
 	"time"
@@ -19,23 +19,26 @@ type Claims struct{
 	Authorized bool `json:"authorized"`;
 	Exp int64 `json:"exp"`;
 	User int `json:"user"`;
+	Rol string `json:"rol"`;
 	jwt.StandardClaims
 }
 
-func newClaim(user int) Claims {
+func newClaim(user int, rol string) Claims {
+	fmt.Println(reflect.TypeOf(os.Getenv("CK_DU")));
 	dur, _ := str.Atoi(os.Getenv("CK_DUR"));
 	return Claims{
 		true,
 		time.Now().Add(time.Duration(dur)).Unix(),
 		user,
+		rol,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Duration(dur)).Unix(),
 		},
 	}
 }
 
-func CreateToken(user int) string {
-	claims := newClaim(user);
+func CreateToken(user int, rol string) string {
+	claims := newClaim(user, rol);
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512,claims);
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("SCRT")));
@@ -60,15 +63,12 @@ func ParseToken(tokenString string) (*Claims, bool){
 }
 
 /*func GetTokenClaims(tokenString string) *Claims{
-
 	token , err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("SCRT")),nil
 	});
 	if err != nil{panic(err);}
-
 	claims , ok := token.Claims.(*Claims);
 	if !ok {panic(ok)}
-
 	return claims;
 }*/
 
@@ -87,20 +87,16 @@ func Validate(c *fiber.Ctx) bool {
 
 	valid := false;
 	if !IsEmpty(c.Cookies("token")){
-		claims, valid := ParseToken(c.Cookies("token"));
-		cl := Claims(*claims);
-		//fmt.Printf("%+v\n",claims);
-		if valid { 
+		if claims, valid := ParseToken(c.Cookies("token")); valid {
+			cl := Claims(*claims);
 			c.Locals("claims", cl);
 
-			//token := renewtoken(cl.User);
-			newToken := CreateToken(cl.User);
+			newToken := CreateToken(cl.User, cl.Rol);
 			newCookie := cookie.CreateCookie(newToken);
 			c.Cookie(newCookie);
 
 			valid = true;
 		}
-		return valid;
 	}
 	return valid;
 }
