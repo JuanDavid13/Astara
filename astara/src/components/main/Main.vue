@@ -10,7 +10,6 @@
 
 <script>
 import Item from '@/components/main/Item.vue';
-
 const axios = require('axios');
 const Axios = axios.create({
   baseURL: 'http://localhost:3000/api/v1',
@@ -30,12 +29,7 @@ export default {
   },
   methods: {
     getTargets(){
-      Axios.get('/user/targets').then((res)=>{
-        console.log(res);
-        this.Items = JSON.parse(res.data);
-        console.log('data');
-        console.log(this.Items);
-      });
+      Axios.get('/user/targets').then((res)=>{ this.Items = JSON.parse(res.data); });
     }
 
   },

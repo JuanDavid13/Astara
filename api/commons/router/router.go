@@ -25,6 +25,7 @@ func RouterSetUp(app *fiber.App){
 
 	auth := api.Group("/auth");
 		auth.Get("/validate",AuthValidate);
+		auth.Get("/logout",LogOut);
 
 	user:= api.Group("/user");
 		user.Use(middleware);

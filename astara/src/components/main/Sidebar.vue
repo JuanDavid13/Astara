@@ -10,23 +10,32 @@
           <span class="deleteable" v-if="area.deleteable">X</span>
         </div>
       </div> 
+      <div>
+        <button @click="logOut">Log Out</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+const axios = require('axios');
+const Axios = axios.create({
+  baseURL: 'http://localhost:3000/api/v1',
+  timeout: 1000,
+  withCredentials: true,
+});
+
   export default{
     name: 'Sidebar',
-    //props:{
-    //  areas: Array
-    //},
     props: {areas: Object},
     data(){
       return {
-
       }
     },
-    create() {
+    methods: {
+      logOut(){
+        Axios.get('/auth/logout').then(()=>{ this.$router.push({name:'Login'}) });
+      }
     }
   }
 </script>

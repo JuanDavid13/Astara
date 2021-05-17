@@ -45,3 +45,12 @@ func Check(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"logged":"true"});
 	}
 }
+
+func LogOut(c *fiber.Ctx) error {
+	if !cookie.CheckIsEmpty(c.Cookies("token")) {
+		cookie := cookie.CreateExpiredCookie();
+		c.Cookie(cookie);
+		return c.SendStatus(200);
+	}
+	return c.SendStatus(400);
+}

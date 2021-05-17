@@ -10,14 +10,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-/*type Cookie struct {
-	Name string
-	Value jwt.Token
-	Exp int64
-	HttpOnly bool
-	Secure bool
-}*/
-
 func CreateCookie(tokenString string) *fiber.Cookie {
 	cookie := new(fiber.Cookie);
 	cookie.Name = "token";
@@ -26,6 +18,21 @@ func CreateCookie(tokenString string) *fiber.Cookie {
 	if err != nil { panic(err); }
 
 	cookie.Expires = time.Now().Add(time.Minute*(time.Duration(dur)));
+
+	cookie.HTTPOnly = true;
+	//cookie.Secure = true;
+
+	return cookie;
+}
+
+func CreateExpiredCookie() *fiber.Cookie {
+	cookie := new(fiber.Cookie);
+	cookie.Name = "token";
+	cookie.Value = "";
+
+	t, err := time.Parse(time.RFC3339,"2009-11-10T23:00:00.000Z");
+	if err != nil { panic(err); }
+	cookie.Expires = t;
 
 	cookie.HTTPOnly = true;
 	//cookie.Secure = true;

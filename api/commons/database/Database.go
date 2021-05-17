@@ -82,12 +82,12 @@ func getInstance(rol string) *sql.DB{
 }
 
 func GetDb(rol string) *sql.DB {
-	fmt.Println("NonUserInstance");
-	fmt.Println(NonUserInstance);
-	fmt.Println("UserInstance");
-	fmt.Println(UserInstance);
-	fmt.Println("AdminUserInstance");
-	fmt.Println(AdminUserInstance);
+	//fmt.Println("NonUserInstance");
+	//fmt.Println(NonUserInstance);
+	//fmt.Println("UserInstance");
+	//fmt.Println(UserInstance);
+	//fmt.Println("AdminUserInstance");
+	//fmt.Println(AdminUserInstance);
 
 	switch rol {
 		case "nonuser": { 
@@ -98,11 +98,11 @@ func GetDb(rol string) *sql.DB {
 				lock.Lock();
 				defer lock.Unlock();
 				if NonUserInstance == nil	{
-					fmt.Println("creating NonUserInstance");
+					//fmt.Println("creating NonUserInstance");
 					newInstance := *db{}.newdb(rol);
 					NonUserInstance = &newInstance;
 				}
-			}else{ fmt.Println("Already has been created an NonUserInstance"); }
+			}//else{ fmt.Println("Already has been created an NonUserInstance"); }
 			return NonUserInstance;
 		}
 		case "user": { 
@@ -113,11 +113,11 @@ func GetDb(rol string) *sql.DB {
 				lock.Lock();
 				defer lock.Unlock();
 				if UserInstance == nil	{
-					fmt.Println("creating UserInstance");
+					//fmt.Println("creating UserInstance");
 					newInstance := *db{}.newdb(rol);
 					UserInstance = &newInstance;
 				}
-			}else{ fmt.Println("Already has been created an UserInstance"); }
+			}//else{ fmt.Println("Already has been created an UserInstance"); }
 			return UserInstance;
 		}
 		case "admin": {
@@ -128,11 +128,11 @@ func GetDb(rol string) *sql.DB {
 				lock.Lock();
 				defer lock.Unlock();
 				if AdminUserInstance == nil	{
-					fmt.Println("creating AdminUserInstance");
+					//fmt.Println("creating AdminUserInstance");
 					newInstance := *db{}.newdb(rol);
 					AdminUserInstance = &newInstance;
 				}
-			}else{ fmt.Println("Already has been created an AdminUserInstance"); }
+			}//else{ fmt.Println("Already has been created an AdminUserInstance"); }
 			return AdminUserInstance;
 		}
 		default: { return nil; }
