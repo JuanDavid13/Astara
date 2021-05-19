@@ -60,20 +60,8 @@ func ParseToken(tokenString string) (*Claims, bool){
 	return claims,true;
 }
 
-/*func GetTokenClaims(tokenString string) *Claims{
-	token , err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("SCRT")),nil
-	});
-	if err != nil{panic(err);}
-	claims , ok := token.Claims.(*Claims);
-	if !ok {panic(ok)}
-	return claims;
-}*/
-
 func IsEmpty(cookieString string) bool {
-	if cookieString != "" { 
-		return false; 
-	}
+	if cookieString != "" { return false; }
 	return true;
 }
 

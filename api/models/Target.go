@@ -22,7 +22,7 @@ type Target struct {
 }
 
 type targetSql struct  {
-		id sql.NullInt32;
+		id sql.NullInt64;
 		id_parent sql.NullInt32;
 		id_user sql.NullInt32;
 		id_area sql.NullInt32;
@@ -36,15 +36,15 @@ func GetTargetsById(user int, rol string) []Target {
 	if rol == ""{ return nil; }
 
 	db := db.GetDb(rol);
-	query := "SELECT * FROM `Targets` WHERE `Id_usu` LIKE ?";
+	query := "SELECT `Id`,`Id_parent`,`Id_usu`,`Id_area`,`Id_status`,`Name`,`Deadline`,`Children` FROM `Targets` WHERE `Id_usu` LIKE ?";
 
 	stmt, err := db.Prepare(query);
 	if err != nil { panic(err); }
 
-	defer stmt.Close();
-
 	rows, err := stmt.Query(user);
 	if err != nil { panic(err); }
+
+	defer stmt.Close();
 
 	targets := []Target{};
 	target := Target{};
@@ -52,12 +52,13 @@ func GetTargetsById(user int, rol string) []Target {
 
 	for rows.Next() {
 
-		rows.Scan(&t.id,&t.id_parent,&t.id_user,&t.id_area,&t.id_status,&t.name,&t.deadline,&t.children);
+		err := rows.Scan(&t.id,&t.id_parent,&t.id_user,&t.id_area,&t.id_status,&t.name,&t.deadline,&t.children);
+		if err != nil { panic(err); }
 
 		if t.id.Valid && t.id_user.Valid && t.id_area.Valid && t.id_status.Valid && t.name.Valid && t.deadline.Valid && t.children.Valid {
 			if !t.id_parent.Valid {	target.Id_parent = -1; }else{ target.Id_parent = int(t.id_parent.Int32); }
 
-			target.Id = int(t.id.Int32);
+			target.Id = int(t.id.Int64);
 			target.Id_user = int(t.id_user.Int32);
 			target.Id_area = int(t.id_area.Int32);
 			target.Id_status = int(t.id_status.Int32);

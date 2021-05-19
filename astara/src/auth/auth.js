@@ -9,7 +9,6 @@ const Axios = axios.create({
 
 //interceptor
 Axios.interceptors.response.use((res)=>{
-  //console.log(res);
   return res;
 },(error)=>{ 
   if(error.response.status == 401)
@@ -27,16 +26,18 @@ function Validate() {
 
 function AreaCorrespond(Area) {
   return Axios.post("/area/correspond",{name:Area}).then((res)=>{
-    console.log(res);
     if(res == null )
       return null;
+
     if(res.data.correspond == false);
       router.push({name:'Main'});
-    if(res.data.correspond == true){
+
+    if(res.data.correspond == true)
       return res.data.targets;
-    }
+
     return null;
   });
 }
 
 export { Validate, AreaCorrespond };
+export default Axios;
