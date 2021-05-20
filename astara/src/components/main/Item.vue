@@ -26,8 +26,11 @@ export default {
 
 <style scoped lang="scss">
 
+@import '@/assets/style/common';
+
 .item{
-  background-color:#333533;
+  color:var(--text);
+  background-color:var(--secondary);
   padding:10px;
   width:90%;
   height:fit-content;

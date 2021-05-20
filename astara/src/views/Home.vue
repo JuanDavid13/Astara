@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home" @switchTheme="switchTheme">
     <Sidebar :areas=areas />
     <router-view :key="$route.fullPath"></router-view>
   </div>
@@ -33,11 +33,8 @@ export default {
     }
   },
   methods: {
-    getAreas(){
-      Axios.get('/area').then((res)=>{
-        this.areas = JSON.parse(res.data);
-      });
-    }
+    getAreas(){ Axios.get('/area').then((res)=>{ this.areas = JSON.parse(res.data); }); },
+    switchTheme(){ console.log("llega"); },
   },
   created(){
    this.getAreas();
@@ -46,9 +43,8 @@ export default {
 </script>
 
 <style lang="scss">
-$black:#242423;
-$lightB:#333533;
 
+@import '@/assets/style/common';
 
 /*Chrome, Safari, Edge*/
 ::-webkit-scrollbar { width:7px; }
@@ -62,8 +58,8 @@ $lightB:#333533;
 }
 
 .home{
-  color:white;
-  background-color:$black;
+  color:var(--text);
+  background-color:var(--primary);
   min-height:100vh;
 
   display:grid;

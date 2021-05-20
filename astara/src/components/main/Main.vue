@@ -10,7 +10,7 @@
     <DashGoal :id="goal.id" :name="goal.name" :deadline="goal.deadline" :progress="goal.progress" />
   </div>
 
-  <div id="modal">
+  <div @click="hideModal" id="modal">
     <div id="modalCont">
       <span>Hello</span>
     </div>
@@ -23,14 +23,15 @@
 import Item from '@/components/main/Item.vue';
 import DashGoal from '@/components/item/Goal.vue';
 import $ from 'jquery';
+import Axios from '@/auth/auth';
 
-console.log($('#main'));
-const axios = require('axios');
+/*const axios = require('axios');
 const Axios = axios.create({
   baseURL: 'http://localhost:3000/api/v1',
   timeout: 1000,
   withCredentials: true,
-});
+});*/
+
 
 export default {
   name: 'Main',
@@ -47,15 +48,19 @@ export default {
     }
   },
   methods: {
+    hideModal(e){ if($('#modal').get(0) == (e.srcElement)){ $('#modal').removeClass('modalActive'); }  },
     getTargets(){ Axios.get('/user/targets').then((res)=>{ this.Items = JSON.parse(res.data); }); },
     getGoals(){ Axios.get('/user/goal').then((res)=>{ 
       console.log(res);
       this.DashGoals = JSON.parse(res.data); 
       console.log(this.DashGoals);
       }); 
-    }
+    },
     //getTask(){ Axios.get('/user/task').then((res)=>{ this.Tasks = JSON.parse(res.data); }); }
     //getEvents(){ Axios.get('/user/event').then((res)=>{ this.Events = JSON.parse(res.data); }); }
+    switchTheme(){
+      
+    }
 
   },
   created() {
@@ -67,15 +72,17 @@ export default {
 </script>
 
 <style scoped lang="scss">
- #items div{
-   height:fit-content;
-}
+
+@import '@/assets/style/common';
+
+#items div{ height:fit-content; }
 
 #main{
   position:relative;
 }
 
 #modal{
+  //make a variable in common.scss
   background-color:rgba(0,0,0,.5);
   position:absolute;
   height:100%;
@@ -94,7 +101,7 @@ export default {
     transform:translate(-50%,-50%);
 
     padding:15px;
-    background-color:lightblue;
+    background-color:var(--primary);
     border-radius:5px;
 
 

@@ -13,42 +13,49 @@
       <div>
         <button @click="logOut">Log Out</button>
       </div>
+      <div>
+        <button @click="switchTheme">Change theme</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-const axios = require('axios');
+/*const axios = require('axios');
 const Axios = axios.create({
   baseURL: 'http://localhost:3000/api/v1',
   timeout: 1000,
   withCredentials: true,
-});
+});*/
+
+import Axios from '@/auth/auth';
+import $ from 'jquery';
 
   export default{
     name: 'Sidebar',
     props: {areas: Object},
+    emits: ['switchTheme'],
     data(){
       return {
       }
     },
     methods: {
-      logOut(){
-        Axios.get('/auth/logout').then(()=>{ this.$router.push({name:'Login'}) });
-      }
+      logOut(){ Axios.get('/auth/logout').then(()=>{ this.$router.push({name:'Login'}) }); },
+      switchTheme(){
+        $('#app').toggleClass('lightTheme');
+      },
     }
   }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 
-$black:#242423;
-$lightB:#333533;
+@import '@/assets/style/common';
 
 .sidebar {
-  color:white;
-  background-color:$black;
-  border-right:1px solid grey;
+  color:var(--text);
+  background-color:var(--primary);
+  border-right:1px solid var(--secondary);
   display: flex;
   flex-direction: column;
   align-items:flex-start;
@@ -69,7 +76,7 @@ $lightB:#333533;
   }
 
     a{
-      color:white;
+      color:var(--text);
       text-decoration:none;
     }
 
@@ -88,15 +95,14 @@ $lightB:#333533;
 
       .deleteable{
         margin-left:0;
-        color:$black;
+        color:var(--primary);
         transition: color .25s ease, margin .25s ease;
       }
 
       &:hover .deleteable{
         margin-left:15px;
-        color:lightgray; 
+        color:var(--contrary); 
       }
     }
-
   }
 </style>
