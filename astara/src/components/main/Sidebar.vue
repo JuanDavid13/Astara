@@ -2,9 +2,9 @@
   <div class="sidebar">
     <div id="sidebarWrap">
       <div class="logo noselect">Astara</div>
-      <p class="noselect">AREAS</p>
+      <p class="noselect splitChar" data-splitting>AREAS</p>
       <div id="areas">
-        <router-link :to="{name: 'Main'}" >MAIN</router-link>
+        <router-link :to="{name: 'Main'}">MAIN</router-link>
         <div class="area" v-for="area in areas" :key="area.id" >
           <router-link :to="{ name: 'Area', params: { name: area.slug} }" >{{area.name}}</router-link>
           <span class="deleteable" v-if="area.deleteable">X</span>
@@ -48,7 +48,7 @@ import $ from 'jquery';
   }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 
 @import '@/assets/style/common';
 

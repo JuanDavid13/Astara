@@ -9,6 +9,9 @@
 // @ is an alias to /src
 import Sidebar from '@/components/main/Sidebar.vue'
 
+import "splitting/dist/splitting.css";
+import Splitting from "splitting";
+
 const axios = require('axios');
 const Axios = axios.create({
   baseURL: 'http://localhost:3000/api/v1',
@@ -39,6 +42,9 @@ export default {
   created(){
    this.getAreas();
   },
+  mounted(){
+    Splitting();
+  }
 }
 </script>
 
@@ -48,13 +54,13 @@ export default {
 
 /*Chrome, Safari, Edge*/
 ::-webkit-scrollbar { width:7px; }
-::-webkit-scrollbar-track { background-color:$black; }
-::-webkit-scrollbar-thumb { background-color:grey; }
+::-webkit-scrollbar-track { background-color:var(--primary); }
+::-webkit-scrollbar-thumb { background-color:var(--secondary); }
 
 /*Firefox*/
 * {
   scrollbar-width:thin;
-  scrollbar-color:grey $black;
+  scrollbar-color:var(--secondary) var(--primary);
 }
 
 .home{
@@ -66,4 +72,16 @@ export default {
   grid-template-columns: 1fr 4.5fr;
   grid-template-rows:1fr;
 }
+
+@keyframes effect {
+  from{ transform: translateY(1em); }
+}
+
+.splitChar.splitting .char{
+  animation: effect .5s cubic-bezier(.5, 0, .5, 1) both;
+  animation-delay: calc(.02s * var(--char-index));
+}
+
+.splitChar{overflow:hidden;}
+
 </style>

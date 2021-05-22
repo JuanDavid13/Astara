@@ -1,6 +1,6 @@
 <template>
   <div id="main">
-  <p>Todos los objetivos</p>
+  <p class="splitChar" data-splitting>Todos los objetivos</p>
   <div id="items" v-for="item in Items" :key="item.name">
     <Item :name="item.name" :deadline="item.deadline" />
   </div>
@@ -15,23 +15,19 @@
       <span>Hello</span>
     </div>
   </div>
-
+  <svg width="200" height="500">
+    <rect v-for="n in 5" :key="n" fill="goldenrod" width="15" height="15" rx="2" ry="2"  ></rect>
+  </svg>
 </div>
 </template>
 
 <script>
 import Item from '@/components/main/Item.vue';
 import DashGoal from '@/components/item/Goal.vue';
-import $ from 'jquery';
+
 import Axios from '@/auth/auth';
 
-/*const axios = require('axios');
-const Axios = axios.create({
-  baseURL: 'http://localhost:3000/api/v1',
-  timeout: 1000,
-  withCredentials: true,
-});*/
-
+import $ from 'jquery';
 
 export default {
   name: 'Main',
@@ -58,10 +54,6 @@ export default {
     },
     //getTask(){ Axios.get('/user/task').then((res)=>{ this.Tasks = JSON.parse(res.data); }); }
     //getEvents(){ Axios.get('/user/event').then((res)=>{ this.Events = JSON.parse(res.data); }); }
-    switchTheme(){
-      
-    }
-
   },
   created() {
     this.getTargets();
@@ -71,7 +63,7 @@ export default {
 
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 
 @import '@/assets/style/common';
 
