@@ -1,0 +1,29 @@
+$black:#242423;
+$lightBlack:#333533;
+$DarkTxt:rgba(255,255,255,.9);
+$jet:#3C3C3B;
+$raisin:#2A2D34;
+$xiketic:#0F1020;
+
+$white:#eff2f1;
+$algo:#E0E2DB;
+$text:#DBDBDB;
+$Ltxt:#37352F;
+$ghost:#E8E9F3;
+
+$gold:#F0A202;
+
+:root{
+  --primary:#{$black};
+  --secondary:#{$lightBlack};
+  --text:#{$DarkTxt};
+  --contrary:#{$DarkTxt};
+  --gold:#{$gold};
+}
+
+.lightTheme{
+  --primary:#{$algo};
+  --seconrary:#{$algo};
+  --text:#{$Ltxt};
+  --contrary:#{$Ltxt};
+}
