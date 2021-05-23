@@ -1,16 +1,21 @@
 <template>
+  <div>
     <form @submit.prevent class="form">
       <span style="color:red">{{message}}</span>
       <input type="text" ref="input" v-model="user" placeholder="Nombre de usuario">
       <input v-if="found" type="text" v-model="pass" placeholder="contraseña">
       <button type="submit" @click="clicked">Aceptar</button>
     </form>
+    <div>
+      <p>¿Nuevo en Astara? <span>Hazte una cuenta</span></p>
+    </div>
+  </div>
 </template>
 
 <script>
-const axios = require('axios');
+import Axios from '@/auth/auth';
   export default{
-    name: 'loginForm',
+    name: 'LoginForm',
     data() {
       return {
         message: "",
@@ -21,8 +26,9 @@ const axios = require('axios');
     },
     methods:{
       clicked(){
+        console.log(process.env);
         if(this.pass.localeCompare("") == 0){
-          axios.post('http://localhost:3000/api/v1/login/',{
+          Axios.post('login/',{
             user: this.user
           }).then((res)=>{
             if(res.data.found == "true"){
@@ -34,10 +40,10 @@ const axios = require('axios');
             }
           });
         }else{
-          axios.post('http://localhost:3000/api/v1/login/check',{
+          Axios.post('login/check',{
             user: this.user,
             pass: this.pass
-          },{ withCredentials: true }).then((res)=>{
+          }).then((res)=>{
             if(res.data.logged == "true"){
               this.$router.push({name:'Home'});
             }else{
@@ -55,8 +61,6 @@ const axios = require('axios');
 form{
   display: flex;
   flex-direction: column;
-  width: 70%;
-  margin:0 auto;
 
   input{margin-bottom: 15px;}
 

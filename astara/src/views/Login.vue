@@ -1,17 +1,27 @@
 <template>
   <div class="wrap">
-    <h2>Únete a Astara y empieza a organizar tu vida</h2>
+    <div id="loginTxt">
+      <logoName :size="1.5" />
+      <h2>Order is key <br />to control chaos</h2>
+    </div>
     <loginForm />
   </div>
 </template>
 
 <script>
-import loginForm from '@/components/loginForm.vue'
+import LoginForm from '@/components/loginForm.vue'
+import logoName from '@/components/commons/logoName.vue'
 
 export default {
   name: 'Login',
   components: {
-    loginForm
+    LoginForm,
+    logoName,
+  },
+  data() {
+    return {
+      publicPath: 'http://localhost/',
+    }
   }
 } 
 </script>
@@ -19,15 +29,25 @@ export default {
 <style scoped lang="scss">
 .wrap{
   min-height:100vh;
-  display:grid;
-  grid-template-rows:1fr;
-  grid-template-columns:repeat(2,1fr);
+  display:flex;
+  flex-direction:row;
+
+  background-color:var(--primary);
+  padding:2rem;
+
+}
+#loginTxt{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:2rem;
+  max-height:80vh;
+  font-size:3vw;
 }
 
 @media only screen and(max-width:670px){
   .wrap{
-    grid-template-rows:20% 80%;
-    grid-template-columns:1fr;
+    flex-direction:column;
   }
 }
 </style>

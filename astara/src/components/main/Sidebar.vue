@@ -21,29 +21,15 @@
 </template>
 
 <script>
-/*const axios = require('axios');
-const Axios = axios.create({
-  baseURL: 'http://localhost:3000/api/v1',
-  timeout: 1000,
-  withCredentials: true,
-});*/
-
 import Axios from '@/auth/auth';
 import $ from 'jquery';
 
   export default{
     name: 'Sidebar',
     props: {areas: Object},
-    emits: ['switchTheme'],
-    data(){
-      return {
-      }
-    },
     methods: {
       logOut(){ Axios.get('/auth/logout').then(()=>{ this.$router.push({name:'Login'}) }); },
-      switchTheme(){
-        $('#app').toggleClass('lightTheme');
-      },
+      switchTheme(){ $('#app').toggleClass('lightTheme'); },
     }
   }
 </script>

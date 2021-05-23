@@ -11,18 +11,33 @@
 
 <style lang="scss">
 
+@import '@/assets/style/common';
+
+/*Chrome, Safari, Edge*/
+::-webkit-scrollbar { width:7px; }
+::-webkit-scrollbar-track { background-color:var(--primary); }
+::-webkit-scrollbar-thumb { background-color:var(--secondary); }
+
+/*Firefox*/
+* {
+  scrollbar-width:thin;
+  scrollbar-color:var(--secondary) var(--primary);
+}
+
+html{
+  font-size:16px;
+
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  color: var(--text);
+}
+
 *,*::before,*::after{
   margin:0;
   padding:0;
   box-sizing:border-box;
-}
-
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
 }
 
 #nav {
@@ -70,6 +85,29 @@
   -moz-user-select:none;
   -ms-user-select:none;
   user-select:none;
+}
+
+input {
+  background-color:var(--primary);
+  color:var(--text);
+
+  border:1px solid var(--contrary);
+  border-radius:5px;
+
+  padding:7px;
+}
+input:focus{
+  outline:2px solid (--primary);
+}
+
+button{
+  background-color:var(--contrary);
+  color:var(--primary);
+
+  border:1px solid var(--primary);
+  border-radius:5px;
+
+  padding:7px;
 }
 
 </style>

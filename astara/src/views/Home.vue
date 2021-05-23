@@ -52,17 +52,6 @@ export default {
 
 @import '@/assets/style/common';
 
-/*Chrome, Safari, Edge*/
-::-webkit-scrollbar { width:7px; }
-::-webkit-scrollbar-track { background-color:var(--primary); }
-::-webkit-scrollbar-thumb { background-color:var(--secondary); }
-
-/*Firefox*/
-* {
-  scrollbar-width:thin;
-  scrollbar-color:var(--secondary) var(--primary);
-}
-
 .home{
   color:var(--text);
   background-color:var(--primary);
