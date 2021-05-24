@@ -1,5 +1,6 @@
 $black:#242423;
-$lightBlack:#333533;
+$lightBlack:#353535;
+$highLight:#808080;
 $DarkTxt:rgba(255,255,255,.9);
 $jet:#3C3C3B;
 $raisin:#2A2D34;
@@ -13,12 +14,20 @@ $ghost:#E8E9F3;
 
 $gold:#F0A202;
 
+//$errorBg:#FFA3A5;
+//$errorBg:#FAAA8D;
+$errorBg:rgba(242,84,91,.1);
+$errorTxt:#F2545B;
+
 :root{
   --primary:#{$black};
   --secondary:#{$lightBlack};
+  --tertiary:#{$highLight};
   --text:#{$DarkTxt};
   --contrary:#{$DarkTxt};
   --gold:#{$gold};
+  --errorTxt:#{$errorTxt};
+  --errorBg:#{$errorBg};
 }
 
 .lightTheme{

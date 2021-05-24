@@ -1,6 +1,8 @@
 package models
 
 import (
+  "fmt"
+
 	"database/sql"
 
 	db "astara/commons/database"
@@ -22,12 +24,15 @@ type areaDb struct {
 }
 
 func GetAreasById (user int, rol string) []Area {
+  fmt.Println("rol area");
+  fmt.Println(rol);
+
   db := db.GetDb(rol);
+  fmt.Println(db);
 
   query := "SELECT `Name`,`Slug`,`Deleteable` FROM `Areas` WHERE `Id_user` LIKE ?;";
   stmt, err := db.Prepare(query);
-  if err != nil { panic(err); }
-
+  if err != nil && err != sql.ErrNoRows { /*return false;*/ panic(err); }
   defer stmt.Close();
 
   rows, err := stmt.Query(user);

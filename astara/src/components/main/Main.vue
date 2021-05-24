@@ -69,9 +69,7 @@ export default {
 
 #items div{ height:fit-content; }
 
-#main{
-  position:relative;
-}
+#main{ position:relative; }
 
 #modal{
   //make a variable in common.scss

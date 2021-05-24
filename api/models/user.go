@@ -7,6 +7,7 @@ import (
 
 	db "astara/commons/database"
 	"database/sql"
+  "golang.org/x/crypto/bcrypt"
 	//jwt "github.com/dgrijalva/jwt-go"
 )
 
@@ -20,41 +21,95 @@ func IsRegistered(user string) bool {
   db := db.GetDb("nonuser");
   query := "SELECT `id`  FROM `Users` WHERE (`Name` LIKE ? OR `Email` LIKE ?)";
   stmt, err := db.Prepare(query);
-  if err != nil{
-    panic(err);
-  }
+  if err != nil{ panic(err); }
 
   var id int;
   err = stmt.QueryRow(user, user).Scan(&id);
   defer stmt.Close();
-  if err != nil && err != sql.ErrNoRows {
-    return false;
-    //panic(err);
-  }
+  if err != nil && err != sql.ErrNoRows { return false; }
   if id != 0 {return true;}
   return false;
 }
+func IsRegisteredWithEmail(user, email string) bool {
+  db := db.GetDb("nonuser");
+  query := "SELECT `Id` FROM Users WHERE  Name LIKE ? OR Email LIKE ?;";
 
-func CheckCredentials(user, pass string) (int,string){
+  stmt, err := db.Prepare(query);
+  if err != nil{ panic(err); }
+
+  var id int;
+  err = stmt.QueryRow(user, email).Scan(&id);
+  defer stmt.Close();
+  fmt.Println(id);
+  if err != nil && err != sql.ErrNoRows { return false; }
+  if id != 0 {return true;}
+
+  return false;
+}
+
+func CheckCredentials(user, pass string) (int,bool) {
   fmt.Println("is registered:")
 
   db := db.GetDb("nonuser");
-  query := "SELECT U.`Id`, R.`Name` FROM `Users` AS U JOIN `Rols` AS R ON (U.`Id_rol` = R.`Id` ) WHERE (U.`Name` LIKE ? OR U.`Email` LIKE ?) AND U.`Password` LIKE ?";
+  //query := "SELECT U.`Id`, R.`Name` FROM `Users` AS U JOIN `Rols` AS R ON (U.`Id_rol` = R.`Id` ) WHERE (U.`Name` LIKE ? OR U.`Email` LIKE ?) AND U.`Password` LIKE ?";
+  query := "SELECT `Id`, `Password` FROM `Users` WHERE `Name` LIKE ? OR `Email` LIKE ?;";
   stmt, err := db.Prepare(query);
   if err != nil{panic(err);}
 
   var ( 
     id int;
-    rol string; 
+    pwd string; 
   )
-  err = stmt.QueryRow(user,user,pass).Scan(&id,&rol);
+  //err = stmt.QueryRow(user,user,pass).Scan(&id,&rol);
+  err = stmt.QueryRow(user,user).Scan(&id,&pwd);
   defer stmt.Close();
-  //if err != nil { panic(err); }
-  if err != nil && err != sql.ErrNoRows {
-    return -1,"";
-    //panic(err);
-  }
 
-  if id != 0 { return id,rol; }
-  return -1,"";
+  if err != nil && err != sql.ErrNoRows { return -1,false; }
+
+  if err := bcrypt.CompareHashAndPassword([]byte(pwd),[]byte(pass)); err != nil { panic(err); }
+
+  return id,true;
+}
+
+func createPass(pass string) string {
+  encpass, err := bcrypt.GenerateFromPassword([]byte(pass),10);
+  if err != nil { panic(err); }
+  return string(encpass);
+}
+
+func CreateNewUser(user, pass, email string) (int, bool) {
+  db := db.GetDb("nonuser");
+  query := "INSERT INTO Users (`Name`,`Password`,`Email`) VALUES(?,?,?);";
+
+  encPass := createPass(pass);
+
+  stmt, err := db.Prepare(query);
+  if err != nil { /*panic(err);*/ return -1,false; }
+
+  res, err := stmt.Exec(user,encPass,email);
+  if err != nil { /*panic(err);*/ return -1,false; }
+  id, err := res.LastInsertId();
+  if err != nil { panic(err); }
+
+  return int(id),true;
+}
+
+func GetBasicUserInfo(user int) (string,string) {
+  fmt.Println("get basic user info:")
+  db := db.GetDb("nonuser");
+  query := "SELECT U.`Name`, R.`Name` FROM `Users` AS U JOIN `Rols`AS R ON (U.`Id_rol` = R.`Id`) WHERE U.`Id` LIKE ?;";
+  stmt, err := db.Prepare(query);
+  if err != nil && err != sql.ErrNoRows { return "","";/*panic(err);*/ }
+
+  var ( name, rol string; )
+
+  err = stmt.QueryRow(user).Scan(&name,&rol);
+  defer stmt.Close();
+  if err != nil && err != sql.ErrNoRows { return "","";/*panic(err);*/ }
+
+  fmt.Println("name");
+  fmt.Println(name);
+  fmt.Println(rol);
+
+  return name,rol;
 }

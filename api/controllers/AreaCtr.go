@@ -17,7 +17,10 @@ func GetAreas(c *fiber.Ctx) error {
 	fmt.Println("get area");
 	cl := c.Locals("claims").(jwt.Claims);
 
-	//user := jwt.GetUser(c);
+
+	fmt.Println("Rol");
+	fmt.Println(cl.Rol);
+
 	areas := GetAreasById(cl.User,cl.Rol);
 
 	Areas,err := json.Marshal(areas);

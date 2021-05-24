@@ -46,13 +46,13 @@ func CreateToken(user int, rol string) string {
 }
 
 func ParseToken(tokenString string) (*Claims, bool){
+	fmt.Println("tokenString");
+	fmt.Println(tokenString);
+
 	token , err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("SCRT")),nil
 	});
-	if err != nil{ 
-		//panic(err);
-		return nil, true;
-	}
+	if err != nil{ return nil, true; }
 
 	claims ,ok := token.Claims.(*Claims);
 	if !ok {panic(ok)}
@@ -70,21 +70,42 @@ func Validate(c *fiber.Ctx) bool {
 	fmt.Println("validate");
 	//fmt.Println(string(c.Request().Header.Peek("Origin")));
 
-	isValid := false;
-	if !IsEmpty(c.Cookies("token")){
-		if claims, valid := ParseToken(c.Cookies("token")); valid {
+	//isValid := false;
+	if IsEmpty(c.Cookies("token")){
+		return false;
+	}else{
+		if claims, valid := ParseToken(c.Cookies("token")); !valid {
+			return false;
+		}else{
 			cl := Claims(*claims);
 			c.Locals("claims", cl);
+
+			fmt.Println("User");
+			fmt.Println(cl.User);
+			fmt.Println("Rol claims");
+			fmt.Println(cl.Rol);
 
 			//renew the token
 			newToken := CreateToken(cl.User, cl.Rol);
 			newCookie := cookie.CreateCookie(newToken);
 			c.Cookie(newCookie);
 
-			isValid = true;
+			return true;
 		}
 	}
-	return isValid;
+	//if !IsEmpty(c.Cookies("token")){
+		//if claims, valid := ParseToken(c.Cookies("token")); valid {
+		//	cl := Claims(*claims);
+		//	c.Locals("claims", cl);
+
+		//	//renew the token
+		//	newToken := CreateToken(cl.User, cl.Rol);
+		//	newCookie := cookie.CreateCookie(newToken);
+		//	c.Cookie(newCookie);
+
+		//	isValid = true;
+	//	}
+	//}
 }
 
 //page validation

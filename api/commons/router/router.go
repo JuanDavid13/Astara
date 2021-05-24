@@ -16,12 +16,13 @@ func middleware(c *fiber.Ctx) error {
 }
 
 //Router declarations
-func RouterSetUp(app *fiber.App){
+func RouterSetUp(app *fiber.App) {
 	api := app.Group("/api/v1");
 
 	login := api.Group("/login");
 		login.Post("/", CheckUser);
 		login.Post("/check", Check);
+		login.Post("/create", CreateUser);
 
 	auth := api.Group("/auth");
 		auth.Get("/validate",AuthValidate);
@@ -33,8 +34,6 @@ func RouterSetUp(app *fiber.App){
 		user.Get("/goal",GetGoals);
 		//user.Get("/task",GetTargets);
 		//user.Get("/event",GetTargets);
-		//user.Post("/create",)
-		//user.Post("/logout",)
 
 	area := api.Group("/area");
 		area.Use(middleware);

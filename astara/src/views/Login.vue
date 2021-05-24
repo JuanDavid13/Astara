@@ -1,16 +1,24 @@
 <template>
-  <div class="wrap">
-    <div id="loginTxt">
-      <logoName :size="1.5" />
-      <h2>Order is key <br />to control chaos</h2>
+  <div id="wrap">
+    <logoName :size="2"/>
+    <div id="contWrap">
+      <div id="loginTxt">
+        <h2 class="noselect">
+          <p class="splitWords" data-splitting="words">Order is key</p>
+          <p class="splitWords" data-splitting="words">to control chaos</p>
+        </h2>
+      </div>
+      <loginForm />
     </div>
-    <loginForm />
   </div>
 </template>
 
 <script>
 import LoginForm from '@/components/loginForm.vue'
 import logoName from '@/components/commons/logoName.vue'
+
+import "splitting/dist/splitting.css";
+import Splitting from "splitting";
 
 export default {
   name: 'Login',
@@ -22,32 +30,48 @@ export default {
     return {
       publicPath: 'http://localhost/',
     }
+  },
+  mounted(){
+    Splitting();
   }
 } 
 </script>
 
-<style scoped lang="scss">
-.wrap{
+<style lang="scss">
+#wrap{
   min-height:100vh;
-  display:flex;
-  flex-direction:row;
+  display:grid;
+  grid-template-rows:10% 90%;
+  grid-template-columns:1fr;
 
   background-color:var(--primary);
   padding:2rem;
 
-}
-#loginTxt{
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  gap:2rem;
-  max-height:80vh;
-  font-size:3vw;
-}
+  #loginTxt{ font-size:2vw; }
 
-@media only screen and(max-width:670px){
-  .wrap{
-    flex-direction:column;
+  #contWrap{
+    display:flex;
+    flex-direction:row;
+    flex-wrap: wrap;
+
+    padding:10vh 0;
+    
+    & > div:first-child{ 
+      flex: 0 0 60%;
+    }
+    & > div:last-child{ 
+      flex: 0 0 40%;
+    }
   }
 }
+
+
+@keyframes effect {
+  from{ transform: translateY(1em); }
+}
+.splitWords.splitting .word{
+  animation: effect .5s cubic-bezier(.5, 0, .5, 1) both;
+  animation-delay: calc(.05s * var(--word-index));
+}
+.splitWords{overflow:hidden;}
 </style>

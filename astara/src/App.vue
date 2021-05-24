@@ -87,27 +87,39 @@ html{
   user-select:none;
 }
 
+input, button{
+  padding:.5rem;
+  border:1px solid var(--tertiary);
+  border-radius:5px;
+}
+
 input {
   background-color:var(--primary);
   color:var(--text);
-
-  border:1px solid var(--contrary);
-  border-radius:5px;
-
-  padding:7px;
-}
-input:focus{
-  outline:2px solid (--primary);
 }
 
 button{
-  background-color:var(--contrary);
-  color:var(--primary);
+  background-color:var(--secondary);
+  font-weight:bold;
+  color:var(--text);
 
-  border:1px solid var(--primary);
+  transition:all .1s ease;
+
+  &:hover{
+    border:1px solid var(--gold);
+    color:var(--gold);
+  }
+}
+
+.errorMsg{
+  color:var(--errorTxt);
+  background-color:var(--errorBg);
+  padding:1vh;
+  border:2px solid var(--errorTxt);
   border-radius:5px;
 
-  padding:7px;
+  transition: all .25s ease;
+  text-align:center;
 }
 
 </style>
