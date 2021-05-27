@@ -122,4 +122,11 @@ button{
   text-align:center;
 }
 
+.pwdReveal{
+  display:grid;
+  grid-template-rows:1fr;
+  grid-template-columns:8fr 2fr;
+
+}
+
 </style>

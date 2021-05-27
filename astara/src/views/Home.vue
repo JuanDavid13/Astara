@@ -5,7 +5,11 @@
 
     <div @click="hideModal" id="modal">
       <div id="modalCont">
-        <span>Hello</span>
+        <Profile />
+        <div id="modalButtons">
+          <button>Aceptar</button>
+          <button>Cancelar</button>
+        </div>
       </div>
     </div>
 
@@ -14,6 +18,7 @@
 
 <script>
 // @ is an alias to /src
+import Profile from '@/components/modals/profile.vue';
 import Sidebar from '@/components/main/Sidebar.vue'
 import Axios from '@/auth/auth';
 
@@ -27,6 +32,7 @@ export default {
   name: 'Home',
   components: {
     Sidebar,
+    Profile,
   },
   data() {
     return{
@@ -82,7 +88,7 @@ export default {
 }
 
 #modal{
-  //make a variable in common.scss
+  //make shadow a variable in common.scss
   background-color:rgba(0,0,0,.5);
   position:absolute;
   height:100%;
@@ -94,25 +100,44 @@ export default {
 
   #modalCont{
     position:absolute;
-    top:30%;
+    top:15vh;
     left:50%;
-
-    transform:translate(-50%,-50%);
+    transform:translateX(-50%);
 
     background-color:var(--primary);
     box-shadow:0 0 10px rgba(0,0,0,.2);
     border:1px solid var(--tertiary);
     border-radius:5px;
-    padding:15px;
 
-    width:60%;
-    height:40vh;
+    //width:60%;
+    //height:40vh;
+    height:fit-content;
+    width:auto;
+
+    & div:first-child{
+      padding:15px;
+    }
+
+    #modalButtons{
+      border-top:1px solid var(--tertiary);
+      padding:15px;
+
+      button{
+        margin-right:15px;
+      }
+    }
 
   }
 }
 
 .modalActive {
   display:block !important;
+}
+
+hr{
+  border:none;
+  border-top:1px solid var(--tertiary);
+  margin: 10px 0;
 }
 
 </style>
