@@ -113,3 +113,26 @@ func GetBasicUserInfo(user int) (string,string) {
 
   return name,rol;
 }
+
+func GetBasicInfo(user int, rol string) (string,string,bool,bool){
+  fmt.Println("get info:")
+  db := db.GetDb(rol);
+  query := "SELECT `Name`, `Email`, `Theme` FROM `Users` WHERE `Id` LIKE ?;";
+  stmt, err := db.Prepare(query);
+  if err != nil && err != sql.ErrNoRows { return "","",false,true;/*panic(err);*/ }
+
+  var (
+    name, email sql.NullString;
+    theme sql.NullBool;
+  )
+
+  err = stmt.QueryRow(user).Scan(&name,&email,&theme);
+  defer stmt.Close();
+  if err != nil && err != sql.ErrNoRows { return "","",false,true;/*panic(err);*/ }
+
+  if name.Valid && email.Valid && theme.Valid {
+    return name.String,email.String, theme.Bool, false
+  }
+
+  return "","",false,true;
+}

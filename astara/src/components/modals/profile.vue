@@ -26,15 +26,6 @@
         <span v-if="!theme">Oscuro</span>
         <span v-else>Claro</span>
       </label>
-      <p>algo</p>
-      <p>algo</p>
-      <p>algo</p>
-      <p>algo</p>
-      <p>algo</p>
-      <p>algo</p>
-      <p>algo</p>
-      <p>algo</p>
-      <p>algo</p>
   </div>
 </template>
 
@@ -43,11 +34,9 @@ import $ from 'jquery';
 
 export default {
   name: 'Profile',
+  props: ['username','email','theme'],
   data() {
     return {
-        username:"algo",
-        email:"algo@gmail.com",
-        theme:false,
         show:false,
     }
   },
@@ -72,9 +61,9 @@ export default {
     display:flex;
     flex-direction:column;
 
-    width:50vw;
+    width:inherit;
 
-    overflow:scroll;
+    overflow-y:scroll;
 
     h2{ margin-bottom:15px; }
 

@@ -100,3 +100,18 @@ func CreateUser(c *fiber.Ctx) error {
 
 	}
 }
+
+func GetInfo(c *fiber.Ctx) error {
+	cl := c.Locals("claims").(jwt.Claims);
+	if name, email, theme, err := GetBasicInfo(cl.User,cl.Rol); err != false {
+		panic(err);
+		//return c.SendStatus(200);
+	}else{
+		c.Status(200);
+		return c.JSON(fiber.Map{
+			"name":name,
+			"email":email,
+			"theme":theme,
+		})
+	}
+}

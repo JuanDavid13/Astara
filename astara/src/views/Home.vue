@@ -1,11 +1,15 @@
 <template>
   <div class="home">
-    <Sidebar @openprofile="showModal" :areas=areas />
+    <Sidebar @openprofile="showModal" />
     <router-view :key="$route.fullPath"></router-view>
 
     <div @click="hideModal" id="modal">
       <div id="modalCont">
-        <Profile />
+        <Profile 
+           :username="user.username"
+           :email="user.email"
+           :theme="user.theme"
+        />
         <div id="modalButtons">
           <button>Aceptar</button>
           <button>Cancelar</button>
@@ -19,7 +23,7 @@
 <script>
 // @ is an alias to /src
 import Profile from '@/components/modals/profile.vue';
-import Sidebar from '@/components/main/Sidebar.vue'
+import Sidebar from '@/components/main/Sidebar.vue';
 import Axios from '@/auth/auth';
 
 import "splitting/dist/splitting.css";
@@ -36,7 +40,11 @@ export default {
   },
   data() {
     return{
-      areas: {},
+      user:{
+        username:"",
+        email:"",
+        theme:false
+      },
     }
   },
   methods: {
@@ -46,19 +54,13 @@ export default {
     showModal(){
       $('#modal').addClass('modalActive');
     },
-    getAreas(){
-      Axios.get('/area').then((res)=>{ this.areas = JSON.parse(res.data); });
-    },
-    openProfile() {
-      console.log("open from parent");
-    },
   },
   created(){
-   this.getAreas();
-    //this.getGoals();
-    //this.getTasks();
-    //this.getInfo();
-    
+    Axios.get("/user/info").then((res)=>{ 
+      this.user.username = res.data.name;
+      this.user.email = res.data.email;
+      this.user.theme = res.data.theme;
+    });
   },
   mounted(){
     Splitting();
@@ -117,11 +119,12 @@ export default {
     grid-template-columns:1fr;
     grid-template-rows:minmax(0,9fr) 1fr;
 
-    //width:60%;
-    //height:40vh;
     height:fit-content;
     max-height:80vh;
-    width:auto;
+    width:60vw;
+    max-width:90vw;
+
+    overflow-x:hidden;
 
     & div:first-child{
       padding:15px;
