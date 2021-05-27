@@ -100,7 +100,7 @@ export default {
 
   #modalCont{
     position:absolute;
-    top:15vh;
+    top:7vh;
     left:50%;
     transform:translateX(-50%);
 

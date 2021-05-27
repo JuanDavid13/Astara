@@ -18,9 +18,6 @@
         </div>
         <!--<div>
           <button @click="logOut">Log Out</button>
-        </div>
-        <div>
-          <button @click="switchTheme">Change theme</button>
         </div>-->
       </div>
     </div>
@@ -29,7 +26,6 @@
 
 <script>
 import Axios from '@/auth/auth';
-import $ from 'jquery';
 
   export default{
     name: 'Sidebar',
@@ -42,12 +38,6 @@ import $ from 'jquery';
     },
     methods: {
       logOut(){ Axios.get('/auth/logout').then(()=>{ this.$router.push({name:'Login'}) }); },
-      switchTheme(){ $('#app').toggleClass('lightTheme'); },
-      openProfile() {
-        console.log("open the door");
-        console.log(this);
-        console.log(this.$emit('openProfile'));
-      },
     }
   }
 </script>

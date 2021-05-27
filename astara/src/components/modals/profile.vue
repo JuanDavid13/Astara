@@ -10,7 +10,10 @@
       <hr>
       <p>Cambiar contraseña</p>
       <p class="info">Introduce tu contraseña antigua para cambiar la.</p>
-      <input id="profilePwd" type="password">
+      <div>
+        <input id="profilePwd" type="password">
+        <button>Cambiar contraseña</button>
+      </div>
       <label>
           <input @change="togglePwd" type="checkbox" v-model="show">
           <span v-if="show">Ocultar</span>
