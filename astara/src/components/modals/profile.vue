@@ -10,15 +10,15 @@
       <hr>
       <p>Cambiar contraseña</p>
       <p class="info">Introduce tu contraseña antigua para cambiar la.</p>
-      <div>
         <input id="profilePwd" type="password">
-        <button>Cambiar contraseña</button>
-      </div>
-      <label>
+      <div id="pwdButtons">
+        <label>
           <input @change="togglePwd" type="checkbox" v-model="show">
           <span v-if="show">Ocultar</span>
           <span v-else>Mostrar</span>
-      </label>
+        </label>
+        <button>Cambiar contraseña</button>
+      </div>
       <hr>
       <p>Theme</p>
       <label>
@@ -26,6 +26,15 @@
         <span v-if="!theme">Oscuro</span>
         <span v-else>Claro</span>
       </label>
+      <p>algo</p>
+      <p>algo</p>
+      <p>algo</p>
+      <p>algo</p>
+      <p>algo</p>
+      <p>algo</p>
+      <p>algo</p>
+      <p>algo</p>
+      <p>algo</p>
   </div>
 </template>
 
@@ -65,6 +74,8 @@ export default {
 
     width:50vw;
 
+    overflow:scroll;
+
     h2{ margin-bottom:15px; }
 
     input { margin-bottom:10px; }
@@ -75,8 +86,9 @@ export default {
         margin:5px 0 10px 0;
     }
 
-    label span{
-        margin-left:15px;
+    label span{ margin-left:15px; }
+    #pwdButtons{
+        label{ margin-right:15px; }
     }
 }
 </style>

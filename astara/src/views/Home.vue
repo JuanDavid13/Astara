@@ -55,6 +55,10 @@ export default {
   },
   created(){
    this.getAreas();
+    //this.getGoals();
+    //this.getTasks();
+    //this.getInfo();
+    
   },
   mounted(){
     Splitting();
@@ -100,7 +104,7 @@ export default {
 
   #modalCont{
     position:absolute;
-    top:7vh;
+    top:10vh;
     left:50%;
     transform:translateX(-50%);
 
@@ -109,9 +113,14 @@ export default {
     border:1px solid var(--tertiary);
     border-radius:5px;
 
+    display:grid;
+    grid-template-columns:1fr;
+    grid-template-rows:minmax(0,9fr) 1fr;
+
     //width:60%;
     //height:40vh;
     height:fit-content;
+    max-height:80vh;
     width:auto;
 
     & div:first-child{
@@ -137,6 +146,7 @@ export default {
 hr{
   border:none;
   border-top:1px solid var(--tertiary);
+  opacity:.3;
   margin: 10px 0;
 }
 

@@ -17,6 +17,8 @@
 ::-webkit-scrollbar { width:7px; }
 ::-webkit-scrollbar-track { background-color:var(--primary); }
 ::-webkit-scrollbar-thumb { background-color:var(--secondary); }
+::-webkit-scrollbar-corner { background-color:var(--primary); }
+::-webkit-scrollbar-resizer { background-color:var(--primary); }
 
 /*Firefox*/
 * {
