@@ -17,12 +17,12 @@
           <span v-if="show">Ocultar</span>
           <span v-else>Mostrar</span>
         </label>
-        <button>Cambiar contraseña</button>
+        <button @click="comparePass('algo')">Cambiar contraseña</button>
       </div>
       <hr>
       <p>Theme</p>
       <label>
-        <input @change="checkTheme" type="checkbox" v-model="theme">
+        <input @change="checkTheme" type="checkbox" v-model="th">
         <span v-if="!theme">Oscuro</span>
         <span v-else>Claro</span>
       </label>
@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import Axios from '@/auth/auth';
+
 import $ from 'jquery';
 
 export default {
@@ -37,7 +39,8 @@ export default {
   props: ['username','email','theme'],
   data() {
     return {
-        show:false,
+      show:false,
+      th: this.theme,
     }
   },
   methods: {
@@ -50,6 +53,11 @@ export default {
         if($('#profilePwd')[0].type == "password") {
                $('#profilePwd')[0].type = 'text';
         }else{ $('#profilePwd')[0].type = 'password'; }
+    },
+    comparePass(pass){
+      Axios.post('user/profile/checkpass',{password:pass}).then((res)=>{
+        console.log(res);
+      })
     }
   },
 }

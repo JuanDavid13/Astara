@@ -32,9 +32,12 @@ func RouterSetUp(app *fiber.App) {
 		user.Use(middleware);
 		user.Get("/targets",GetTargets);
 		user.Get("/goal",GetGoals);
-		user.Get("/info",GetInfo);
 		//user.Get("/task",GetTargets);
 		//user.Get("/event",GetTargets);
+		info := user.Group("/profile");
+			info.Get("/info",GetInfo);
+			info.Post("/checkpass",CheckPass);
+			//info.Get("/change-info",ChangeInfo);
 
 	area := api.Group("/area");
 		area.Use(middleware);

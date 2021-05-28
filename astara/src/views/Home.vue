@@ -51,12 +51,10 @@ export default {
     hideModal(e){
       if($('#modal').get(0) == (e.srcElement)){ $('#modal').removeClass('modalActive'); } 
     },
-    showModal(){
-      $('#modal').addClass('modalActive');
-    },
+    showModal(){ $('#modal').addClass('modalActive'); },
   },
   created(){
-    Axios.get("/user/info").then((res)=>{ 
+    Axios.get("/user/profile/info").then((res)=>{ 
       this.user.username = res.data.name;
       this.user.email = res.data.email;
       this.user.theme = res.data.theme;

@@ -136,3 +136,28 @@ func GetBasicInfo(user int, rol string) (string,string,bool,bool){
 
   return "","",false,true;
 }
+
+func ComparePass(user int, rol, pass string) (bool,bool){
+  fmt.Println("compare pass:")
+  db := db.GetDb(rol);
+  query := "SELECT `password` FROM `Users` WHERE `Id` LIKE ?;";
+  stmt, err := db.Prepare(query);
+  if err != nil && err != sql.ErrNoRows { return false,true /*panic(err);*/ }
+
+  var pwd sql.NullString;
+
+  err = stmt.QueryRow(user).Scan(&pwd);
+  defer stmt.Close();
+
+  if err != nil && err != sql.ErrNoRows { return false,true;/*panic(err);*/ }
+
+  if pwd.Valid {
+    if err = bcrypt.CompareHashAndPassword([]byte(pwd.String),[]byte(pass)); err != nil {
+      return false,false;
+    }else{
+      return true,false;
+    }
+  }
+
+  return false,true;
+}
