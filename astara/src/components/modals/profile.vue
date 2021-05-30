@@ -1,51 +1,65 @@
 <template>
   <div id="profile">
-      <h2>Perfil</h2>
+    <h2>Perfil</h2>
+    
+    <span v-if="err" class="errorMsg" style="margin-bottom:15px;">{{errMsg}}</span>
 
-      <p>Nombre de usuario</p>
-      <p class="info">El nombre de usuario es único y te identifica en la aplicación.</p>
-      <input type="text" v-model="userCopy.username" @input="changeUserName" autocomplete="off" autocorrect="off" minlength="3" maxlength="20">
+    <form @submit.prevent >
+      <label>Nombre de usuario
+        <p class="info">El nombre de usuario es único y te identifica en la aplicación.</p>
+        <input type="text" name="username" v-model="userCopy.username" @input="changeUserName" autocomplete="off" spellcheck="false" minlength="3" maxlength="30">
+      </label>
 
-      <p>Email</p>
-      <p class="info">Recuerda que también puedes usar tu correo electrónico para acceder a la aplicación.</p>
-      <input type="text" :value="userCopy.email" autocomplete="off" autocorrect="off" minlength="3" maxlength="20">
+      <label>Email
+        <p class="info">Recuerda que también puedes usar tu correo electrónico para acceder a la aplicación.</p>
+        <input type="text" name="email" v-model="userCopy.email" autocomplete="off" spellcheck="false" minlength="3" maxlength="50">
+      </label>
 
       <hr>
 
-      <p>Cambiar contraseña</p>
-      <p v-if="!same" class="info">Introduce tu contraseña antigua para cambiarla.</p>
-      <p v-else class="info">Introduce la nueva contraseña.</p>
+      <label>Cambiar contraseña
+        <p v-if="!same" class="info">Introduce tu contraseña antigua para cambiarla.</p>
+        <p v-else class="info" style="margin-bottom:5px;">Introduce la nueva contraseña.</p>
 
-      <span v-if="pwdErr" class="errorMsg" style="margin-bottom:15px;">{{message}}</span>
+        <span v-if="pwdErr" class="errorMsg" style="margin-bottom:15px;">{{pwdMsg}}</span>
 
-      <input id="profilePwd" class="pwdTgg" type="password" v-model="userCopy.password" v-if="!same" autocomplete="off" minlength="1" maxlength="50">
-      <div v-if="same">
-        <label>Nueva contraseña
-          <input class="pwdTgg" type="password" v-model="newPass" autocomplete="off" minlength="1" maxlength="50">
-        </label>
-        <label>Repetir contraseña
-          <input class="pwdTgg" type="password" v-model="checkNP" autocomplete="off" minlength="1" maxlength="50">
-        </label>
-      </div>
+        <input id="profilePwd" class="pwdTgg" type="password" v-model="userCopy.password" v-if="!same" autocomplete="off" minlength="1" maxlength="50">
+        <div v-if="same">
+          <label>Nueva contraseña
+            <input class="pwdTgg" type="password" v-model="newPass" autocomplete="off" minlength="1" maxlength="50">
+          </label>
+          <label>Repetir contraseña
+            <input class="pwdTgg" type="password" v-model="checkNP" autocomplete="off" minlength="1" maxlength="50">
+          </label>
+        </div>
+      </label>
 
       <div id="pwdButtons">
-        <label>
+        <label class="inputRow">
           <input @change="togglePwd" type="checkbox" v-model="show">
           <span v-if="show">Ocultar</span>
           <span v-else>Mostrar</span>
         </label>
-        <button @click="comparePass">Cambiar contraseña</button>
+        <button v-if="!same" @click="comparePass">Comprobar contraseña</button>
+        <button v-else @click="comparePass">Cambiar contraseña</button>
       </div>
 
       <hr>
 
       <p>Theme</p>
-      <label>
+      <label class="inputRow">
         <input @change="checkTheme" type="checkbox" v-model="userCopy.theme">
         <span v-if="!userCopy.theme">Oscuro</span>
         <span v-else>Claro</span>
       </label>
 
+      <div id="modalPwdButtons">
+        <button @click="submitData">Aceptar</button>
+        <button @click="closeModal" >Cancelar</button>
+      </div>
+    </form>
+
+    <button id="logOut" @click="logOut">Salir</button>
   </div>
 </template>
 
@@ -71,12 +85,16 @@ export default {
       show:false,
       same: false,
 
+      err:false,
+      errMsg:"",
+
       pwdErr:false,
-      message: "",
+      pwdMsg: "",
 
     }
   },
   methods: {
+    logOut(){ Axios.get('/auth/logout').then(()=>{ this.$router.push({name:'Login'}) }); },
     changeUserName(){ this.$emit('changeUser',this.userCopy.username); },
     changeTheme(iswhite){
       if(iswhite)
@@ -86,7 +104,7 @@ export default {
     },
     checkTheme(e){
         if(e.target.checked){ this.changeTheme(true);   this.userCopy.theme = true; }
-        else{                 this.changeTheme(false);  this.userCopy.theme = false; }
+        else{ this.changeTheme(false);  this.userCopy.theme = false; }
     },
     togglePwd(){
       let pwdInputs = $('.pwdTgg');
@@ -99,16 +117,16 @@ export default {
           this.same = res.data.same;
           if(!res.data.same){
             this.pwdErr = true;
-            this.message = GetErrMsg('missPass');
+            this.pwdMsg = GetErrMsg('missPass');
           }else{
             this.pwdErr = false;
-            this.message = "";
+            this.pwdMsg = "";
           }
         });
       }else{ //the password is the same
         if(this.newPass != this.checkNP){ //passwords are differents
           this.pwdErr = true;
-          this.message = GetErrMsg('diffPass');
+          this.pwdMsg = GetErrMsg('diffPass');
         }else
           this.pwdErr = false;
       }
@@ -118,6 +136,35 @@ export default {
         this.setError('noError');
       else
         this.setError('diffPass');
+    },
+    checkInputs(){
+      let userErr = "";
+      let emailErr = "";
+
+      if(this.userCopy.username.length < 3)
+        userErr = GetErrMsg('shortUserName');
+
+      if(this.userCopy.email.length < 5 || !this.userCopy.email.includes('@'))
+        emailErr = GetErrMsg('wrongEmail');
+
+      if(userErr.length > 0 && emailErr.length > 0){
+        userErr = userErr.charAt(0).toUpperCase() + userErr.slice(1);
+        this.errMsg = userErr + ' , ' + emailErr;
+      }
+      else
+        this.errMsg = userErr + emailErr;
+
+      if((userErr.length + emailErr.length) == 0)
+        return true
+
+      return false;
+    },
+    submitData(){
+      if(!this.checkInputs()){
+        this.err = true;
+      }else{
+        this.err = false;
+      }
     },
     closeModal(){
       this.show = false;
@@ -135,34 +182,58 @@ export default {
     openModal(){
       this.userCopy = $.extend(true,{},this.user);
       this.originalName = this.userCopy.username;
-    }
+    },
   },
+  mounted(){
+    this.openModal()
+    console.log('mounted');
+  },
+  unmounted(){
+    this.closeModal()
+    console.log('unmounted');
+  }
+
 }
 
 </script>
 
 <style lang="scss">
 #profile{
+  display:flex;
+  flex-direction:column;
+
+  width:inherit;
+
+  overflow-y:scroll;
+
+  h2{ margin-bottom:15px; }
+
+  input { margin:10px 0; }
+
+  .info{
+    color:var(--tertiary);
+    font-size:.8rem;
+    margin-top:5px;
+  }
+
+  label{
     display:flex;
     flex-direction:column;
+  }
+  .inputRow{ flex-direction:row; }
 
-    width:inherit;
+  #pwdButtons label{ margin-right:15px; }
 
-    overflow-y:scroll;
-
-    h2{ margin-bottom:15px; }
-
-    input { margin-bottom:10px; }
-
-    .info{
-        color:var(--tertiary);
-        font-size:.8rem;
-        margin:5px 0 10px 0;
-    }
-
-    label span{ margin-left:15px; }
-    #pwdButtons{
-        label{ margin-right:15px; }
-    }
+  //bottom buttons
+  #modalPwdButtons{
+    display:flex;
+    flex-direction:row;
+    gap:.7rem;
+  }
+  #logOut{
+    position:absolute;
+    top:15px;
+    right:15px;
+  }
 }
 </style>

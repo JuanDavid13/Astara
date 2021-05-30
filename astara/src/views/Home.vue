@@ -10,13 +10,8 @@
            :user="user"
            @changeUser="changeUser"
         />
-        <div id="modalButtons">
-          <button>Aceptar</button>
-          <button @click="closeModal" >Cancelar</button>
-        </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -75,6 +70,9 @@ export default {
       this.user.username = res.data.name;
       this.user.email = res.data.email;
       this.user.theme = res.data.theme;
+
+      if(res.data.theme)
+        $('#app').addClass("lightTheme");
     });
 
     setShortCodes(this);
@@ -132,10 +130,6 @@ export default {
     border:1px solid var(--tertiary);
     border-radius:5px;
 
-    display:grid;
-    grid-template-columns:1fr;
-    grid-template-rows:minmax(0,9fr) 1fr;
-
     height:fit-content;
     max-height:80vh;
     width:60vw;
@@ -146,22 +140,10 @@ export default {
     & div:first-child{
       padding:15px;
     }
-
-    #modalButtons{
-      border-top:1px solid var(--tertiary);
-      padding:15px;
-
-      button{
-        margin-right:15px;
-      }
-    }
-
   }
 }
 
-.modalActive {
-  display:block !important;
-}
+.modalActive { display:block !important; }
 
 hr{
   border:none;

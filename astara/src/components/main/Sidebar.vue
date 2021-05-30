@@ -16,16 +16,13 @@
           <a href="#" @click="$emit('openprofile')"><span>{{username}}</span></a>
           <div>...</div>
         </div>
-        <!--<div>
-          <button @click="logOut">Log Out</button>
-        </div>-->
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Axios from '@/auth/auth';
+//import Axios from '@/auth/auth';
 
   export default{
     name: 'Sidebar',
@@ -37,7 +34,6 @@ import Axios from '@/auth/auth';
       }
     },
     methods: {
-      logOut(){ Axios.get('/auth/logout').then(()=>{ this.$router.push({name:'Login'}) }); },
     }
   }
 </script>
