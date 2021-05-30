@@ -13,7 +13,7 @@
       <div>
         <div>
           <div>OOO</div>
-          <a href="#" @click="$emit('openprofile')"><span>{{name}}</span></a>
+          <a href="#" @click="$emit('openprofile')"><span>{{username}}</span></a>
           <div>...</div>
         </div>
         <!--<div>
@@ -29,7 +29,7 @@ import Axios from '@/auth/auth';
 
   export default{
     name: 'Sidebar',
-    props: {areas: Object},
+    props: {areas: Object, username: String},
     emits: ['openprofile'],
     data() {
       return {

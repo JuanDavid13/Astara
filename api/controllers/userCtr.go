@@ -119,13 +119,13 @@ func GetInfo(c *fiber.Ctx) error {
 func CheckPass(c *fiber.Ctx) error {
 	cl := c.Locals("claims").(jwt.Claims);
 	type passRes struct{
-		pass string `json:"password"`;
+		Pass string `json:"password"`;
 	}
 	pass := passRes{};
 	if err := json.Unmarshal(c.Body(),&pass); err != nil { panic(err); }
 
 	c.Status(200);
-	same, err := ComparePass(cl.User,cl.Rol,pass.pass);
+	same, err := ComparePass(cl.User,cl.Rol,pass.Pass);
 	if err { 
 		return c.JSON(fiber.Map{
 			"same":false,

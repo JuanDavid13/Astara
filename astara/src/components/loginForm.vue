@@ -8,20 +8,20 @@
     </div>
     <span v-if="error" class="errorMsg">{{message}}</span>
     <form @submit.prevent class="form">
-      <label v-if="signUp"><span>Nombre de usuario <span class="mandatory">*</span></span><input type="text" v-model="user"></label>
-      <input v-else type="text" v-model="user" placeholder="Nombre de usuario o email">
+      <label v-if="signUp"><span>Nombre de usuario <span class="mandatory">*</span></span><input type="text" v-model="user.username"></label>
+      <input v-else type="text" v-model="user.username" placeholder="Nombre de usuario o email">
 
-      <input id="pass" v-if="found && !signUp" type="password" v-model="pass" placeholder="contraseña">
+      <input id="pass" v-if="found && !signUp" type="password" v-model="user.pass" placeholder="contraseña">
 
       <div id="signUpForm" v-if="signUp">
         <label><span>Correo electrónico</span>
-          <input type="text" v-model="email">
+          <input type="text" v-model="user.email">
         </label>
         <label><span>Contraseña <span class="mandatory">*</span></span>
-          <input id="SUpass" type="password" @input="checkEqual" v-model="pass">
+          <input id="SUpass" type="password" @input="checkEqual" v-model="user.pass">
         </label>
         <label id="lastLabel"><span>Repite la contraseña <span class="mandatory">*</span></span>
-          <input id="SUcheckpass" @input="checkEqual" type="password" v-model="checkpass">
+          <input id="SUcheckpass" @input="checkEqual" type="password" v-model="user.checkPass">
         </label> 
         <span><span class="mandatory">*</span> Significa que es obligatorio</span>
       </div>
@@ -35,104 +35,100 @@
 
 <script>
 import Axios from '@/auth/auth';
+import GetErrMsg from '@/js/error.js';
 import $ from 'jquery';
 
 export default{
     name: 'LoginForm',
     data() {
       return {
-        user: "",
-        pass: "",
-        checkpass: "",
-        email: "",
+        user:{
+          username: "",
+          email: "",
+          pass: "",
+          checkPass: "",
+        },
         signUp:false,
+
         found: false,
+
         error: false,
         message: "",
       }
     },
     methods:{
-      setError(errorName){
-        switch(errorName) {
-          case 'noError': 
-            this.error = false;
-            break;
-          case 'noUser': {
-            this.error = true;
-            this.message = "El usuario introducido no existe";
-          }break;
-          case 'missPass': {
-            this.error = true;
-            this.message = "La contraseña introducida es incorrecta";
-          }break;
-          case 'diffPass':{
-            this.error = true;
-            this.message = "Las contraseñas no coinciden";
-          }break;
-          case 'lackInput': {
-            this.error = true;
-            this.message = "Debe de completar todos los campos obligatorios";
-          }break;
-          case 'alreadyCreated': {
-            this.error = true;
-            this.message = "Ya existe un usuario con ese nombre o email";
-          }break;
-          default:{
-            this.error = true;
-            this.message = "Ha ocurrido un error";
-          }
-        }
-      },
       clicked(){
         if(this.signUp){
-          console.log("nose");
           Axios.post('login/create',{ 
-            user: this.user,
-            pass: this.pass,
-            email: this.email,
+            user: this.user.username,
+            pass: this.user.pass,
+            email: this.user.email,
           }).then((res)=>{
             if(res.data.error == true){
               if(res.data.alreadyCreated == true){
-                this.setError('alreadyCreated');
+                this.error = true;
+                this.message = GetErrMsg('alreadyCreated');
                 this.clearVal();
-              }else{ this.setError(); this.clearVal(); }
+              }else{ 
+                this.error = true;
+                this.message = GetErrMsg();
+                this.clearVal();
+              }
             }else{
               if(res.data.created == true)
                 this.$router.push({name: 'Home'});
             }
-            console.log(res);
           })
         }else{
-          if(this.pass.localeCompare("") == 0){
-            Axios.post('login/',{ user: this.user }).then((res)=>{
-              $('#pass').focus();
-              if(res.data.found == "true"){
-                this.found = true;
-                this.setError('noError');
-              }else{ 
+          if(this.user.pass.localeCompare("") == 0){
+            Axios.post('login/',{ user: this.user.username }).then((res)=>{
+              $(document).ready(()=>{
+                $('#pass').focus();
+              })
+              if(res.data.found != "true"){
                 this.found = false;
-                this.setError('noUser'); } });
+                this.error = true;
+                this.message = GetErrMsg('noUser');
+              }
+              else{
+                this.found = true;
+                this.error = false
+                this.message = "";
+              }
+            });
           }else{
-            Axios.post('login/check',{ user: this.user, pass: this.pass }).then((res)=>{
-              if(res.data.logged == "true"){
+            Axios.post('login/check',{ user: this.user.username, pass: this.user.pass }).then((res)=>{
+              if(res.data.logged == "true")
                 this.$router.push({name:'Home'});
-              }else{ this.setError('missPass'); } });
+              else{
+                this.error = true;
+                this.message = GetErrMsg('missPass');
+              } 
+            });
           }
         }
       },
-      SignUp(){ this.error = false; this.signUp = true; },
-      SignIn(){ this.signUp = false; this.clearVal(); },
+      SignUp(){ 
+        this.error = false;
+        this.signUp = true;
+      },
+      SignIn(){
+        this.signUp = false;
+        this.clearVal();
+      },
       checkEqual(){
-        if($('#SUcheckpass').val() == $('#SUpass').val()){
-          this.setError('noError');
+        if($('#SUcheckpass').val() != $('#SUpass').val()){
+          this.error = false;
+          this.message = GetErrMsg('diffPass');
         }else{
-          this.setError('diffPass');
+          this.error = false;
+          this.message = GetErrMsg('noError');
         }
       },
       clearVal(){
-        this.pass="";
-        this.checkpass="";
-        this.email="";
+        this.user.pass="";
+        this.user.checkPass="";
+        this.user.email="";
         this.found = false;
       }
     }

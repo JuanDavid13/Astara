@@ -138,7 +138,8 @@ func GetBasicInfo(user int, rol string) (string,string,bool,bool){
 }
 
 func ComparePass(user int, rol, pass string) (bool,bool){
-  fmt.Println("compare pass:")
+  fmt.Println("compare pass:");
+  fmt.Println(pass);
   db := db.GetDb(rol);
   query := "SELECT `password` FROM `Users` WHERE `Id` LIKE ?;";
   stmt, err := db.Prepare(query);

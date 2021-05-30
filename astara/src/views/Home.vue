@@ -1,18 +1,18 @@
 <template>
   <div class="home">
-    <Sidebar @openprofile="showModal" />
+    <Sidebar @openprofile="openProfile" :username="user.username"/>
     <router-view :key="$route.fullPath"></router-view>
-
     <div @click="hideModal" id="modal">
       <div id="modalCont">
         <Profile 
-           :username="user.username"
-           :email="user.email"
-           :theme="user.theme"
+           v-if="modalOption == 1"
+           ref="profile"
+           :user="user"
+           @changeUser="changeUser"
         />
         <div id="modalButtons">
           <button>Aceptar</button>
-          <button>Cancelar</button>
+          <button @click="closeModal" >Cancelar</button>
         </div>
       </div>
     </div>
@@ -22,6 +22,8 @@
 
 <script>
 // @ is an alias to /src
+import { setShortCodes } from '@/js/shortcodes';
+
 import Profile from '@/components/modals/profile.vue';
 import Sidebar from '@/components/main/Sidebar.vue';
 import Axios from '@/auth/auth';
@@ -43,15 +45,30 @@ export default {
       user:{
         username:"",
         email:"",
-        theme:false
+        theme:true,
       },
+      modalOption:0,
     }
   },
   methods: {
-    hideModal(e){
-      if($('#modal').get(0) == (e.srcElement)){ $('#modal').removeClass('modalActive'); } 
+    changeUser(username){
+      this.user.username = username;
     },
-    showModal(){ $('#modal').addClass('modalActive'); },
+    openProfile(){
+      $('#modal').addClass('modalActive');
+      this.modalOption = 1;
+      $(document).ready(()=>{ this.$refs.profile.openModal(); });
+    },
+    hideModal(e){
+      if($('#modal').get(0) == (e.srcElement)){
+        $('#modal').removeClass('modalActive');
+        this.$refs.profile.closeModal();
+      } 
+    },
+    closeModal(){
+      $('#modal').removeClass('modalActive');
+      this.$refs.profile.closeModal();
+    }
   },
   created(){
     Axios.get("/user/profile/info").then((res)=>{ 
@@ -59,6 +76,8 @@ export default {
       this.user.email = res.data.email;
       this.user.theme = res.data.theme;
     });
+
+    setShortCodes(this);
   },
   mounted(){
     Splitting();
@@ -150,5 +169,4 @@ hr{
   opacity:.3;
   margin: 10px 0;
 }
-
 </style>
