@@ -24,11 +24,7 @@ type areaDb struct {
 }
 
 func GetAreasById (user int, rol string) []Area {
-  fmt.Println("rol area");
-  fmt.Println(rol);
-
   db := db.GetDb(rol);
-  fmt.Println(db);
 
   query := "SELECT `Name`,`Slug`,`Deleteable` FROM `Areas` WHERE `Id_user` LIKE ?;";
   stmt, err := db.Prepare(query);
@@ -40,7 +36,6 @@ func GetAreasById (user int, rol string) []Area {
 
   areas := []Area{};
   area := Area{};
-  
   
   areadb := areaDb{};
 
@@ -79,3 +74,21 @@ func CheckUserArea(user int, slug,rol string) (string,bool){
   return "",false;
 }
 
+func CreateNewArea(uid int, rol, name, slug string) bool {
+  db := db.GetDb(rol);
+
+  fmt.Println(uid);
+  fmt.Println(rol);
+  fmt.Println(name);
+  fmt.Println(slug);
+
+  query := "INSERT INTO `Areas` (`Name`,`Id_user`,`Deleteable`,`Slug`) VALUES (?, ?, ?, ?)";
+  stmt, err := db.Prepare(query);
+  if err != nil { /*return false;*/ panic(err); }
+
+  _ , err = stmt.Exec(name,uid,1,slug);
+  if err != nil { return false; /*panic(err);*/ }
+  defer stmt.Close();
+
+  return true;
+}

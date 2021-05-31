@@ -17,10 +17,6 @@ func GetAreas(c *fiber.Ctx) error {
 	fmt.Println("get area");
 	cl := c.Locals("claims").(jwt.Claims);
 
-
-	fmt.Println("Rol");
-	fmt.Println(cl.Rol);
-
 	areas := GetAreasById(cl.User,cl.Rol);
 
 	Areas,err := json.Marshal(areas);
@@ -63,4 +59,45 @@ func AreaCheck(c *fiber.Ctx) error {
 		}); 
 	}
 	//return c.SendStatus(400);
+}
+
+func CreateArea(c *fiber.Ctx) error {
+	cl := c.Locals("claims").(jwt.Claims);
+
+	type response struct{ Name string `json:"name"`; }
+	res := response{};
+
+	if err := json.Unmarshal(c.Body(), &res); err != nil {
+		c.Status(400);
+		return c.JSON(fiber.Map{
+			"added":false,
+		});
+	}
+
+	if res.Name == "" {
+		c.Status(400);
+		return c.JSON(fiber.Map{
+			"added":false,
+		});
+	}
+
+	slug := NameToSlug(res.Name);
+
+	created := CreateNewArea(cl.User,cl.Rol, res.Name, slug );
+	if !created {
+		c.Status(200);
+		return c.JSON(fiber.Map{
+			"added":false,
+		});
+	}else{
+		areas := GetAreasById(cl.User,cl.Rol);
+		Areas,err := json.Marshal(areas);
+		if err != nil{ panic(err); }
+
+		c.Status(200);
+		return c.JSON(fiber.Map{
+			"added":true,
+			"areas":string(Areas),
+		});
+	}
 }

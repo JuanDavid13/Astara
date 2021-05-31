@@ -150,9 +150,11 @@ export default {
       if(userErr.length > 0 && emailErr.length > 0){
         userErr = userErr.charAt(0).toUpperCase() + userErr.slice(1);
         this.errMsg = userErr + ' , ' + emailErr;
-      }
-      else
+      }else{
+        userErr = userErr.charAt(0).toUpperCase() + userErr.slice(1);
+        emailErr = emailErr.charAt(0).toUpperCase() + emailErr.slice(1);
         this.errMsg = userErr + emailErr;
+      }
 
       if((userErr.length + emailErr.length) == 0)
         return true
@@ -160,38 +162,52 @@ export default {
       return false;
     },
     submitData(){
-      if(!this.checkInputs()){
+      if(!this.checkInputs())
         this.err = true;
-      }else{
+      else{
         this.err = false;
+        Axios.post("user/profile/update",{
+          username: this.userCopy.username,
+          email:this.userCopy.email,
+          theme:this.userCopy.theme,
+        }).then((res)=>{
+          if(res.data.updated){
+            this.originalName = this.userCopy.username;
+            $('#modal').removeClass('modalActive');
+            //this.closeModal();
+          }else{
+            this.err = true;
+            this.errMsg = GetErrMsg('updateErr');
+          }
+        });
       }
     },
     closeModal(){
-      this.show = false;
-      this.same =  false;
+      //default values;
+      this.newPass = "",
+      this.checkNP = "",
 
-      this.pwdErr = false;
-      this.message =  "";
+      this.show = false,
+      this.same = false,
 
-      this.newPass = "";
-      this.checkNP = "";
+      this.err = false,
+      this.errMsg = "",
+
+      this.pwdErr = false,
+      this.pwdMsg = "",
 
       this.$emit('changeUser',this.originalName);
       this.changeTheme(this.user.theme);
+
+      $('#modal').removeClass('activeModal');
     },
     openModal(){
       this.userCopy = $.extend(true,{},this.user);
       this.originalName = this.userCopy.username;
     },
   },
-  mounted(){
-    this.openModal()
-    console.log('mounted');
-  },
-  unmounted(){
-    this.closeModal()
-    console.log('unmounted');
-  }
+  mounted(){ this.openModal() },
+  unmounted(){ this.closeModal(); }
 
 }
 

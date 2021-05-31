@@ -9,6 +9,13 @@
           <router-link :to="{ name: 'Area', params: { name: area.slug} }" >{{area.name}}</router-link>
           <span class="deleteable" v-if="area.deleteable">X</span>
         </div>
+        <div>
+          <button id="addArea" @click="addArea">+ Area</button>
+          <form @submit.capture="addArea">
+            <input v-model="newArea" type="text" minlegth="3" maxlength="20" spellcheck="false" autocomplete="off">
+          </form>
+
+        </div>
       </div> 
       <div>
         <div>
@@ -22,19 +29,32 @@
 </template>
 
 <script>
-//import Axios from '@/auth/auth';
+import Axios from '@/auth/auth';
 
   export default{
     name: 'Sidebar',
-    props: {areas: Object, username: String},
-    emits: ['openprofile'],
+    props: {username: String},
+    emits: ['openprofile', 'updateAreas'],
     data() {
       return {
-        name: "Juan peñalber de los montes de artujar",
+        newArea:"",
+        areas: {},
       }
     },
     methods: {
-    }
+      addArea(e){
+        e.preventDefault();
+        Axios.post("/area/create",{name:this.newArea}).then((res)=>{
+          if(res.data.added){ this.areas = JSON.parse(res.data.areas); }
+        })
+      },
+      getAreas(){
+        Axios.get("/area").then((res)=>{ this.areas = JSON.parse(res.data); });
+      }
+    },
+    created(){
+      this.getAreas();
+    },
   }
 </script>
 
@@ -81,6 +101,12 @@
       font-size:.9rem;
       overflow-x:hidden;
       overflow-y:scroll;
+
+      #addArea{
+        opacity: 0;
+        transition: opacity .25s ease;
+      }
+      &:hover #addArea{ opacity:1; }
     }
 
     & > div:last-child {

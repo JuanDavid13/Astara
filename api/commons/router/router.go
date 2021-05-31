@@ -37,13 +37,14 @@ func RouterSetUp(app *fiber.App) {
 		info := user.Group("/profile");
 			info.Get("/info",GetInfo);
 			info.Post("/checkpass",CheckPass);
+			info.Post("/update",UpdateUser);
 			//info.Get("/change-info",ChangeInfo);
 
 	area := api.Group("/area");
 		area.Use(middleware);
 		area.Get("/",GetAreas);
 		area.Post("/correspond",AreaCheck);
-		//area.Post("/create",)
+		area.Post("/create",CreateArea);
 		//area.Post("/delete",)
 		//area.Post("/edit",)
 }

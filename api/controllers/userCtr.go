@@ -141,3 +141,30 @@ func CheckPass(c *fiber.Ctx) error {
 		})
 	}
 }
+
+func UpdateUser(c *fiber.Ctx) error {
+	cl := c.Locals("claims").(jwt.Claims);
+
+	type response struct {
+		Username string `json:"username"`;
+		Email string `json:"email"`;
+		Theme bool `json:"theme"`;
+	}
+	res := response{};
+
+	if err := json.Unmarshal(c.Body(), &res); err != nil { panic(err); }
+	fmt.Printf("%+v",res);
+
+	updated := UpdateUserInfo(cl.User, cl.Rol, res.Username, res.Email, res.Theme);
+	if updated {
+		c.Status(200);
+		return c.JSON(fiber.Map{
+			"updated":true,
+		});
+	}else{
+		c.Status(200);
+		return c.JSON(fiber.Map{
+			"updated":false,
+		});
+	}
+}

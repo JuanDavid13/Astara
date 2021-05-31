@@ -162,3 +162,18 @@ func ComparePass(user int, rol, pass string) (bool,bool){
 
   return false,true;
 }
+
+func UpdateUserInfo(uid int, rol, username, email string, theme bool ) bool {
+  fmt.Println("Update user info:");
+  db := db.GetDb(rol);
+  
+  query := "UPDATE `Users` SET `Name` = ?, `Email` = ? WHERE Id LIKE ?;";
+
+  stmt, err := db.Prepare(query);
+  if err != nil && err != sql.ErrNoRows { return false;/*panic(err);*/ }
+
+  _, err = stmt.Exec(username, email, uid);
+  defer stmt.Close();
+  if err != nil && err != sql.ErrNoRows { return false;/*panic(err);*/
+  }else{ return true; }
+}
