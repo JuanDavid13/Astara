@@ -7,12 +7,10 @@
         <router-link :to="{name: 'Main'}">MAIN</router-link>
         <div class="area" v-for="area in areas" :key="area.id" >
           <router-link :to="{ name: 'Area', params: { name: area.slug} }" >{{area.name}}</router-link>
-          <span class="deleteable" v-if="area.deleteable">X</span>
         </div>
         <div>
-          <button id="addArea" @click="addArea">+ Area</button>
           <form @submit.capture="addArea">
-            <input v-model="newArea" type="text" minlegth="3" maxlength="20" spellcheck="false" autocomplete="off">
+            <input id="addArea" v-model="newArea" type="text" minlegth="3" maxlength="20" spellcheck="false" autocomplete="off" placeholder="+ Area">
           </form>
 
         </div>
@@ -29,6 +27,8 @@
 </template>
 
 <script>
+import $ from 'jquery';
+
 import Axios from '@/auth/auth';
 
   export default{
@@ -45,7 +45,10 @@ import Axios from '@/auth/auth';
       addArea(e){
         e.preventDefault();
         Axios.post("/area/create",{name:this.newArea}).then((res)=>{
-          if(res.data.added){ this.areas = JSON.parse(res.data.areas); }
+          if(res.data.added){
+            this.areas = JSON.parse(res.data.areas);
+            $(document).ready(()=>{ $('#addArea').val(""); });
+          }
         })
       },
       getAreas(){
@@ -101,12 +104,6 @@ import Axios from '@/auth/auth';
       font-size:.9rem;
       overflow-x:hidden;
       overflow-y:scroll;
-
-      #addArea{
-        opacity: 0;
-        transition: opacity .25s ease;
-      }
-      &:hover #addArea{ opacity:1; }
     }
 
     & > div:last-child {
@@ -134,17 +131,6 @@ import Axios from '@/auth/auth';
     cursor: pointer;
 
     text-transform:uppercase;
-
-    .deleteable{
-      margin-left:0;
-      color:var(--primary);
-      transition: color .25s ease, margin .25s ease;
-    }
-
-    &:hover .deleteable{
-      margin-left:15px;
-      color:var(--contrary); 
-    }
   }
 }
 </style>

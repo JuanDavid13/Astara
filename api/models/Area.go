@@ -1,7 +1,7 @@
 package models
 
 import (
-  "fmt"
+  //"fmt"
 
 	"database/sql"
 
@@ -73,22 +73,36 @@ func CheckUserArea(user int, slug,rol string) (string,bool){
 
   return "",false;
 }
+func alreadyCreated(uid int, rol, name string) bool {
+  db := db.GetDb(rol);
+
+  query := "SELECT `Id` FROM `Areas` WHERE `Name` LIKE ? AND `Id_user` LIKE ?";
+  stmt, err := db.Prepare(query);
+  if err != nil { /*return false;*/ panic(err); }
+
+  var id  int ;
+  row := stmt.QueryRow(name,uid);
+  defer stmt.Close();
+
+  row.Scan(&id);
+  if id == 0 { return false;
+  }else{ return true; }
+}
 
 func CreateNewArea(uid int, rol, name, slug string) bool {
   db := db.GetDb(rol);
 
-  fmt.Println(uid);
-  fmt.Println(rol);
-  fmt.Println(name);
-  fmt.Println(slug);
+  if !alreadyCreated(uid,rol,name) {
+    query := "INSERT INTO `Areas` (`Name`,`Id_user`,`Deleteable`,`Slug`) VALUES (?, ?, ?, ?)";
+    stmt, err := db.Prepare(query);
+    if err != nil { /*return false;*/ panic(err); }
 
-  query := "INSERT INTO `Areas` (`Name`,`Id_user`,`Deleteable`,`Slug`) VALUES (?, ?, ?, ?)";
-  stmt, err := db.Prepare(query);
-  if err != nil { /*return false;*/ panic(err); }
+    _ , err = stmt.Exec(name,uid,1,slug);
+    if err != nil { return false; /*panic(err);*/ }
+    defer stmt.Close();
+    return true;
+  }
 
-  _ , err = stmt.Exec(name,uid,1,slug);
-  if err != nil { return false; /*panic(err);*/ }
-  defer stmt.Close();
 
-  return true;
+  return false;
 }
