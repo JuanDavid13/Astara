@@ -80,11 +80,6 @@ func Validate(c *fiber.Ctx) bool {
 			cl := Claims(*claims);
 			c.Locals("claims", cl);
 
-			fmt.Println("User");
-			fmt.Println(cl.User);
-			fmt.Println("Rol claims");
-			fmt.Println(cl.Rol);
-
 			//renew the token
 			newToken := CreateToken(cl.User, cl.Rol);
 			newCookie := cookie.CreateCookie(newToken);

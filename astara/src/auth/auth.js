@@ -17,27 +17,26 @@ Axios.interceptors.response.use((res)=>{
 });
 
 //this function complements the interceptor
-function Validate() {
+export function Validate() {
   return Axios.get("/auth/validate").then((res)=>{
     if (/2.{2}/.test(res.status)){ return true;
     }else{ return false; }
   });
 }
 
-function AreaCorrespond(Area) {
+export function AreaCorrespond(Area) {
   return Axios.post("/area/correspond",{name:Area}).then((res)=>{
-    if(res == null )
-      return null;
+    console.log(res);
+    console.log(res.data.correspond);
 
-    if(res.data.correspond == false);
+    if(!res.data.correspond){
       router.push({name:'Main'});
-
-    if(res.data.correspond == true)
+      return null;
+    }
+    else
       return res.data.targets;
 
-    return null;
   });
 }
 
-export { Validate, AreaCorrespond };
 export default Axios;

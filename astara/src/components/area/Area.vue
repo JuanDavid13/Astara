@@ -9,14 +9,7 @@
 
 <script>
 import Item from '@/components/main/Item.vue';
-
-const auth = require('@/auth/auth.js');
-const axios = require('axios');
-const Axios = axios.create({
-  baseURL: 'http://localhost:3000/api/v1',
-  timeout: 1000,
-  withCredentials: true,
-});
+import Axios, { AreaCorrespond }from '@/auth/auth';
 
 export default {
   name: 'Area',
@@ -38,7 +31,7 @@ export default {
   },
   async created() {
     const slug = this.$router.currentRoute._value.params.name;
-    let data = await auth.AreaCorrespond(slug)
+    let data = await AreaCorrespond(slug)
     console.log("data");
     console.log(data);
     this.Items = JSON.parse(data);

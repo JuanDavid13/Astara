@@ -8,7 +8,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	cookie "astara/commons/cookie"
+	//cookie "astara/commons/cookie"
 	jwt "astara/commons/jwt"
 	. "astara/models"
 )
@@ -36,16 +36,12 @@ func AreaCheck(c *fiber.Ctx) error {
 	type name struct { Name string `json:"name"`; }
 	n := name{};
 
-	if err := json.Unmarshal(c.Body(),&n); err != nil{return err;}
-
-	//if c.Cookies("token") == "" { return c.SendStatus(401); }
-	if cookie.CheckIsEmpty(c.Cookies("token")) {
-		//return c.JSON(fiber.Map{
-		//	"correspond":false,
-		//})
-		return c.SendStatus(401);
+	if err := json.Unmarshal(c.Body(),&n); err != nil{
+		return c.SendStatus(400);
 	}
+
 	cl := c.Locals("claims").(jwt.Claims);
+
 	if targets, found := CheckUserArea(cl.User,n.Name,cl.Rol); found {
 		c.Status(200);
 		return c.JSON(fiber.Map{
