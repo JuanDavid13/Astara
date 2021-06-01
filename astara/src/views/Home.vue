@@ -28,7 +28,6 @@ import Splitting from "splitting";
 
 import $ from 'jquery';
 
-
 export default {
   name: 'Home',
   components: {

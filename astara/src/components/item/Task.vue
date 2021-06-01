@@ -1,9 +1,10 @@
 <template>
   <div class="task">
-    <p>{{task.name}}</p> 
-    <p>{{task.deadline}}</p> 
-    <p>{{task.dated}}</p> 
+    <input type="checkbox" v-model=statusCopy disabled>
     <p>{{task.status}}</p> 
+    <span>{{task.name}}</span> 
+    <span>{{task.deadline}}</span> 
+    <span>{{task.dated}}</span>
   </div>
 </template>
 
@@ -17,6 +18,16 @@ export default {
       dated: "",
       status: false,
     },
+  },
+  data(){
+    return {
+      statusCopy:false,
+    }
+  },
+  methods: {
+    setNew(){
+      this.statusCopy = this.task.status;
+    }
   }
 }
 

@@ -4,9 +4,13 @@
     <button @click="addTask">+ Tarea</button>
     <button @click="deleteArea">Eliminar</button>
     <form @submit.capture="createTask">
-      <input type="text" v-model="task.name">
-      <input type="text" v-model="task.deadline">
-      <input type="text" v-model="task.dated">
+      <input type="text" v-model="task.name" placeholder="Nombre">
+      <label> Fecha límite
+        <input type="date" v-model="task.deadline" placeholder="Fecha límite">
+      </label>
+      <label> Lo voy a hacer el día
+        <input type="date" v-model="task.dated" placeholder="fechado para">
+      </label>
       <button type="submit">Añadir</button>
     </form>
     <Task :task="task" id="newTaks" />
@@ -22,6 +26,7 @@ import Item from '@/components/main/Item.vue';
 
 import Task from '@/components/item/Task.vue';
 import Axios, { AreaCorrespond }from '@/auth/auth';
+
 
 export default {
   name: 'Area',
@@ -42,15 +47,35 @@ export default {
     }
   },
   methods: {
+    //delete from here
     getItemsFromAreas(slug) {
       console.log(slug);
       Axios.get('/area').then((res)=>{
         console.log(res);
       })
     },
-    createTask(e){
+    async createTask(e){
       e.preventDefault();
-      console.log(this.$route.params.name);
+      //let formLenght = e.target.length -1;
+
+      const name  = e.target[0].value;
+      const deadline = e.target[1].value;
+      const dated =  e.target[2].value;
+      
+      Axios.post('/user/task/create',{
+        slug:this.$route.params.name,
+        name:name,
+        deadline:deadline,
+        dated:dated,
+      }).then(async (res)=>{
+        console.log(res);
+        if(!res.data.created){
+          console.log("error");
+        }else{
+          let data = await AreaCorrespond(this.$route.params.name);
+          this.Items = JSON.parse(data);
+        }
+      });
     },
     deleteArea(){
           this.$emit('updateSidebar',this.$route.params.name);
@@ -65,9 +90,8 @@ export default {
   async created() {
     const slug = this.$router.currentRoute._value.params.name;
     let data = await AreaCorrespond(slug)
-    console.log("data");
-    console.log(data);
     this.Items = JSON.parse(data);
+
   }
 }
 </script>

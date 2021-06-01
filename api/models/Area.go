@@ -120,3 +120,24 @@ func DelArea(uid int, rol, slug string) bool {
     return true;
   }
 }
+
+func GetIdFromSlug(uid int, rol, slug string) int {
+  db := db.GetDb(rol);
+
+  query := "SELECT `Id`FROM `Areas` WHERE `Slug` LIKE ? AND `Id_user` LIKE ?;";
+  stmt, err := db.Prepare(query);
+  if err != nil { return -1; /*panic(err);*/ }
+
+  var (
+    id sql.NullInt64;
+  )
+  if err := stmt.QueryRow(slug, uid).Scan(&id); err != nil {
+    /*panic(err);*/
+    return -1;
+  }else{
+    if id.Valid {
+      return int(id.Int64);
+    }
+    return -1;
+  }
+}
