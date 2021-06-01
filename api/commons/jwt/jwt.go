@@ -46,8 +46,8 @@ func CreateToken(user int, rol string) string {
 }
 
 func ParseToken(tokenString string) (*Claims, bool){
-	fmt.Println("tokenString");
-	fmt.Println(tokenString);
+	//fmt.Println("tokenString");
+	//fmt.Println(tokenString);
 
 	token , err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("SCRT")),nil
@@ -112,7 +112,7 @@ func AuthValidate(c *fiber.Ctx) error {
 			return c.SendStatus(200); 
 		}
 	}
-	fmt.Println(IsEmpty(c.Cookies("token")));
+	//fmt.Println(IsEmpty(c.Cookies("token")));
 	return c.SendStatus(401);
 }
 

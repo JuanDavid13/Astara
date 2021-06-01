@@ -36,9 +36,7 @@ func AreaCheck(c *fiber.Ctx) error {
 	type name struct { Name string `json:"name"`; }
 	n := name{};
 
-	if err := json.Unmarshal(c.Body(),&n); err != nil{
-		return c.SendStatus(400);
-	}
+	if err := json.Unmarshal(c.Body(),&n); err != nil{ return c.SendStatus(400); }
 
 	cl := c.Locals("claims").(jwt.Claims);
 
@@ -58,7 +56,6 @@ func AreaCheck(c *fiber.Ctx) error {
 }
 
 func CreateArea(c *fiber.Ctx) error {
-	cl := c.Locals("claims").(jwt.Claims);
 
 	type response struct{ Name string `json:"name"`; }
 	res := response{};
@@ -69,6 +66,8 @@ func CreateArea(c *fiber.Ctx) error {
 			"added":false,
 		});
 	}
+
+	cl := c.Locals("claims").(jwt.Claims);
 
 	if res.Name == "" {
 		c.Status(400);
@@ -96,4 +95,28 @@ func CreateArea(c *fiber.Ctx) error {
 			"areas":string(Areas),
 		});
 	}
+}
+
+
+func DeleteArea(c *fiber.Ctx) error {
+
+	type slug struct { Slug string `json:"slug"`; }
+	slugreq := slug{}; //slugreq -> slug request
+
+
+	if err := json.Unmarshal(c.Body(),&slugreq); err != nil { panic(err); }
+
+	if slugreq.Slug == "" { return c.SendStatus(400);}
+
+	cl := c.Locals("claims").(jwt.Claims);
+
+	c.Status(200);
+	if deleted := DelArea(cl.User,cl.Rol,slugreq.Slug); !deleted {
+		return c.JSON(fiber.Map{
+			"deleted": false,
+		});
+	}
+	return c.JSON(fiber.Map{
+		"deleted": true,
+	});
 }

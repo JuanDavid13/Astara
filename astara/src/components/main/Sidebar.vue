@@ -47,7 +47,10 @@ import Axios from '@/auth/auth';
         Axios.post("/area/create",{name:this.newArea}).then((res)=>{
           if(res.data.added){
             this.areas = JSON.parse(res.data.areas);
-            $(document).ready(()=>{ $('#addArea').val(""); });
+            $(document).ready(()=>{ 
+              $('#addArea').val(""); 
+              $('#addArea').blur();
+            });
           }
         })
       },
@@ -119,6 +122,21 @@ import Axios from '@/auth/auth';
 
       span { overflow:hidden; }
     }
+
+    #addArea{
+      border:none;
+      overflow:hidden;
+      padding: calc(0.5rem + 1px);
+
+      &:hover { cursor:pointer; }
+      &:focus, &:focus-visible{
+        padding:0.5rem;
+        border:1px solid var(--gold);
+        outline:none;
+      }
+
+    }
+
   }
 
   a{

@@ -26,14 +26,10 @@ export function Validate() {
 
 export function AreaCorrespond(Area) {
   return Axios.post("/area/correspond",{name:Area}).then((res)=>{
-    console.log(res);
-    console.log(res.data.correspond);
-
     if(!res.data.correspond){
       router.push({name:'Main'});
       return null;
-    }
-    else
+    }else
       return res.data.targets;
 
   });

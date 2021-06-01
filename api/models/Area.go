@@ -106,3 +106,17 @@ func CreateNewArea(uid int, rol, name, slug string) bool {
 
   return false;
 }
+
+func DelArea(uid int, rol, slug string) bool {
+  db := db.GetDb(rol);
+
+  query := "DELETE FROM `Areas` WHERE `Slug` LIKE ? AND `Id_user` LIKE ? AND `Deleteable` = 1;";
+  stmt, err := db.Prepare(query);
+  if err != nil { return false; /*panic(err);*/ }
+
+  if _, err = stmt.Exec(slug, uid); err != nil {
+    return false; /*panic(err);*/
+  }else{
+    return true;
+  }
+}
