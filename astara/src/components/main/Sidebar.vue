@@ -54,6 +54,13 @@ import Axios from '@/auth/auth';
           }
         })
       },
+      deleteArea(slug){
+        let pos = this.areas.findIndex(area => area.slug === slug);
+        let selector = "#areas div.area:nth-of-type(" + (pos +1) + ")";
+        $(selector).fadeOut('fast',()=>{
+          this.areas.splice(pos,1);
+        });
+      },
       getAreas(){
         Axios.get("/area").then((res)=>{ this.areas = JSON.parse(res.data); });
       }

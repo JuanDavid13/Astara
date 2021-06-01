@@ -1,7 +1,7 @@
 <template>
   <div class="home">
-    <Sidebar @openprofile="openProfile" :username="user.username"/>
-    <router-view :key="$route.fullPath"></router-view>
+    <Sidebar @openprofile="openProfile" :username="user.username" ref="Sidebar"/>
+    <router-view :key="$route.fullPath" @updateSidebar="updateSidebar" ></router-view>
     <div @click="hideModal" id="modal">
       <div id="modalCont">
         <Profile 
@@ -46,6 +46,9 @@ export default {
     }
   },
   methods: {
+    updateSidebar(slug){
+      this.$refs.Sidebar.deleteArea(slug);
+    },
     changeUser(username){
       this.user.username = username;
     },

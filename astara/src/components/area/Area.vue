@@ -29,6 +29,7 @@ export default {
     Item,
     Task,
   },
+  emits: ['updateSidebar'],
   data() {
     return {
       Items: [],
@@ -52,8 +53,10 @@ export default {
       console.log(this.$route.params.name);
     },
     deleteArea(){
+          this.$emit('updateSidebar',this.$route.params.name);
       Axios.post("/area/delete",{slug:this.$route.params.name}).then((res)=>{
         if(res.data.deleted){
+          this.$emit('updateSidebar',this.$route.params.name);
           this.$router.push({name:'Main'});
         }
       })
