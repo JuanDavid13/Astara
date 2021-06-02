@@ -18,6 +18,7 @@
     <div id="items" v-for="item in Items" :key="item.name">
       <Item :name="item.name" :deadline="item.deadline" :done="item.done"/>
     </div>
+    <span id="load">Cargar más</span>
   </div>
 </template>
 
@@ -27,6 +28,7 @@ import Item from '@/components/main/Item.vue';
 import Task from '@/components/item/Task.vue';
 import Axios, { AreaCorrespond }from '@/auth/auth';
 
+import $ from 'jquery';
 
 export default {
   name: 'Area',
@@ -91,7 +93,25 @@ export default {
     const slug = this.$router.currentRoute._value.params.name;
     let data = await AreaCorrespond(slug)
     this.Items = JSON.parse(data);
+  },
+  mounted(){
+    const options = {
+      root: null,
+      threshold: 0.2,
+      rootMargin: "-10px"
+    };
 
+    $('#load').ready(()=>{
+      let observer = new IntersectionObserver((entries)=>{
+        entries.forEach(entry =>{
+          if(!entry.isIntersecting || entry.intersectionRatio == 1)
+            return;
+          console.log(entry);
+        });
+      },options);
+
+      observer.observe($('#load')[0]);
+    });
   }
 }
 </script>
