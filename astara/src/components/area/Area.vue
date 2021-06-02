@@ -15,9 +15,17 @@
     </form>
     <Task :task="task" id="newTaks" />
     <!--<p>se abre formulario y se crea una nueva "tarea", las tareas se mueven hacia abajo con margin y luego se hace una animación tope guapa</p>-->
-    <div id="items" v-for="item in Items" :key="item.name">
-      <Item :name="item.name" :deadline="item.deadline" :done="item.done"/>
-    </div>
+    <input v-model="query" type="text">
+    <transition-group
+      name="search-fade"
+      @before-enter="beforeEnter"
+      @enter="enter"
+      @leave="leave"
+    >
+      <div id="items" v-for="(item,index) in computedTasks" :key="item.name">
+        <Item :data-index="index" :name="item.name" :deadline="item.deadline" :done="item.done"/>
+      </div>
+    </transition-group>
     <span id="load">Cargar más</span>
   </div>
 </template>
@@ -45,10 +53,42 @@ export default {
         deadline:"",
         dated:"",
         status:false,
-      }
+      },
+      query:"",
+    }
+  },
+  computed: {
+    computedTasks(){
+      return this.Items.filter(task  => {
+        return task.name.toLowerCase().indexOf(this.query.toLowerCase()) !== -1;
+      });
     }
   },
   methods: {
+    beforeEnter(tasks){
+      $(tasks).css({
+        "opacity":0,
+        "height":0,
+        "transform":"translateX(5vw)",
+      });
+    },
+    enter(tasks){
+      let index = $(tasks).children(1)[0].dataset.index;
+      $(tasks).css({
+        "opacity":1,
+        "height":"3rem",
+        "transform":"translateX(0vw)",
+        "transition":"all .25s ease",
+        "transition-delay":(index*0.1)+"s",
+      });
+    },
+    leave(tasks){
+      $(tasks).css({
+        "opacity":0,
+        "height":0,
+        "transform":"translateX(-5vw)",
+      });
+    },
     //delete from here
     getItemsFromAreas(slug) {
       console.log(slug);
@@ -93,6 +133,7 @@ export default {
     const slug = this.$router.currentRoute._value.params.name;
     let data = await AreaCorrespond(slug)
     this.Items = JSON.parse(data);
+    console.log(this.Items);
   },
   mounted(){
     const options = {
