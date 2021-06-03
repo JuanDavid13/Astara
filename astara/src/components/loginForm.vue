@@ -28,14 +28,14 @@
 
       <button type="submit" @click="clicked">Aceptar</button>
     </form>
-    <p v-if="signUp" style="text-align:center;">¿Ya eres usuario de Astara? <a href="#" @click.prevent="SignIn" class="formLink" >Entra</a></p>
-    <p v-else style="text-align:center;">¿Nuevo en Astara? <a href="#" @click.prevent="SignUp" class="formLink">Hazte una cuenta</a></p>
+    <p v-if="signUp" style="text-align:center;">¿Ya eres usuario de Astara? <a href="#" @click.prevent="Sign(1)" class="formLink" >Entra</a></p>
+    <p v-else style="text-align:center;">¿Nuevo en Astara? <a href="#" @click.prevent="Sign(2)" class="formLink">Hazte una cuenta</a></p>
   </div>
 </template>
 
 <script>
 import Axios from '@/auth/auth';
-import GetErrMsg from '@/js/error.js';
+import { GetErrMsg  } from '@/js/error.js';
 import $ from 'jquery';
 
 export default{
@@ -59,11 +59,31 @@ export default{
     methods:{
       clicked(){
         if(this.signUp){
-          Axios.post('login/create',{ 
+          if(this.user.username == "" || this.user.pass == "" || this.user.checkpass == ""){
+            this.error = true;
+            this.message = GetErrMsg('lackInput');
+            return;
+          } 
+          if(this.user.pass !== this.user.checkpass){
+            this.error = true;
+            this.message = GetErrMsg('diffPass');
+            return;
+          }
+
+          if(this.user.email != ""){
+            if(this.user.email.indexOf('@') === -1){
+              this.error = true;
+              this.message = GetErrMsg('wrongEmai');
+              return;
+            }
+          }
+          
+          Axios.post('login/create',{
             user: this.user.username,
             pass: this.user.pass,
             email: this.user.email,
           }).then((res)=>{
+            console.log(res);
             if(res.data.error == true){
               if(res.data.alreadyCreated == true){
                 this.error = true;
@@ -85,7 +105,7 @@ export default{
               $(document).ready(()=>{
                 $('#pass').focus();
               })
-              if(res.data.found != "true"){
+              if(!res.data.found){
                 this.found = false;
                 this.error = true;
                 this.message = GetErrMsg('noUser');
@@ -108,13 +128,14 @@ export default{
           }
         }
       },
-      SignUp(){ 
-        this.error = false;
-        this.signUp = true;
-      },
-      SignIn(){
-        this.signUp = false;
-        this.clearVal();
+      Sign(option){
+        if(option==2){
+          this.error = false;
+          this.signUp = true;
+        }else{
+          this.signUp = false;
+          this.clearVal();
+        }
       },
       checkEqual(){
         if($('#SUcheckpass').val() != $('#SUpass').val()){

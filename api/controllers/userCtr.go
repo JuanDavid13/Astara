@@ -20,8 +20,8 @@ func CheckUser(c *fiber.Ctx) error {
 	if err := json.Unmarshal(c.Body(),&u); err != nil{ return c.SendStatus(400); }
 
 	c.Status(200);
-	if IsRegistered(u.User){ return c.JSON(fiber.Map{"found":"true",})
-	}else{ return c.JSON(fiber.Map{"found":"false",})}
+	if IsRegistered(u.User){ return c.JSON(fiber.Map{"found":true,})
+	}else{ return c.JSON(fiber.Map{"found":false,})}
 }
 
 func logUser(c *fiber.Ctx, name string, id int, rol string) {
