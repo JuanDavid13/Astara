@@ -66,7 +66,7 @@ func CheckCredentials(user, pass string) (int,bool) {
 
   if err != nil && err != sql.ErrNoRows { return -1,false; }
 
-  if err := bcrypt.CompareHashAndPassword([]byte(pwd),[]byte(pass)); err != nil { panic(err); }
+  if err := bcrypt.CompareHashAndPassword([]byte(pwd),[]byte(pass)); err != nil { return -1,false;/*panic(err);*/ }
 
   return id,true;
 }

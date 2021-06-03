@@ -11,18 +11,26 @@
       <label v-if="signUp"><span>Nombre de usuario <span class="mandatory">*</span></span><input type="text" v-model="user.username"></label>
       <input v-else type="text" v-model="user.username" placeholder="Nombre de usuario o email">
 
-      <input id="pass" v-if="found && !signUp" type="password" v-model="user.pass" placeholder="contraseña">
+      <input id="pass" class="pwdTgg" v-if="found && !signUp" type="password" v-model="user.pass" placeholder="contraseña">
+      <label v-if="found && !signUp">
+        <input type="checkbox" @change="togglePwd">
+        <span>Mostar contraseña</span>
+      </label>
 
       <div id="signUpForm" v-if="signUp">
         <label><span>Correo electrónico</span>
           <input type="text" v-model="user.email">
         </label>
         <label><span>Contraseña <span class="mandatory">*</span></span>
-          <input id="SUpass" type="password" @input="checkEqual" v-model="user.pass">
+          <input id="SUpass" class="pwdTgg" type="password" @input="checkEqual" v-model="user.pass">
         </label>
         <label id="lastLabel"><span>Repite la contraseña <span class="mandatory">*</span></span>
-          <input id="SUcheckpass" @input="checkEqual" type="password" v-model="user.checkPass">
+          <input id="SUcheckpass" class="pwdTgg" @input="checkEqual" type="password" v-model="user.checkPass">
         </label> 
+        <label>
+          <input type="checkbox" @change="togglePwd">
+          <span>Mostar contraseña</span>
+        </label>
         <span><span class="mandatory">*</span> Significa que es obligatorio</span>
       </div>
 
@@ -57,33 +65,46 @@ export default{
       }
     },
     methods:{
-      clicked(){
+      validateInputs(){
         if(this.signUp){
           if(this.user.username == "" || this.user.pass == "" || this.user.checkpass == ""){
             this.error = true;
             this.message = GetErrMsg('lackInput');
-            return;
+            return false;
           } 
+
           if(this.user.pass !== this.user.checkpass){
             this.error = true;
             this.message = GetErrMsg('diffPass');
-            return;
+            return false;
           }
 
           if(this.user.email != ""){
             if(this.user.email.indexOf('@') === -1){
               this.error = true;
               this.message = GetErrMsg('wrongEmai');
-              return;
+              return false;
             }
           }
-          
+        }else{
+          if(this.user.username == ""){
+            this.error = true;
+            this.message = GetErrMsg('lackInput');
+            return false;
+          } 
+        }
+        return true;
+      },
+      clicked(){
+        if(!this.validateInputs())
+          return;
+
+        if(this.signUp){
           Axios.post('login/create',{
             user: this.user.username,
             pass: this.user.pass,
             email: this.user.email,
           }).then((res)=>{
-            console.log(res);
             if(res.data.error == true){
               if(res.data.alreadyCreated == true){
                 this.error = true;
@@ -100,17 +121,16 @@ export default{
             }
           })
         }else{
-          if(this.user.pass.localeCompare("") == 0){
+          if(this.user.pass.localeCompare("") == 0){ //otra forma de comparar
             Axios.post('login/',{ user: this.user.username }).then((res)=>{
               $(document).ready(()=>{
                 $('#pass').focus();
-              })
+              });
               if(!res.data.found){
                 this.found = false;
                 this.error = true;
                 this.message = GetErrMsg('noUser');
-              }
-              else{
+              }else{
                 this.found = true;
                 this.error = false
                 this.message = "";
@@ -134,8 +154,7 @@ export default{
           this.signUp = true;
         }else{
           this.signUp = false;
-          this.clearVal();
-        }
+          this.clearVal(); }
       },
       checkEqual(){
         if($('#SUcheckpass').val() != $('#SUpass').val()){
@@ -151,7 +170,12 @@ export default{
         this.user.checkPass="";
         this.user.email="";
         this.found = false;
-      }
+      },
+      togglePwd(){
+        let pwdInputs = $('.pwdTgg');
+        if($(pwdInputs[0]).attr('type') == "password"){ $(pwdInputs).attr('type','text'); }
+        else { $(pwdInputs).attr('type','password'); }
+      },
     }
   }
 
