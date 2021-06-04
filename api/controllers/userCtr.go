@@ -90,6 +90,7 @@ func CreateUser(c *fiber.Ctx) error {
 			"created": false,
 		});
 	}else{
+		CreateIndexArea(id);
 		logUser(c, res.User, id, "user");
 		c.Status(200);
 		return c.JSON(fiber.Map{

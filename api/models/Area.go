@@ -141,3 +141,15 @@ func GetIdFromSlug(uid int, rol, slug string) int {
     return -1;
   }
 }
+
+func CreateIndexArea(uid int) bool {
+  db := db.GetDb("nonuser");
+
+  query := "INSERT INTO `Areas` (`Name`,`Id_user`,`Deleteable`,`Slug`) VALUES (?,?,?,?)";
+  stmt, err := db.Prepare(query);
+  if err != nil { /*return false;*/ panic(err); }
+
+  if _, err := stmt.Exec("Index", uid, 0, "index"); err != nil { /*return false*/ panic(err); }
+
+  return true;
+}

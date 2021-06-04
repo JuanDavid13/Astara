@@ -22,10 +22,10 @@
           <input type="text" v-model="user.email">
         </label>
         <label><span>Contraseña <span class="mandatory">*</span></span>
-          <input id="SUpass" class="pwdTgg" type="password" @input="checkEqual" v-model="user.pass">
+          <input class="pwdTgg" type="password" v-model="user.pass">
         </label>
         <label id="lastLabel"><span>Repite la contraseña <span class="mandatory">*</span></span>
-          <input id="SUcheckpass" class="pwdTgg" @input="checkEqual" type="password" v-model="user.checkPass">
+          <input class="pwdTgg" type="password" v-model="user.checkPass">
         </label> 
         <label>
           <input type="checkbox" @change="togglePwd">
@@ -73,7 +73,7 @@ export default{
             return false;
           } 
 
-          if(this.user.pass !== this.user.checkpass){
+          if(this.user.pass !== this.user.checkPass){
             this.error = true;
             this.message = GetErrMsg('diffPass');
             return false;
@@ -82,7 +82,7 @@ export default{
           if(this.user.email != ""){
             if(this.user.email.indexOf('@') === -1){
               this.error = true;
-              this.message = GetErrMsg('wrongEmai');
+              this.message = GetErrMsg('wrongEmail');
               return false;
             }
           }
@@ -155,15 +155,6 @@ export default{
         }else{
           this.signUp = false;
           this.clearVal(); }
-      },
-      checkEqual(){
-        if($('#SUcheckpass').val() != $('#SUpass').val()){
-          this.error = false;
-          this.message = GetErrMsg('diffPass');
-        }else{
-          this.error = false;
-          this.message = GetErrMsg('noError');
-        }
       },
       clearVal(){
         this.user.pass="";
