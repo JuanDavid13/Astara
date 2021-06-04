@@ -25,13 +25,10 @@ export function Validate() {
 }
 
 export function AreaCorrespond(Area) {
-  return Axios.post("/area/correspond",{name:Area}).then((res)=>{
-    if(!res.data.correspond){
-      router.push({name:'Main'});
-      return null;
-    }else
-      return res.data.targets;
-
+  return Axios.post("/area/correspond",{slug:Area}).then((res)=>{
+    if(!res.data.correspond){ router.push({name:'Main'}); }
+    else
+      return res.data;
   });
 }
 

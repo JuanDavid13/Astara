@@ -26,7 +26,7 @@ type areaDb struct {
 func GetAreasById (user int, rol string) []Area {
   db := db.GetDb(rol);
 
-  query := "SELECT `Name`,`Slug`,`Deleteable` FROM `Areas` WHERE `Id_user` LIKE ?;";
+  query := "SELECT `Name`,`Slug` FROM `Areas` WHERE `Id_user` LIKE ?;";
   stmt, err := db.Prepare(query);
   if err != nil && err != sql.ErrNoRows { /*return false;*/ panic(err); }
   defer stmt.Close();
@@ -41,12 +41,11 @@ func GetAreasById (user int, rol string) []Area {
 
   for rows.Next() {
 
-    rows.Scan(&areadb.Name,&areadb.Slug,&areadb.Deleteable);
+    rows.Scan(&areadb.Name,&areadb.Slug);
 
-    if areadb.Slug.Valid && areadb.Name.Valid && areadb.Deleteable.Valid {
+    if areadb.Slug.Valid && areadb.Name.Valid {
       area.Name = areadb.Name.String;
       area.Slug = areadb.Slug.String;
-      area.Deleteable = int(areadb.Deleteable.Int64);
 
       areas = append(areas,area);
     } 
@@ -55,24 +54,52 @@ func GetAreasById (user int, rol string) []Area {
   return areas;
 }
 
-func CheckUserArea(user int, slug,rol string) (string,bool){
+func CheckUserArea(user int, slug,rol string) int {
   db := db.GetDb(rol);
 
   query := "SELECT `Id` FROM `Areas` WHERE `Id_user` LIKE ? AND `Slug` LIKE ?;";
   stmt, err := db.Prepare(query);
-  if err != nil { panic(err); }
+  if err != nil { return -1 /*panic(err);*/ }
 
-  defer stmt.Close();
 
   row := stmt.QueryRow(user,slug);
-  if err != nil { panic(err); }
-  
-  var id int;
-  row.Scan(&id);
-  if id != 0 { return GetFormatedUserAreas(user,id,rol),true;  }
+  if err != nil { return -1; /*panic(err);*/ }
 
-  return "",false;
+  defer stmt.Close();
+  
+  var ( id sql.NullInt64; )
+
+  row.Scan(&id);
+  if !id.Valid || id.Int64 == 0 { return  -1; }
+
+  return int(id.Int64);
 }
+
+func AreaIsDeleteable(areaId int, rol string) bool {
+  db := db.GetDb(rol);
+
+  query := "SELECT `Deleteable` FROM `Areas` WHERE `Id` LIKE ? ;";
+  stmt, err := db.Prepare(query);
+  if err != nil { return false /*panic(err);*/ }
+
+
+  row := stmt.QueryRow(areaId);
+  if err != nil { return false; /*panic(err);*/ }
+  
+  defer stmt.Close();
+
+  var ( del sql.NullInt64; )
+
+  row.Scan(&del);
+  if !del.Valid { return false }
+
+  switch del.Int64 {
+    case 0 : { return false; }
+    case 1 : { return true; }
+    default: { return false; }
+  }
+}
+
 func alreadyCreated(uid int, rol, name string) bool {
   db := db.GetDb(rol);
 
@@ -147,9 +174,9 @@ func CreateIndexArea(uid int) bool {
 
   query := "INSERT INTO `Areas` (`Name`,`Id_user`,`Deleteable`,`Slug`) VALUES (?,?,?,?)";
   stmt, err := db.Prepare(query);
-  if err != nil { /*return false;*/ panic(err); }
+  if err != nil { return false; /*panic(err);*/ }
 
-  if _, err := stmt.Exec("Index", uid, 0, "index"); err != nil { /*return false*/ panic(err); }
+  if _, err := stmt.Exec("Index", uid, 0, "index"); err != nil { return false /*panic(err);*/ }
 
   return true;
 }

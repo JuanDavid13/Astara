@@ -84,10 +84,10 @@ func CreateNewUser(user, pass, email string) (int, bool) {
   encPass := createPass(pass);
 
   stmt, err := db.Prepare(query);
-  if err != nil { /*panic(err);*/ return -1,false; }
+  if err != nil { panic(err); /*return -1,false;*/ }
 
   res, err := stmt.Exec(user,encPass,email);
-  if err != nil { /*panic(err);*/ return -1,false; }
+  if err != nil { panic(err); /*return -1,false;*/ }
   id, err := res.LastInsertId();
   if err != nil { panic(err); }
 

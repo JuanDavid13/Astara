@@ -1,14 +1,13 @@
 <template>
   <div>
-    <span>{{$route.params.name}}</span>
     <button @click="addTask">+ Tarea</button>
-    <button @click="deleteArea">Eliminar</button>
+    <button v-if="deleteable" @click="deleteArea">Eliminar</button>
     <form @submit.capture="createTask">
       <input type="text" v-model="task.name" placeholder="Nombre">
-      <label> Fecha límite
+      <label>Fecha límite
         <input type="date" v-model="task.deadline" placeholder="Fecha límite">
       </label>
-      <label> Lo voy a hacer el día
+      <label>Lo voy a hacer el día
         <input type="date" v-model="task.dated" placeholder="fechado para">
       </label>
       <button type="submit">Añadir</button>
@@ -47,6 +46,7 @@ export default {
   emits: ['updateSidebar'],
   data() {
     return {
+      deleteable: false,
       Items: [],
       task:{
         name:"",
@@ -132,8 +132,9 @@ export default {
   async created() {
     const slug = this.$router.currentRoute._value.params.name;
     let data = await AreaCorrespond(slug)
-    this.Items = JSON.parse(data);
-    console.log(this.Items);
+    console.log(data);
+    this.deleteable = data.deleteable;
+    //this.Items = JSON.parse(data);
   },
   mounted(){
     const options = {

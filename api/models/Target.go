@@ -120,6 +120,7 @@ func GetTargetsUserArea(user, areaid int, rol string) []UserArea {
 	return userArea;
 }
 
+//delete
 func targetMarshal(v interface{}) string{
 	if json, err := json.Marshal(v); err != nil { 
 		//panic(err)
@@ -129,6 +130,7 @@ func targetMarshal(v interface{}) string{
 	}
 }
 
+//delete
 func GetFormatedUserAreas(user, areaid int, rol string) string {
 	return targetMarshal(GetTargetsUserArea(user,areaid, rol));
 }

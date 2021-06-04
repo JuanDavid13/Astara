@@ -6,7 +6,7 @@
         <p class="noselect splitChar" data-splitting>AREAS</p>
         <router-link :to="{name: 'Main'}">MAIN</router-link>
         <div class="area" v-for="area in areas" :key="area.id" >
-          <router-link :to="{ name: 'Area', params: { name: area.slug} }" >{{area.name}}</router-link>
+          <router-link :to="{ name: 'Area', params: { name: area.slug } }" >{{area.name}}</router-link>
         </div>
         <div>
           <form @submit.capture="addArea">
@@ -62,7 +62,10 @@ import Axios from '@/auth/auth';
         });
       },
       getAreas(){
-        Axios.get("/area").then((res)=>{ this.areas = JSON.parse(res.data); });
+        Axios.get("/area").then((res)=>{
+          this.areas = JSON.parse(res.data); 
+          console.log(res.data);
+        });
       }
     },
     created(){

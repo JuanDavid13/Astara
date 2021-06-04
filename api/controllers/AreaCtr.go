@@ -33,26 +33,33 @@ func SlugToName(slug string) string { return str.ReplaceAll(slug,"-"," "); }
 
 func AreaCheck(c *fiber.Ctx) error {
 
-	type name struct { Name string `json:"name"`; }
-	n := name{};
+	type slug struct { Slug string `json:"slug"`; }
+	s := slug{};
 
-	if err := json.Unmarshal(c.Body(),&n); err != nil{ return c.SendStatus(400); }
+	if err := json.Unmarshal(c.Body(),&s); err != nil{ return c.SendStatus(400); }
 
 	cl := c.Locals("claims").(jwt.Claims);
 
-	if targets, found := CheckUserArea(cl.User,n.Name,cl.Rol); found {
-		c.Status(200);
-		return c.JSON(fiber.Map{
-			"correspond":true,
-			"targets":targets,
-		}); 
-	}else{
+	c.Status(200);
+	areaId:= CheckUserArea(cl.User,s.Slug,cl.Rol);
+	if areaId == -1 || areaId == 0 {
 		c.Status(200);
 		return c.JSON(fiber.Map{
 			"correspond":false,
 		}); 
 	}
-	//return c.SendStatus(400);
+	
+	if deleteable := AreaIsDeleteable(areaId, cl.Rol); !deleteable{ 
+		return c.JSON(fiber.Map{
+			"correspond":true,
+			"deleteable":false,
+		}); 
+	}
+
+	return c.JSON(fiber.Map{
+		"correspond":true,
+		"deleteable":true,
+	}); 
 }
 
 func CreateArea(c *fiber.Ctx) error {
