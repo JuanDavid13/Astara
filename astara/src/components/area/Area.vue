@@ -132,7 +132,6 @@ export default {
   async created() {
     const slug = this.$router.currentRoute._value.params.name;
     let data = await AreaCorrespond(slug)
-    console.log(data);
     this.deleteable = data.deleteable;
     //this.Items = JSON.parse(data);
   },

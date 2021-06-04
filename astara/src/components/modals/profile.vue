@@ -7,12 +7,12 @@
     <form @submit.prevent >
       <label>Nombre de usuario
         <p class="info">El nombre de usuario es único y te identifica en la aplicación.</p>
-        <input type="text" name="username" v-model="userCopy.username" @input="changeUserName" autocomplete="off" spellcheck="false" minlength="3" maxlength="30">
+        <input type="text" name="username" v-model="userCopy.username" @input="changeUserName" autocomplete="off" spellcheck="false" minlength="4" maxlength="30">
       </label>
 
       <label>Email
         <p class="info">Recuerda que también puedes usar tu correo electrónico para acceder a la aplicación.</p>
-        <input type="text" name="email" v-model="userCopy.email" autocomplete="off" spellcheck="false" minlength="3" maxlength="50">
+        <input type="text" name="email" v-model="userCopy.email" autocomplete="off" spellcheck="false" minlength="5" maxlength="50">
       </label>
 
       <hr>
@@ -23,10 +23,10 @@
 
         <span v-if="pwdErr" class="errorMsg" style="margin-bottom:15px;">{{pwdMsg}}</span>
 
-        <input id="profilePwd" class="pwdTgg" type="password" v-model="userCopy.password" v-if="!same" autocomplete="off" minlength="1" maxlength="50">
+        <input id="profilePwd" class="pwdTgg" type="password" v-model="userCopy.password" v-if="!same" autocomplete="off" minlength="7" maxlength="50">
         <div v-if="same">
           <label>Nueva contraseña
-            <input class="pwdTgg" type="password" v-model="newPass" autocomplete="off" minlength="1" maxlength="50">
+            <input class="pwdTgg" type="password" v-model="newPass" autocomplete="off" minlength="7" maxlength="50">
           </label>
           <label>Repetir contraseña
             <input class="pwdTgg" type="password" v-model="checkNP" autocomplete="off" minlength="1" maxlength="50">
@@ -77,7 +77,10 @@ export default {
   emits:[ 'changeUser'],
   data() {
     return {
-      userCopy: {},
+      userCopy: {
+        username:"",
+        email:"",
+      },
       originalName:"",
       newPass:"",
       checkNP:"",
@@ -97,10 +100,8 @@ export default {
     logOut(){ Axios.get('/auth/logout').then(()=>{ this.$router.push({name:'Login'}) }); },
     changeUserName(){ this.$emit('changeUser',this.userCopy.username); },
     changeTheme(iswhite){
-      if(iswhite)
-          $('#app').addClass('lightTheme');
-      else
-          $('#app').removeClass('lightTheme');
+      if(iswhite) $('#app').addClass('lightTheme');
+      else $('#app').removeClass('lightTheme');
     },
     checkTheme(e){
         if(e.target.checked){ this.changeTheme(true);   this.userCopy.theme = true; }
@@ -132,21 +133,61 @@ export default {
       }
     },
     checkEqual(){
-      if($('#checkNP').val() == $('#newPass').val())
-        this.setError('noError');
-      else
-        this.setError('diffPass');
+      if($('#checkNP').val() == $('#newPass').val()) this.setError('noError');
+      else this.setError('diffPass');
+    },
+    checkUser(){
+      if(this.originalName == this.userCopy.username) return null;
+
+      if(this.userCopy.username == "") return -1
+
+      if(this.userCopy.username.length < 6) return -2
+
+      return 0;
+    },
+    checkEmail(){
+      if(this.user.email == this.userCopy.email) return null; //equal
+      
+      if(this.userCopy.email == "") return -1; //deleted
+
+      if(this.userCopy.email.length < 5) return -2;
+
+      if(this.userCopy.email.indexOf('@') === -1) return -3;
+
+      return 0; //added or updated
     },
     checkInputs(){
+      let changes = {
+        username:null,
+        email:null,
+        theme:null
+      };
+
       let userErr = "";
       let emailErr = "";
 
-      if(this.userCopy.username.length < 3)
-        userErr = GetErrMsg('shortUserName');
+      switch(this.checkUser()){
+        case null:  { changes.username = null; }break;
+        case -1:    { userErr = GetErrMsg('emptyuser'); }break;
+        case -2:    { userErr = GetErrMsg('shortUserName'); }break;
+        case 0:     { changes.username = this.userCopy.username; }break;
+        default:    { userErr = GetErrMsg(); }break;
+      }
 
-      if(this.userCopy.email.length < 5 || !this.userCopy.email.includes('@'))
-        emailErr = GetErrMsg('wrongEmail');
+      switch(this.checkEmail()){
+        case null:  { changes.email= null; }break;
+        case -1:    { changes.email = this.userCopy.email; }break;
+        case -2:    { emailErr = GetErrMsg('shortEmail'); }break;
+        case -3:    { emailErr = GetErrMsg('wrongEmail'); }break;
+        case 0:     { changes.email = this.userCopy.username; }break;
+        default:    { emailErr = GetErrMsg(); }break;
+      }
 
+      if(this.user.theme == this.userCopy.theme) changes.theme = null;
+
+      if(this.user.theme != this.userCopy.theme) changes.theme = this.userCopy.theme;
+
+      //genrate error message
       if(userErr.length > 0 && emailErr.length > 0){
         userErr = userErr.charAt(0).toUpperCase() + userErr.slice(1);
         this.errMsg = userErr + ' , ' + emailErr;
@@ -156,31 +197,40 @@ export default {
         this.errMsg = userErr + emailErr;
       }
 
-      if((userErr.length + emailErr.length) == 0)
-        return true
+      if((userErr.length + emailErr.length) != 0)
+        return null; 
 
-      return false;
+      return changes;
     },
     submitData(){
-      if(!this.checkInputs())
+
+      let changes = this.checkInputs();
+
+      if(changes == null){
         this.err = true;
-      else{
-        this.err = false;
-        Axios.post("user/profile/update",{
-          username: this.userCopy.username,
-          email:this.userCopy.email,
-          theme:this.userCopy.theme,
-        }).then((res)=>{
-          if(res.data.updated){
-            this.originalName = this.userCopy.username;
-            $('#modal').removeClass('modalActive');
-            //this.closeModal();
-          }else{
-            this.err = true;
-            this.errMsg = GetErrMsg('updateErr');
-          }
-        });
+        return;
       }
+      this.err = false;
+
+      if(changes.username == null && changes.email == null && changes.theme == null)
+        return;
+
+
+      Axios.post("user/profile/update",{
+        username: changes.username,
+        email: changes.email,
+        theme: changes.theme,
+      }).then((res)=>{
+        if(!res.data.updated){
+          this.err = true;
+          this.errMsg = GetErrMsg('updateErr');
+        }else{
+          this.originalName = this.userCopy.username;
+          $('#modal').removeClass('modalActive');
+          this.closeModal();
+        }
+      });
+
     },
     closeModal(){
       //default values;

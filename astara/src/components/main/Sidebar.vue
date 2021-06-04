@@ -64,7 +64,6 @@ import Axios from '@/auth/auth';
       getAreas(){
         Axios.get("/area").then((res)=>{
           this.areas = JSON.parse(res.data); 
-          console.log(res.data);
         });
       }
     },
