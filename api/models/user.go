@@ -200,6 +200,9 @@ func UpdateUserInfo(uid int, rol, query string, changes []string) bool {
   fmt.Println("Update user info:");
   db := db.GetDb(rol);
 
+  fmt.Println(query);
+  fmt.Printf("%+v",changes);
+
   stmt, err := db.Prepare(query);
   if err != nil && err != sql.ErrNoRows { return false; /*panic(err);*/ }
 

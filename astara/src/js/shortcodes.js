@@ -33,10 +33,10 @@ export function setShortCodes(context){
             context.$data.modalOption = 1;
             $(document).ready(()=>{
               if($('#modal').hasClass('modalActive')){
-                context.$refs.profile.openModal();
+                context.$refs.profile.closeModal();
                 $('#modal').removeClass('modalActive');
               }else{
-                context.$refs.profile.closeModal();
+                context.$refs.profile.openModal();
                 $('#modal').addClass('modalActive');
               }
             });

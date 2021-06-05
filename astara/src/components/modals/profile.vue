@@ -80,6 +80,7 @@ export default {
       userCopy: {
         username:"",
         email:"",
+        theme:"",
       },
       originalName:"",
       newPass:"",
@@ -100,6 +101,8 @@ export default {
     logOut(){ Axios.get('/auth/logout').then(()=>{ this.$router.push({name:'Login'}) }); },
     changeUserName(){ this.$emit('changeUser',this.userCopy.username); },
     changeTheme(iswhite){
+      console.log("iswhite");
+      console.log(iswhite);
       if(iswhite) $('#app').addClass('lightTheme');
       else $('#app').removeClass('lightTheme');
     },
@@ -222,7 +225,8 @@ export default {
           this.err = true;
           this.errMsg = GetErrMsg('updateErr');
         }else{
-          this.originalName = this.userCopy.username;
+          this.$emit('changeTheme',this.userCopy.theme);
+          this.changeTheme(this.userCopy.theme);
           $('#modal').removeClass('modalActive');
           this.closeModal();
         }
@@ -246,7 +250,8 @@ export default {
       this.pwdMsg = "",
 
       this.$emit('changeUser',this.originalName);
-      this.changeTheme(this.user.theme);
+      this.$emit('changeTheme',this.user.theme);
+      //this.changeTheme(this.user.theme);
   
       $('#modal').removeClass('modalActive');
     },

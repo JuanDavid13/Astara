@@ -182,6 +182,7 @@ func UpdateUser(c *fiber.Ctx) error {
 	query :=createUpdateQuery(cl.User, res.Changes.Username, res.Changes.Email, res.Changes.Theme);
 	if query == nil{ return c.SendStatus(400); }
 
+
 	var changesArr []string;
 	if res.Changes.Username != nil {
 		if UserTakenbyName(*res.Changes.Username){
@@ -199,9 +200,14 @@ func UpdateUser(c *fiber.Ctx) error {
 			});
 		}
 		changesArr = append(changesArr, *res.Changes.Email); }
-	if res.Changes.Theme != nil { changesArr = append(changesArr, strconv.FormatBool(*res.Changes.Theme)); }
+	if res.Changes.Theme != nil { 
+		if *res.Changes.Theme == true {
+						changesArr = append(changesArr,"1"); 
+		}else{	changesArr = append(changesArr,"0"); }
+		//strconv.FormatBool(*res.Changes.Theme)
+	}
 
-	if !UpdateUserInfo(cl.User, cl.Rol, *query, changesArr){
+	if !UpdateUserInfo(cl.User, cl.Rol, *query, changesArr) {
 		c.Status(200);
 		return c.JSON(fiber.Map{ "updated":false, });
 	}else{

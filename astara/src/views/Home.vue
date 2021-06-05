@@ -9,6 +9,7 @@
            ref="profile"
            :user="user"
            @changeUser="changeUser"
+           @changeTheme="updateTheme"
         />
       </div>
     </div>
@@ -47,6 +48,7 @@ export default {
   methods: {
     updateSidebar(slug){ this.$refs.Sidebar.deleteArea(slug); },
     changeUser(username){ this.user.username = username; },
+    updateTheme(theme) {this.user.theme = theme},
     openProfile(){
       $('#modal').addClass('modalActive');
       this.modalOption = 1;
