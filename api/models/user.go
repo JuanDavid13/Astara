@@ -197,10 +197,6 @@ func ComparePass(user int, rol, pass string) (bool,bool){
 }
 
 func UpdateUserInfo(uid int, rol, query string, changes []string) bool {
-  
-  fmt.Println(query);
-  fmt.Printf("%+v",changes);
-
   fmt.Println("Update user info:");
   db := db.GetDb(rol);
 
@@ -212,6 +208,25 @@ func UpdateUserInfo(uid int, rol, query string, changes []string) bool {
       args[i] = s
   }
   _, err = stmt.Exec(args...);
+  defer stmt.Close();
+
+  if err != nil && err != sql.ErrNoRows { return false; /*panic(err);*/}
+
+  return true;
+}
+
+func UpdateUserPwd(uid int, rol, pass string) bool {
+  fmt.Println("Update password:");
+
+  db := db.GetDb(rol);
+
+  password := createPass(pass);
+  query := "UPDATE `Users` SET Password = ? WHERE `Id` LIKE ?;";
+
+  stmt, err := db.Prepare(query);
+  if err != nil && err != sql.ErrNoRows { return false; /*panic(err);*/ }
+
+  _, err = stmt.Exec(password, uid);
   defer stmt.Close();
 
   if err != nil && err != sql.ErrNoRows { return false; /*panic(err);*/}

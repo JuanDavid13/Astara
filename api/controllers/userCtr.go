@@ -144,6 +144,24 @@ func CheckPass(c *fiber.Ctx) error {
 	}
 }
 
+func UpdatePwd(c *fiber.Ctx) error {
+	type response struct { Pass string `json:"pass"`; }
+	res := response{}
+
+	if err := json.Unmarshal(c.Body(),&res); err != nil { panic(err); }
+
+	cl := c.Locals("claims").(jwt.Claims);
+
+	c.Status(200);
+	if !UpdateUserPwd(cl.User,cl.Rol,res.Pass) {
+		return c.JSON(fiber.Map{ "updated":false, });
+	}else{
+		return c.JSON(fiber.Map{ "updated":true, });
+	}
+
+	return c.SendStatus(200);
+}
+
 func UpdateUser(c *fiber.Ctx) error {
 	cl := c.Locals("claims").(jwt.Claims);
 
@@ -172,7 +190,6 @@ func UpdateUser(c *fiber.Ctx) error {
 				"updated":false, 
 			});
 		}
-
 		changesArr = append(changesArr, *res.Changes.Username); }
 	if res.Changes.Email != nil {
 		if UserTakenbyEmail(*res.Changes.Username){

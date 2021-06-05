@@ -11,6 +11,7 @@ export function GetErrMsg(errorName) {
     case 'missPass':{ return "La contraseña introducida es incorrecta"; }
     case 'diffPass': { return "Las contraseñas no coinciden"; }
     case 'emptyPass':{ return "Debes de introducir una contraseña"; }
+    case 'wrongPass':{ return "Ha ocurrido un error al intentar cambiar la contraseña"; }
       
     case 'wrongEmail':{ return "el correo electrónico introducido no es valido. Ej: ejemplo@gmail.com"; }
 

@@ -130,8 +130,13 @@ export default {
           this.pwdMsg = GetErrMsg('diffPass');
         }else
           this.pwdErr = false;
-        Axios.post('user/profile/changePwd',{ password: this.userCopy.pass }).then((res)=>{
-          console.log(res);
+        Axios.post('user/profile/changePass',{ pass: this.newPass }).then((res)=>{
+          if (!res.data.updated){
+            this.pwdErr = true;
+            this.pwdMsg = GetErrMsg('wrongPass');
+          }else{
+            this.closeModal();
+          }
         });
       }
     },
@@ -211,9 +216,6 @@ export default {
         return;
 
       Axios.post("user/profile/update",{
-        //username: changes.username,
-        //email: changes.email,
-        //theme: changes.theme,
         changes: changes
       }).then((res)=>{
         if(!res.data.updated){
