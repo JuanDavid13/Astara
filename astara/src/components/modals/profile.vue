@@ -138,22 +138,15 @@ export default {
     },
     checkUser(){
       if(this.originalName == this.userCopy.username) return null;
-
       if(this.userCopy.username == "") return -1
-
       if(this.userCopy.username.length < 6) return -2
-
       return 0;
     },
     checkEmail(){
       if(this.user.email == this.userCopy.email) return null; //equal
-      
       if(this.userCopy.email == "") return -1; //deleted
-
       if(this.userCopy.email.length < 5) return -2;
-
       if(this.userCopy.email.indexOf('@') === -1) return -3;
-
       return 0; //added or updated
     },
     checkInputs(){
@@ -203,7 +196,6 @@ export default {
       return changes;
     },
     submitData(){
-
       let changes = this.checkInputs();
 
       if(changes == null){
@@ -233,7 +225,10 @@ export default {
 
     },
     closeModal(){
+      console.log('close modal');
       //default values;
+      this.userCopy.pass = {};
+
       this.newPass = "",
       this.checkNP = "",
 
@@ -248,15 +243,16 @@ export default {
 
       this.$emit('changeUser',this.originalName);
       this.changeTheme(this.user.theme);
-
-      $('#modal').removeClass('activeModal');
+  
+      $('#modal').removeClass('modalActive');
     },
     openModal(){
+      console.log('open modal');
       this.userCopy = $.extend(true,{},this.user);
       this.originalName = this.userCopy.username;
     },
   },
-  mounted(){ this.openModal() },
+  mounted(){ console.log('mounted'); this.openModal() },
   unmounted(){ this.closeModal(); }
 
 }

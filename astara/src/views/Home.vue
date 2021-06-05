@@ -45,12 +45,8 @@ export default {
     }
   },
   methods: {
-    updateSidebar(slug){
-      this.$refs.Sidebar.deleteArea(slug);
-    },
-    changeUser(username){
-      this.user.username = username;
-    },
+    updateSidebar(slug){ this.$refs.Sidebar.deleteArea(slug); },
+    changeUser(username){ this.user.username = username; },
     openProfile(){
       $('#modal').addClass('modalActive');
       this.modalOption = 1;

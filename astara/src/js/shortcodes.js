@@ -16,7 +16,7 @@ export function setShortCodes(context){
   $(document).keydown((e)=>{
     //observer.observe(target,config);
 
-    if(e.keyCode == 27){
+    if(e.keyCode == 27){ //esq key
       $('#modal').removeClass('modalActive'); 
       $(document).ready(()=>{
         switch( context.$data.modalOption ){
@@ -31,8 +31,16 @@ export function setShortCodes(context){
         switch(e.keyCode){
           case 80: { //p --> alt + p
             context.$data.modalOption = 1;
-            $('#modal').toggleClass('modalActive');
-          }break;
+            $(document).ready(()=>{
+              if($('#modal').hasClass('modalActive')){
+                context.$refs.profile.openModal();
+                $('#modal').removeClass('modalActive');
+              }else{
+                context.$refs.profile.closeModal();
+                $('#modal').addClass('modalActive');
+              }
+            });
+          }break; //repeat for the rest
           case 71: { //g --> alt + g
             $('#modal').toggleClass('modalActive'); 
             context.$data.modalOption = 2;
