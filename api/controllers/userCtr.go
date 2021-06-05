@@ -5,6 +5,7 @@ import (
 	//"reflect"
 
 	"encoding/json"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 
@@ -163,12 +164,29 @@ func UpdateUser(c *fiber.Ctx) error {
 	fmt.Println("Update user info**********************");
 	fmt.Printf("%+v",res);
 
-	if query :=createUpdateQuery(cl.User, res.Changes.Username, res.Changes.Email, res.Changes.Theme); query != nil{
-		fmt.Println("query");
-		fmt.Println(*query);
-	}
+	query :=createUpdateQuery(cl.User, res.Changes.Username, res.Changes.Email, res.Changes.Theme);
+	if query == nil{ return c.SendStatus(400); }
 
-	//updated := UpdateUserInfo(cl.User, cl.Rol, res.Username, res.Email, res.Theme);
+	fmt.Println(*query);
+
+	//updated := UpdateUserInfo(cl.User, cl.Rol, res.Changes.Username, res.Changes.Email, res.Changes.Theme, );
+
+
+	//if res.Changes.Username ==  nil { userAux := "nil"; res.Changes.Username= &userAux };
+	//if res.Changes.Email ==  nil { emailAux := "nil"; res.Changes.Email = &emailAux };
+
+	//themeChanged := "nil";
+	//if res.Changes.Theme != nil { themeChanged = strconv.FormatBool(*res.Changes.Theme); }
+
+	//changesArr := []string{*res.Changes.Username,*res.Changes.Email,themeChanged};
+	var changesArr []string;
+	if res.Changes.Username != nil { changesArr = append(changesArr, *res.Changes.Username); }
+	if res.Changes.Email != nil { changesArr = append(changesArr, *res.Changes.Email); }
+	if res.Changes.Theme != nil { changesArr = append(changesArr, strconv.FormatBool(*res.Changes.Theme)); }
+
+
+	UpdateUserInfo(cl.User, cl.Rol, *query, changesArr);
+
 	//if updated {
 	//	c.Status(200);
 	//	return c.JSON(fiber.Map{
@@ -204,7 +222,7 @@ func createUpdateQuery(User int, username, email *string, theme *bool) *string {
 		}else{ query += "`Theme` = ?"; }
 	}
 
-	query += ";";
+	query += " WHERE `Id` = " + strconv.Itoa(User) + ";";
 
 	return &query;
 }

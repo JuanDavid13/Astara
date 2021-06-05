@@ -160,17 +160,37 @@ func ComparePass(user int, rol, pass string) (bool,bool){
   return false,true;
 }
 
-func UpdateUserInfo(uid int, rol, username, email string, theme bool ) bool {
+//func UpdateUserInfo(uid int, rol string, username, email *string, theme *bool ) bool {
+type response struct {
+  Username *string;
+  Email *string;
+  Theme *bool;
+}
+
+func UpdateUserInfo(uid int, rol, query string, changes []string) bool {
+  
+  fmt.Println(query);
+  fmt.Printf("%+v",changes);
+
   fmt.Println("Update user info:");
   db := db.GetDb(rol);
-  
-  query := "UPDATE `Users` SET `Name` = ?, `Email` = ? WHERE Id LIKE ?;";
 
   stmt, err := db.Prepare(query);
-  if err != nil && err != sql.ErrNoRows { return false;/*panic(err);*/ }
+  if err != nil && err != sql.ErrNoRows { /*return false;*/ panic(err); }
 
-  _, err = stmt.Exec(username, email, uid);
+  //username := changes.Username;
+  //email := changes.Email;
+  args := make([]interface{}, len(changes))
+  for i, s := range changes{
+      args[i] = s
+  }
+  _, err = stmt.Exec(args...);
   defer stmt.Close();
-  if err != nil && err != sql.ErrNoRows { return false;/*panic(err);*/
-  }else{ return true; }
+
+  if err != nil && err != sql.ErrNoRows { /*return false;*/ panic(err);}
+
+  return false;
+
+
+  //return true;
 }
