@@ -30,6 +30,7 @@ func IsRegistered(user string) bool {
   if id != 0 {return true;}
   return false;
 }
+
 func IsRegisteredWithEmail(user, email string) bool {
   db := db.GetDb("nonuser");
   query := "SELECT `Id` FROM Users WHERE  Name LIKE ? OR Email LIKE ?;";
@@ -40,7 +41,41 @@ func IsRegisteredWithEmail(user, email string) bool {
   var id int;
   err = stmt.QueryRow(user, email).Scan(&id);
   defer stmt.Close();
-  fmt.Println(id);
+
+  if err != nil && err != sql.ErrNoRows { return false; }
+  if id != 0 {return true;}
+
+  return false;
+}
+
+func UserTakenbyName(name string) bool {
+  db := db.GetDb("nonuser");
+  query := "SELECT `Id` FROM Users WHERE Name LIKE ?;";
+
+  stmt, err := db.Prepare(query);
+  if err != nil{ panic(err); }
+
+  var id int;
+  err = stmt.QueryRow(name).Scan(&id);
+  defer stmt.Close();
+
+  if err != nil && err != sql.ErrNoRows { return false; }
+  if id != 0 {return true;}
+
+  return false;
+}
+
+func UserTakenbyEmail(name string) bool {
+  db := db.GetDb("nonuser");
+  query := "SELECT `Id` FROM Users WHERE Email LIKE ?;";
+
+  stmt, err := db.Prepare(query);
+  if err != nil{ panic(err); }
+
+  var id int;
+  err = stmt.QueryRow(name).Scan(&id);
+  defer stmt.Close();
+
   if err != nil && err != sql.ErrNoRows { return false; }
   if id != 0 {return true;}
 
@@ -137,6 +172,7 @@ func GetBasicInfo(user int, rol string) (string,string,bool,bool){
 func ComparePass(user int, rol, pass string) (bool,bool){
   fmt.Println("compare pass:");
   fmt.Println(pass);
+
   db := db.GetDb(rol);
   query := "SELECT `password` FROM `Users` WHERE `Id` LIKE ?;";
   stmt, err := db.Prepare(query);
@@ -160,13 +196,6 @@ func ComparePass(user int, rol, pass string) (bool,bool){
   return false,true;
 }
 
-//func UpdateUserInfo(uid int, rol string, username, email *string, theme *bool ) bool {
-type response struct {
-  Username *string;
-  Email *string;
-  Theme *bool;
-}
-
 func UpdateUserInfo(uid int, rol, query string, changes []string) bool {
   
   fmt.Println(query);
@@ -176,10 +205,8 @@ func UpdateUserInfo(uid int, rol, query string, changes []string) bool {
   db := db.GetDb(rol);
 
   stmt, err := db.Prepare(query);
-  if err != nil && err != sql.ErrNoRows { /*return false;*/ panic(err); }
+  if err != nil && err != sql.ErrNoRows { return false; /*panic(err);*/ }
 
-  //username := changes.Username;
-  //email := changes.Email;
   args := make([]interface{}, len(changes))
   for i, s := range changes{
       args[i] = s
@@ -187,10 +214,7 @@ func UpdateUserInfo(uid int, rol, query string, changes []string) bool {
   _, err = stmt.Exec(args...);
   defer stmt.Close();
 
-  if err != nil && err != sql.ErrNoRows { /*return false;*/ panic(err);}
+  if err != nil && err != sql.ErrNoRows { return false; /*panic(err);*/}
 
-  return false;
-
-
-  //return true;
+  return true;
 }

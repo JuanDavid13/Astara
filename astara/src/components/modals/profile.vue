@@ -130,6 +130,9 @@ export default {
           this.pwdMsg = GetErrMsg('diffPass');
         }else
           this.pwdErr = false;
+        Axios.post('user/profile/changePwd',{ password: this.userCopy.pass }).then((res)=>{
+          console.log(res);
+        });
       }
     },
     checkEqual(){
@@ -225,7 +228,6 @@ export default {
 
     },
     closeModal(){
-      console.log('close modal');
       //default values;
       this.userCopy.pass = {};
 
@@ -247,12 +249,11 @@ export default {
       $('#modal').removeClass('modalActive');
     },
     openModal(){
-      console.log('open modal');
       this.userCopy = $.extend(true,{},this.user);
       this.originalName = this.userCopy.username;
     },
   },
-  mounted(){ console.log('mounted'); this.openModal() },
+  mounted(){ this.openModal() },
   unmounted(){ this.closeModal(); }
 
 }

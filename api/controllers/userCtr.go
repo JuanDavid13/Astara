@@ -120,10 +120,10 @@ func GetInfo(c *fiber.Ctx) error {
 
 func CheckPass(c *fiber.Ctx) error {
 	cl := c.Locals("claims").(jwt.Claims);
-	type passRes struct{
-		Pass string `json:"password"`;
-	}
+
+	type passRes struct{ Pass string `json:"password"`; }
 	pass := passRes{};
+
 	if err := json.Unmarshal(c.Body(),&pass); err != nil { panic(err); }
 
 	c.Status(200);
@@ -161,48 +161,39 @@ func UpdateUser(c *fiber.Ctx) error {
 
 	if err := json.Unmarshal(c.Body(), &res); err != nil { return c.SendStatus(400) /*panic(err);*/ }
 
-	fmt.Println("Update user info**********************");
-	fmt.Printf("%+v",res);
-
 	query :=createUpdateQuery(cl.User, res.Changes.Username, res.Changes.Email, res.Changes.Theme);
 	if query == nil{ return c.SendStatus(400); }
 
-	fmt.Println(*query);
-
-	//updated := UpdateUserInfo(cl.User, cl.Rol, res.Changes.Username, res.Changes.Email, res.Changes.Theme, );
-
-
-	//if res.Changes.Username ==  nil { userAux := "nil"; res.Changes.Username= &userAux };
-	//if res.Changes.Email ==  nil { emailAux := "nil"; res.Changes.Email = &emailAux };
-
-	//themeChanged := "nil";
-	//if res.Changes.Theme != nil { themeChanged = strconv.FormatBool(*res.Changes.Theme); }
-
-	//changesArr := []string{*res.Changes.Username,*res.Changes.Email,themeChanged};
 	var changesArr []string;
-	if res.Changes.Username != nil { changesArr = append(changesArr, *res.Changes.Username); }
-	if res.Changes.Email != nil { changesArr = append(changesArr, *res.Changes.Email); }
+	if res.Changes.Username != nil {
+		if UserTakenbyName(*res.Changes.Username){
+			c.Status(200);
+			return c.JSON(fiber.Map{
+				"updated":false, 
+			});
+		}
+
+		changesArr = append(changesArr, *res.Changes.Username); }
+	if res.Changes.Email != nil {
+		if UserTakenbyEmail(*res.Changes.Username){
+			c.Status(200);
+			return c.JSON(fiber.Map{
+				"updated":false, 
+			});
+		}
+		changesArr = append(changesArr, *res.Changes.Email); }
 	if res.Changes.Theme != nil { changesArr = append(changesArr, strconv.FormatBool(*res.Changes.Theme)); }
 
-
-	UpdateUserInfo(cl.User, cl.Rol, *query, changesArr);
-
-	//if updated {
-	//	c.Status(200);
-	//	return c.JSON(fiber.Map{
-	//		"updated":true,
-	//	});
-	//}else{
-	//	c.Status(200);
-	//	return c.JSON(fiber.Map{
-	//		"updated":false,
-	//	});
-	//}
-	return c.SendStatus(200);
+	if !UpdateUserInfo(cl.User, cl.Rol, *query, changesArr){
+		c.Status(200);
+		return c.JSON(fiber.Map{ "updated":false, });
+	}else{
+		c.Status(200);
+		return c.JSON(fiber.Map{ "updated":true, });
+	}
 }
 
 func createUpdateQuery(User int, username, email *string, theme *bool) *string {
-
 	if username == nil && email == nil && theme == nil { return nil; }
 
 	query := "UPDATE `Users` SET ";
@@ -214,7 +205,6 @@ func createUpdateQuery(User int, username, email *string, theme *bool) *string {
 	if email != nil { // cambia
 		if username != nil { query += ", `Email` = ?";
 		}else{ query += "`Email` = ?"; }
-		
 	}
 
 	if theme != nil { // cambia

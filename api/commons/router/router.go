@@ -41,7 +41,7 @@ func RouterSetUp(app *fiber.App) {
 			info.Get("/info",GetInfo);
 			info.Post("/checkpass",CheckPass);
 			info.Post("/update",UpdateUser);
-			//info.Get("/change-info",ChangeInfo);
+			//info.Post("/changePass",UpdatePwd);
 
 	area := api.Group("/area");
 		area.Use(middleware);
