@@ -175,11 +175,11 @@ export default {
       }
 
       switch(this.checkEmail()){
-        case null:  { changes.email= null; }break;
+        case null:  { changes.email = null; }break;
         case -1:    { changes.email = this.userCopy.email; }break;
         case -2:    { emailErr = GetErrMsg('shortEmail'); }break;
         case -3:    { emailErr = GetErrMsg('wrongEmail'); }break;
-        case 0:     { changes.email = this.userCopy.username; }break;
+        case 0:     { changes.email = this.userCopy.email; }break;
         default:    { emailErr = GetErrMsg(); }break;
       }
 
@@ -215,11 +215,11 @@ export default {
       if(changes.username == null && changes.email == null && changes.theme == null)
         return;
 
-
       Axios.post("user/profile/update",{
-        username: changes.username,
-        email: changes.email,
-        theme: changes.theme,
+        //username: changes.username,
+        //email: changes.email,
+        //theme: changes.theme,
+        changes: changes
       }).then((res)=>{
         if(!res.data.updated){
           this.err = true;

@@ -121,7 +121,7 @@ export default{
             }
           })
         }else{
-          if(this.user.pass.localeCompare("") == 0){ //otra forma de comparar
+          if(this.user.pass.localeCompare("") == 0){ //otra forma de comparar dos strings
             Axios.post('login/',{ user: this.user.username }).then((res)=>{
               $(document).ready(()=>{
                 $('#pass').focus();

@@ -147,25 +147,64 @@ func UpdateUser(c *fiber.Ctx) error {
 	cl := c.Locals("claims").(jwt.Claims);
 
 	type response struct {
-		Username string `json:"username"`;
-		Email string `json:"email"`;
-		Theme bool `json:"theme"`;
+		Username *string `json:"username"`;
+		Email *string `json:"email"`;
+		Theme *bool `json:"theme"`;
 	}
-	res := response{};
 
-	if err := json.Unmarshal(c.Body(), &res); err != nil { panic(err); }
+	type changes struct{
+			Changes response `json:"changes"`;
+	}
+	//res := response{};
+	res:= changes{};
+
+	if err := json.Unmarshal(c.Body(), &res); err != nil { return c.SendStatus(400) /*panic(err);*/ }
+
+	fmt.Println("Update user info**********************");
 	fmt.Printf("%+v",res);
 
-	updated := UpdateUserInfo(cl.User, cl.Rol, res.Username, res.Email, res.Theme);
-	if updated {
-		c.Status(200);
-		return c.JSON(fiber.Map{
-			"updated":true,
-		});
-	}else{
-		c.Status(200);
-		return c.JSON(fiber.Map{
-			"updated":false,
-		});
+	if query :=createUpdateQuery(cl.User, res.Changes.Username, res.Changes.Email, res.Changes.Theme); query != nil{
+		fmt.Println("query");
+		fmt.Println(*query);
 	}
+
+	//updated := UpdateUserInfo(cl.User, cl.Rol, res.Username, res.Email, res.Theme);
+	//if updated {
+	//	c.Status(200);
+	//	return c.JSON(fiber.Map{
+	//		"updated":true,
+	//	});
+	//}else{
+	//	c.Status(200);
+	//	return c.JSON(fiber.Map{
+	//		"updated":false,
+	//	});
+	//}
+	return c.SendStatus(200);
+}
+
+func createUpdateQuery(User int, username, email *string, theme *bool) *string {
+
+	if username == nil && email == nil && theme == nil { return nil; }
+
+	query := "UPDATE `Users` SET ";
+
+	if username != nil { // cambia
+			query += "`Name` = ?"
+	}
+
+	if email != nil { // cambia
+		if username != nil { query += ", `Email` = ?";
+		}else{ query += "`Email` = ?"; }
+		
+	}
+
+	if theme != nil { // cambia
+		if username != nil || email != nil { query += ", `Theme` = ?";
+		}else{ query += "`Theme` = ?"; }
+	}
+
+	query += ";";
+
+	return &query;
 }

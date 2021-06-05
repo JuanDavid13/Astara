@@ -97,6 +97,7 @@ func CreateNewUser(user, pass, email string) (int, bool) {
 func GetBasicUserInfo(user int) (string,string) {
   fmt.Println("get basic user info:")
   db := db.GetDb("nonuser");
+
   query := "SELECT U.`Name`, R.`Name` FROM `Users` AS U JOIN `Rols`AS R ON (U.`Id_rol` = R.`Id`) WHERE U.`Id` LIKE ?;";
   stmt, err := db.Prepare(query);
   if err != nil && err != sql.ErrNoRows { return "","";/*panic(err);*/ }
@@ -106,10 +107,6 @@ func GetBasicUserInfo(user int) (string,string) {
   err = stmt.QueryRow(user).Scan(&name,&rol);
   defer stmt.Close();
   if err != nil && err != sql.ErrNoRows { return "","";/*panic(err);*/ }
-
-  fmt.Println("name");
-  fmt.Println(name);
-  fmt.Println(rol);
 
   return name,rol;
 }
