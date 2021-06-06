@@ -34,7 +34,7 @@ import Axios from '@/auth/auth';
   export default{
     name: 'Sidebar',
     props: {username: String},
-    emits: ['openprofile', 'updateAreas'],
+    emits: ['openprofile', 'deleteArea', 'updateAreaName'],
     data() {
       return {
         newArea:"",
@@ -56,10 +56,16 @@ import Axios from '@/auth/auth';
       },
       deleteArea(slug){
         let pos = this.areas.findIndex(area => area.slug === slug);
-        let selector = "#areas div.area:nth-of-type(" + (pos +1) + ")";
-        $(selector).fadeOut('fast',()=>{
-          this.areas.splice(pos,1);
-        });
+        let selector = "#areas > div.area:nth-of-type(" + (pos +1) + ")";
+        console.log(selector);
+        console.log($(selector));
+        $(selector).fadeOut('fast');
+        this.areas.splice(pos,1);
+        console.log(this.areas);
+      },
+      updateAreaName(oldName,name){
+        let pos = this.areas.findIndex(area => area.name === oldName);
+        this.areas[pos].name = name;
       },
       getAreas(){
         Axios.get("/area").then((res)=>{

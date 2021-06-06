@@ -1,7 +1,7 @@
 package models
 
 import (
-  //"fmt"
+  "fmt"
 
 	"database/sql"
 
@@ -184,16 +184,18 @@ func CreateIndexArea(uid int) bool {
   return true;
 }
 
-func ChangeName(uid int , rol, name string) bool {
+func ChangeName(uid int , rol, oldName, name, slug string) bool {
+  fmt.Println(oldName);
+  fmt.Println(name);
 
   db := db.GetDb(rol);
 
-  query := "UPDATE `Areas` SET `Name` = ? WHERE `Id_user` = ?;";
+  query := "UPDATE `Areas` SET `Name` = ?, `Slug` = ? WHERE `Id_user` = ? AND `Name` LIKE ?;";
   stmt, err := db.Prepare(query);
 
-  if err != nil { return false; /*panic(err);*/ }
+  if err != nil { /*return false;*/ panic(err); }
 
-  if _, err := stmt.Exec(name, uid); err != nil { return false; /*panic(err);*/ }
+  if _, err := stmt.Exec(name, slug, uid, oldName); err != nil { /*return false;*/ panic(err); }
 
   return true;
 }

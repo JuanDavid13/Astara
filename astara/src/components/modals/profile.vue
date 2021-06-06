@@ -98,11 +98,15 @@ export default {
     }
   },
   methods: {
-    logOut(){ Axios.get('/auth/logout').then(()=>{ this.$router.push({name:'Login'}) }); },
+    logOut(){ 
+      Axios.get('/auth/logout').then(()=>{ 
+        this.$router.push({name:'Login'}) 
+        if($('#app').hasClass('lightTheme'))
+          $('#app').removeClass('lightTheme');
+      }); 
+    },
     changeUserName(){ this.$emit('changeUser',this.userCopy.username); },
     changeTheme(iswhite){
-      console.log("iswhite");
-      console.log(iswhite);
       if(iswhite) $('#app').addClass('lightTheme');
       else $('#app').removeClass('lightTheme');
     },

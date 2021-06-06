@@ -48,7 +48,7 @@ export default {
     Item,
     Task,
   },
-  emits: ['updateSidebar'],
+  emits: ['updateAreaName','deleteArea'],
   data() {
     return {
       deleteable: false,
@@ -102,17 +102,27 @@ export default {
         console.log(res);
       })
     },
+    getSlugfromName(name){
+      return name.repplace(" ","-").trim();
+    },
     async editAreaName(e){
       if($('#areaName')[0].nodeName.localeCompare("SPAN") == 0){ 
-        $('#areaName').replaceWith("<input id='areaName' type='text' value='" + this.AreaName + "'>");
+        $('#areaName').replaceWith("<input id='areaName' type='text' value='" + this.AreaName + "' minlength='3' maxlength='20'>");
       $(e.target).text('Aceptar');
       }else{
         if($('#areaName').val().localeCompare(this.AreaName) != 0){
-          await Axios.post('/area/edit',{ name: $('#areaName').val() }).then((res)=>{
+          if($('#areaName').val().length < 3){
+            $('#areaName').replaceWith("<span id='areaName' style='text-transform: uppercase;'>"+this.AreaName +"</span>");
+            return;
+          }
+          await Axios.post('/area/edit',{ oldName: this.AreaName ,name: $('#areaName').val() }).then((res)=>{
             if(!res.data.changed){
               this.AreaName = "Error";
             }else{
+              this.$emit('updateAreaName', this.AreaName, $('#areaName').val());
               this.AreaName = $('#areaName').val();
+              let slug = $('#areaName').val();
+              window.history.pushState($('#areaName').val(), $('#areaName').val(), '/area/'+slug);
             }
           });
         }
@@ -144,10 +154,9 @@ export default {
       });
     },
     deleteArea(){
-      this.$emit('updateSidebar',this.$route.params.name);
       Axios.post("/area/delete",{slug:this.$route.params.name}).then((res)=>{
         if(res.data.deleted){
-          this.$emit('updateSidebar',this.$route.params.name);
+          this.$emit('deleteArea',this.$route.params.name);
           this.$router.push({name:'Main'});
         }
       })
@@ -156,7 +165,6 @@ export default {
   async created() {
     const slug = this.$router.currentRoute._value.params.name;
     let data = await AreaCorrespond(slug)
-    console.log(data);
     this.deleteable = data.deleteable;
     this.AreaName = data.areaName;
     //this.Items = JSON.parse(data);
