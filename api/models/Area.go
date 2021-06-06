@@ -179,7 +179,21 @@ func CreateIndexArea(uid int) bool {
   stmt, err := db.Prepare(query);
   if err != nil { return false; /*panic(err);*/ }
 
-  if _, err := stmt.Exec("Index", uid, 0, "index"); err != nil { return false /*panic(err);*/ }
+  if _, err := stmt.Exec("Index", uid, 0, "index"); err != nil { return false; /*panic(err);*/ }
+
+  return true;
+}
+
+func ChangeName(uid int , rol, name string) bool {
+
+  db := db.GetDb(rol);
+
+  query := "UPDATE `Areas` SET `Name` = ? WHERE `Id_user` = ?;";
+  stmt, err := db.Prepare(query);
+
+  if err != nil { return false; /*panic(err);*/ }
+
+  if _, err := stmt.Exec(name, uid); err != nil { return false; /*panic(err);*/ }
 
   return true;
 }

@@ -1,8 +1,12 @@
 <template>
   <div>
-    <span>{{AreaName}}</span>
-    <button @click="addTask">+ Tarea</button>
+    <span id="areaName" style="text-transform: uppercase;">{{AreaName}}</span>
+    <button id="editNameBt" v-if="deleteable" @click="editAreaName" >Editar</button>
+
     <button v-if="deleteable" @click="deleteArea">Eliminar</button>
+
+    <br />
+    <button @click="addTask">+ Tarea</button>
     <form @submit.capture="createTask">
       <input type="text" v-model="task.name" placeholder="Nombre">
       <label>Fecha límite
@@ -98,6 +102,24 @@ export default {
         console.log(res);
       })
     },
+    async editAreaName(e){
+      if($('#areaName')[0].nodeName.localeCompare("SPAN") == 0){ 
+        $('#areaName').replaceWith("<input id='areaName' type='text' value='" + this.AreaName + "'>");
+      $(e.target).text('Aceptar');
+      }else{
+        if($('#areaName').val().localeCompare(this.AreaName) != 0){
+          await Axios.post('/area/edit',{ name: $('#areaName').val() }).then((res)=>{
+            if(!res.data.changed){
+              this.AreaName = "Error";
+            }else{
+              this.AreaName = $('#areaName').val();
+            }
+          });
+        }
+        $('#areaName').replaceWith("<span id='areaName' style='text-transform: uppercase;'>"+this.AreaName +"</span>");
+        $(e.target).text('Editar');
+      }
+    },
     async createTask(e){
       e.preventDefault();
       //let formLenght = e.target.length -1;
@@ -122,7 +144,7 @@ export default {
       });
     },
     deleteArea(){
-          this.$emit('updateSidebar',this.$route.params.name);
+      this.$emit('updateSidebar',this.$route.params.name);
       Axios.post("/area/delete",{slug:this.$route.params.name}).then((res)=>{
         if(res.data.deleted){
           this.$emit('updateSidebar',this.$route.params.name);
@@ -134,6 +156,7 @@ export default {
   async created() {
     const slug = this.$router.currentRoute._value.params.name;
     let data = await AreaCorrespond(slug)
+    console.log(data);
     this.deleteable = data.deleteable;
     this.AreaName = data.areaName;
     //this.Items = JSON.parse(data);

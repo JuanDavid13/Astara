@@ -54,7 +54,7 @@ func AreaCheck(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"correspond":true,
 			"deleteable":false,
-			"name": name,
+			"areaName": name,
 		}); 
 	}
 
@@ -130,3 +130,17 @@ func DeleteArea(c *fiber.Ctx) error {
 		"deleted": true,
 	});
 }
+
+func ChangeAreaName(c *fiber.Ctx) error {
+	cl:= c.Locals("claims").(jwt.Claims);
+
+	type response struct { Name string `json:"name"`; }
+	res := response{};
+	if err := json.Unmarshal(c.Body(),&res); err != nil{ return c.SendStatus(400); }
+
+	c.Status(200);
+	if !ChangeName(cl.User, cl.Rol, res.Name){
+					return c.JSON(fiber.Map{ "changed":false, });
+	}else{	return c.JSON(fiber.Map{ "changed":true, }); }
+
+} 
