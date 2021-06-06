@@ -41,7 +41,7 @@ func AreaCheck(c *fiber.Ctx) error {
 	cl := c.Locals("claims").(jwt.Claims);
 
 	c.Status(200);
-	areaId:= CheckUserArea(cl.User,s.Slug,cl.Rol);
+	areaId, name := CheckUserArea(cl.User,s.Slug,cl.Rol);
 	if areaId == -1 || areaId == 0 {
 		c.Status(200);
 		return c.JSON(fiber.Map{
@@ -49,16 +49,19 @@ func AreaCheck(c *fiber.Ctx) error {
 		}); 
 	}
 	
-	if deleteable := AreaIsDeleteable(areaId, cl.Rol); !deleteable{ 
+	deleteable := AreaIsDeleteable(areaId, cl.Rol);
+	if !deleteable{ 
 		return c.JSON(fiber.Map{
 			"correspond":true,
 			"deleteable":false,
+			"name": name,
 		}); 
 	}
 
 	return c.JSON(fiber.Map{
 		"correspond":true,
 		"deleteable":true,
+		"areaName": name,
 	}); 
 }
 

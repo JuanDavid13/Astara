@@ -1,5 +1,6 @@
 <template>
   <div>
+    <span>{{AreaName}}</span>
     <button @click="addTask">+ Tarea</button>
     <button v-if="deleteable" @click="deleteArea">Eliminar</button>
     <form @submit.capture="createTask">
@@ -47,6 +48,7 @@ export default {
   data() {
     return {
       deleteable: false,
+      AreaName: "",
       Items: [],
       task:{
         name:"",
@@ -133,6 +135,7 @@ export default {
     const slug = this.$router.currentRoute._value.params.name;
     let data = await AreaCorrespond(slug)
     this.deleteable = data.deleteable;
+    this.AreaName = data.areaName;
     //this.Items = JSON.parse(data);
   },
   mounted(){

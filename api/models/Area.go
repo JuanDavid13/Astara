@@ -54,25 +54,28 @@ func GetAreasById (user int, rol string) []Area {
   return areas;
 }
 
-func CheckUserArea(user int, slug,rol string) int {
+func CheckUserArea(user int, slug,rol string) (int,string) {
   db := db.GetDb(rol);
 
-  query := "SELECT `Id` FROM `Areas` WHERE `Id_user` LIKE ? AND `Slug` LIKE ?;";
+  query := "SELECT `Id`,`Name` FROM `Areas` WHERE `Id_user` LIKE ? AND `Slug` LIKE ?;";
   stmt, err := db.Prepare(query);
-  if err != nil { return -1 /*panic(err);*/ }
+  if err != nil { return -1,"" /*panic(err);*/ }
 
 
   row := stmt.QueryRow(user,slug);
-  if err != nil { return -1; /*panic(err);*/ }
+  if err != nil { return -1,""; /*panic(err);*/ }
 
   defer stmt.Close();
   
-  var ( id sql.NullInt64; )
+  var ( 
+    id sql.NullInt64; 
+    name sql.NullString;
+  )
 
-  row.Scan(&id);
-  if !id.Valid || id.Int64 == 0 { return  -1; }
+  row.Scan(&id, &name);
+  if !id.Valid || id.Int64 == 0 || !name.Valid{ return  -1,""; }
 
-  return int(id.Int64);
+  return int(id.Int64), name.String;
 }
 
 func AreaIsDeleteable(areaId int, rol string) bool {
