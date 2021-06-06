@@ -5,7 +5,7 @@
       <div id="areas">
         <p class="noselect splitChar" data-splitting>AREAS</p>
         <router-link :to="{name: 'Main'}">MAIN</router-link>
-        <transition-group name="list">
+        <transition-group name="list" mode="out-in">
           <div class="area" v-for="area in areas" :key="area.name" >
             <router-link :to="{ name: 'Area', params: { name: area.slug } }" >{{area.name}}</router-link>
           </div>
@@ -125,12 +125,13 @@ import Axios from '@/auth/auth';
 
       .list-enter-active,
       .list-leave-active {
-        transition: all 1s ease;
+        transition: all .5s ease;
       }
       .list-enter-from,
       .list-leave-to {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateX(-3rem);
+        position:absolute;
       }
     }
 
