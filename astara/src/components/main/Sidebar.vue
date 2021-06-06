@@ -5,16 +5,17 @@
       <div id="areas">
         <p class="noselect splitChar" data-splitting>AREAS</p>
         <router-link :to="{name: 'Main'}">MAIN</router-link>
-        <div class="area" v-for="area in areas" :key="area.id" >
-          <router-link :to="{ name: 'Area', params: { name: area.slug } }" >{{area.name}}</router-link>
-        </div>
-        <div>
-          <form @submit.capture="addArea">
-            <input id="addArea" v-model="newArea" type="text" minlegth="3" maxlength="20" spellcheck="false" autocomplete="off" placeholder="+ Area">
-          </form>
-
-        </div>
+        <transition-group name="list">
+          <div class="area" v-for="area in areas" :key="area.name" >
+            <router-link :to="{ name: 'Area', params: { name: area.slug } }" >{{area.name}}</router-link>
+          </div>
+        </transition-group>
       </div> 
+      <div>
+        <form @submit.capture="addArea">
+          <input id="addArea" v-model="newArea" type="text" minlegth="3" maxlength="20" spellcheck="false" autocomplete="off" placeholder="+ Area">
+        </form>
+      </div>
       <div>
         <div>
           <div>OOO</div>
@@ -38,7 +39,7 @@ import Axios from '@/auth/auth';
     data() {
       return {
         newArea:"",
-        areas: {},
+        areas: [],
       }
     },
     methods: {
@@ -56,12 +57,11 @@ import Axios from '@/auth/auth';
       },
       deleteArea(slug){
         let pos = this.areas.findIndex(area => area.slug === slug);
-        let selector = "#areas > div.area:nth-of-type(" + (pos +1) + ")";
-        console.log(selector);
-        console.log($(selector));
-        $(selector).fadeOut('fast');
-        this.areas.splice(pos,1);
-        console.log(this.areas);
+        //let selector = "#areas > div.area:nth-of-type(" + (pos +1) + ")";
+        //$(selector).fadeOut("fast",()=>{
+          this.areas.splice(pos,1);
+        //});
+        
       },
       updateAreaName(oldName,name){
         let pos = this.areas.findIndex(area => area.name === oldName);
@@ -122,6 +122,16 @@ import Axios from '@/auth/auth';
       font-size:.9rem;
       overflow-x:hidden;
       overflow-y:scroll;
+
+      .list-enter-active,
+      .list-leave-active {
+        transition: all 1s ease;
+      }
+      .list-enter-from,
+      .list-leave-to {
+        opacity: 0;
+        transform: translateY(30px);
+      }
     }
 
     & > div:last-child {
@@ -138,18 +148,19 @@ import Axios from '@/auth/auth';
       span { overflow:hidden; }
     }
 
-    #addArea{
-      border:none;
-      overflow:hidden;
-      padding: calc(0.5rem + 1px);
 
-      &:hover { cursor:pointer; }
-      &:focus, &:focus-visible{
-        padding:0.5rem;
-        border:1px solid var(--gold);
-        outline:none;
-      }
+  }
 
+  #addArea{
+    border:none;
+    overflow:hidden;
+    padding: calc(0.5rem + 1px);
+
+    &:hover { cursor:pointer; }
+    &:focus, &:focus-visible{
+      padding:0.5rem;
+      border:1px solid var(--gold);
+      outline:none;
     }
 
   }
