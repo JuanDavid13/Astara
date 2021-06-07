@@ -56,9 +56,10 @@ func GetAllTasksOfArea(uid, areaid int, rol string) string {
 
 			if !Id.Valid { task.Id = 0; }else{ task.Id= int(Id.Int64); }
 			if !Name.Valid { task.Name = ""; }else{ task.Name = Name.String; }
-			if !Deadline.Valid { task.Name = ""; }else{ task.Name = Name.String; }
-			if !Children.Valid { task.Id = 0; }else{ task.Id= int(Id.Int64); }
-			if !ChildrenDone.Valid { task.Id = 0; }else{ task.Id= int(Id.Int64); }
+			if !Deadline.Valid { task.Deadline = ""; }else{ task.Deadline = Deadline.String; }
+			if !Dated.Valid { task.Deadline = ""; }else{ task.Dated = Dated.String; }
+			if !Children.Valid { task.Children = 0; }else{ task.Children = int(Children.Int64); }
+			if !ChildrenDone.Valid { task.Id = 0; }else{ task.ChildrenDone = int(ChildrenDone.Int64); }
 			if !Id_parent.Valid { task.Id_parent = 0; }else{ task.Id_parent = int(Id_parent.Int64); }
 
 			//tasks = append(tasks, task);
