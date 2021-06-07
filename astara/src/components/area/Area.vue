@@ -17,7 +17,7 @@
         @leave="leave"
       >
       <div id="tasks" v-for="(task, index) in computedTasks" :key="task.id">
-        <Task :task="task" :data-inex="index" />
+        <Task :task="task" :data-inex="index" @taskDeleted="getTasks" />
       </div>
 
       </transition-group>

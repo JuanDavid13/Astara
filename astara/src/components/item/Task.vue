@@ -15,8 +15,11 @@
 </template>
 
 <script>
+import Axios from '@/auth/auth';
+
 export default {
   name: 'Task',
+  emits: ['taskDeleted'],
   props: {
     task: {
       id: 0,
@@ -42,7 +45,14 @@ export default {
       console.log(this.task.id);
     },
     remove(){
-      console.log(this.task.id);
+      Axios.post('/user/task/delete',{id:this.task.id}).then((res)=>{
+        if(!res.data.deleted)
+          console.log("error");
+        else
+          this.$emit('taskDeleted');
+        //nota:
+        //podría pasarle el id del eliminado y así poder hacer una transición
+      });
     },
   }
 }

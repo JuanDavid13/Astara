@@ -134,3 +134,19 @@ func CreateNewTask(uid, areaid int, rol, name, deadline, dated string) bool {
 
 	return true;
 }
+
+func RemoveTask(uid, id int, rol string) bool {
+  fmt.Println("Remove Task:");
+  db := db.GetDb(rol);
+  
+	query := "DELETE FROM `Targets` WHERE `Id` = ? AND `Id_usu` = ?;"; //double check for security
+
+  stmt, err := db.Prepare(query);
+  if err != nil && err != sql.ErrNoRows { return false; /*panic(err);*/ }
+
+	_, err = stmt.Exec(id, uid);
+  defer stmt.Close();
+  if err != nil && err != sql.ErrNoRows { return false; /*panic(err);*/}
+
+	return true;
+}

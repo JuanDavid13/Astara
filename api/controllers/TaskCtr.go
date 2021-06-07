@@ -45,7 +45,7 @@ func GetAllTasks(c *fiber.Ctx) error {
 	type response struct { Slug string `json:"slug"`; }
 	res := response{};
 
-	if err := json.Unmarshal(c.Body(),&res); err != nil { /*return c.SendStatus(400);*/ panic(err); }
+	if err := json.Unmarshal(c.Body(),&res); err != nil { return c.SendStatus(400); /*panic(err);*/ }
 
 	if res.Slug == "" { return c.SendStatus(400); }
 
@@ -62,5 +62,22 @@ func GetAllTasks(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"tasks":tasks,
 	});
+}
 
+func DeleteTask(c *fiber.Ctx) error {
+	
+	type response struct { Id int `json:"id"`; }
+	res := response{};
+
+	if err := json.Unmarshal(c.Body(),&res); err != nil { return c.SendStatus(400); /*panic(err);*/ }
+
+	if res.Id == 0 { return c.SendStatus(400); }
+
+	cl := c.Locals("claims").(jwt.Claims);
+
+	c.Status(200);
+	if !RemoveTask(cl.User, res.Id, cl.Rol){
+		return c.JSON(fiber.Map{ "deleted":false, });
+	}
+	return c.JSON(fiber.Map{ "deleted":true, });
 }
