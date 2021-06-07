@@ -57,7 +57,10 @@ func GetAllTasks(c *fiber.Ctx) error {
 	if id == -1 { return c.JSON(fiber.Map{ "error":true, }); }
 
 	//create a new task
-	GetAllTasksOfArea(cl.User,id,cl.Rol);
+	tasks := GetAllTasksOfArea(cl.User,id,cl.Rol);
 
-	return c.SendStatus(200);
+	return c.JSON(fiber.Map{
+		"tasks":tasks,
+	});
+
 }

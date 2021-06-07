@@ -1,10 +1,16 @@
 <template>
   <div class="task">
-    <input type="checkbox" v-model=statusCopy disabled>
-    <p>{{task.status}}</p> 
+    <!--<input type="checkbox" v-model=statusCopy disabled>-->
+    <span>{{task.status}}</span>
+    <span>{{task.id}}</span>
     <span>{{task.name}}</span> 
     <span>{{task.deadline}}</span> 
     <span>{{task.dated}}</span>
+    <div>
+      <button>Crear</button>
+      <button>Editar</button>
+      <button>Eliminar</button>
+    </div>
   </div>
 </template>
 
@@ -13,6 +19,7 @@ export default {
   name: 'Task',
   props: {
     task: {
+      id: 0,
       name: "",
       deadline: "",
       dated: "",

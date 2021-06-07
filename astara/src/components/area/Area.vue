@@ -20,17 +20,19 @@
     <Task :task="task" id="newTaks" />
     <!--<p>se abre formulario y se crea una nueva "tarea", las tareas se mueven hacia abajo con margin y luego se hace una animación tope guapa</p>-->
     <input v-model="query" type="text">
-    <transition-group
-      name="search-fade"
-      @before-enter="beforeEnter"
-      @enter="enter"
-      @leave="leave"
-    >
-      <div id="tasks" v-for="(tasks,index) in computedTasks" :key="tasks.id">
-        {{index}}
-        <!--<Item :data-index="index" :name="item.name" :deadline="item.deadline" :done="item.done"/>-->
-      </div>
-    </transition-group>
+    <div>
+      <transition-group
+        name="search-fade"
+        @before-enter="beforeEnter"
+        @enter="enter"
+        @leave="leave"
+      >
+        <div id="tasks" v-for="(task,index) in computedTasks" :key="task.id">
+          <!--<Item :data-index="index" :name="item.name" :deadline="item.deadline" :done="item.done"/>-->
+          <Task :task="task" :data-inex="index" />
+        </div>
+      </transition-group>
+    </div>
     <span id="load">Cargar más</span>
   </div>
 </template>
@@ -178,6 +180,8 @@ export default {
     //this.Items = JSON.parse(data);
     Axios.post('/area/tasks',{slug: this.$route.params.name }).then((res)=>{
       console.log(res);
+      console.log(JSON.parse(res.data.tasks));
+      this.Tasks = JSON.parse(res.data.tasks);
     });
   },
   mounted(){

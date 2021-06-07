@@ -4,6 +4,7 @@ import (
 	"fmt"
 	//"reflect"
 	//"os"
+	"encoding/json"
 
 	db "astara/commons/database"
 	"database/sql"
@@ -23,7 +24,7 @@ type Task struct{
 	Tasks *[]Task `json:"tasks"`;
 }
 
-func GetAllTasksOfArea(uid, areaid int, rol string) map[int]*Task {
+func GetAllTasksOfArea(uid, areaid int, rol string) string {
   fmt.Println("Getting all tasks of area:");
   db := db.GetDb(rol);
 
@@ -52,12 +53,6 @@ func GetAllTasksOfArea(uid, areaid int, rol string) map[int]*Task {
 
 			//Dated
 			//Id_parent
-			
-			//task.Id = int(Id.Int64);
-			//task.Name = Name.String;
-			//task.Deadline = Deadline.String;
-			//task.Children = int(Children.Int64);
-			//task.ChildrenDone = int(ChildrenDone.Int64);
 
 			if !Id.Valid { task.Id = 0; }else{ task.Id= int(Id.Int64); }
 			if !Name.Valid { task.Name = ""; }else{ task.Name = Name.String; }
@@ -78,11 +73,15 @@ func GetAllTasksOfArea(uid, areaid int, rol string) map[int]*Task {
 	nestedTasks := nestTasks(tasks);
 
 	fmt.Println();
-	for _, s := range nestedTasks {
-		fmt.Printf("%+v\n",s);
-	}
+	//for _, s := range nestedTasks {
+	//	fmt.Printf("%+v\n",s);
+	//}
+	arrayTasks := arrayTasks(nestedTasks);
 
-	return tasks;
+	jsonTasks, err := json.Marshal(arrayTasks);
+	if err != nil { panic(err); }
+
+	return string(jsonTasks);
 }
 
 func nestTasks(tasks map[int]*Task) map[int]*Task{
@@ -99,6 +98,14 @@ func nestTasks(tasks map[int]*Task) map[int]*Task{
 	}
 	return tasks;
 };
+
+func arrayTasks(tasks map[int]*Task) []Task{
+	arrayTasks := []Task{};
+	for _,v :=range tasks {
+		arrayTasks = append(arrayTasks,*v);
+	}
+	return arrayTasks;
+}
 
 func CreateNewTask(uid, areaid int, rol, name, deadline, dated string) bool {
   fmt.Println("Create Task:");
