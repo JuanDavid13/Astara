@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"sync"
-	"fmt"
+	//"fmt"
 	//"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -59,8 +59,8 @@ func (db *db) open(user, pwd string) *sql.DB {
 	if db, err := sql.Open(db.driver,user+":"+pwd+"@/"+db.dbName); err != nil {
 		panic(err);
 	}else{ 
-		fmt.Println("lo que devuelve open:");
-		fmt.Println(db);
+		//fmt.Println("lo que devuelve open:");
+		//fmt.Println(db);
 		return db
 	}
 }

@@ -146,6 +146,4 @@ func ChangeAreaName(c *fiber.Ctx) error {
 	if !ChangeName(cl.User, cl.Rol, res.OldName, res.Name, slug){
 					return c.JSON(fiber.Map{ "changed":false, });
 	}else{	return c.JSON(fiber.Map{ "changed":true, }); }
-
-	
 } 

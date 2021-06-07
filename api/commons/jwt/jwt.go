@@ -67,7 +67,6 @@ func IsEmpty(cookieString string) bool {
 
 //resource validation
 func Validate(c *fiber.Ctx) bool {
-	fmt.Println("validate");
 	//fmt.Println(string(c.Request().Header.Peek("Origin")));
 
 	//isValid := false;

@@ -1,7 +1,7 @@
 package router
 
 import (
-	"fmt"
+	//"fmt"
 
 	"github.com/gofiber/fiber/v2"
 
@@ -10,7 +10,6 @@ import (
 )
 
 func middleware(c *fiber.Ctx) error {
-	fmt.Println("middleware");
 	if Validate(c) { return c.Next(); }
 	return c.SendStatus(401);
 }
@@ -36,6 +35,8 @@ func RouterSetUp(app *fiber.App) {
 		//user.Get("/task",GetTargets);
 		task := user.Group("/task");
 			task.Post("/create",CreateTask);
+			//task.Post("/delete",CreateTask);
+			//task.Post("/edit",CreateTask);
 
 		info := user.Group("/profile");
 			info.Get("/info",GetInfo);
@@ -50,5 +51,6 @@ func RouterSetUp(app *fiber.App) {
 		area.Post("/create",CreateArea);
 		area.Post("/delete",DeleteArea);
 		area.Post("/edit",ChangeAreaName);
+		area.Post("/tasks",GetAllTasks);
 }
 

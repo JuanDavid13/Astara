@@ -12,33 +12,52 @@ import (
 	. "astara/models"
 )
 
+
 func CreateTask(c *fiber.Ctx) error {
 	type response struct {
-		Slug string `json:"slug"`;
+		Slug string `json:"slug"`; // to distinc the area it is from
 		Name string `json:"name"`;
 		Deadline string `json:"deadline"`;
 		Dated string `json:"dated"`;
 	}
 	res := response{};
 
-	if err := json.Unmarshal(c.Body(),&res); err != nil { panic(err); }
+	if err := json.Unmarshal(c.Body(),&res); err != nil { /*return c.SendStatus(400);*/ panic(err); }
+
+	if res.Name == "" || res.Deadline == "" || res.Slug == "" { return c.SendStatus(400); }
+
 
 	cl := c.Locals("claims").(jwt.Claims);
 
+	//get the id of the area it is from 
 	id := GetIdFromSlug(cl.User, cl.Rol, res.Slug);
-	if id == -1 {
-		return c.JSON(fiber.Map{
-			"created":false,
-		});
-	}
+	if id == -1 { return c.JSON(fiber.Map{ "created":false, }); }
 
-	created := CreateNewTask(cl.User, id, cl.Rol, res.Name, res.Deadline, res.Dated);
-	if !created {
-		return c.JSON(fiber.Map{
-			"created":false,
-		});
+	//create a new task
+	if !CreateNewTask(cl.User, id, cl.Rol, res.Name, res.Deadline, res.Dated) {
+		return c.JSON(fiber.Map{ "created":false, });
+	}else{
+		return c.JSON(fiber.Map{ "created":true, });
 	}
-	return c.JSON(fiber.Map{
-		"created":true,
-	});
+}
+
+func GetAllTasks(c *fiber.Ctx) error {
+	type response struct { Slug string `json:"slug"`; }
+	res := response{};
+
+	if err := json.Unmarshal(c.Body(),&res); err != nil { /*return c.SendStatus(400);*/ panic(err); }
+
+	if res.Slug == "" { return c.SendStatus(400); }
+
+
+	cl := c.Locals("claims").(jwt.Claims);
+
+	//get the id of the area it is from 
+	id := GetIdFromSlug(cl.User, cl.Rol, res.Slug);
+	if id == -1 { return c.JSON(fiber.Map{ "error":true, }); }
+
+	//create a new task
+	GetAllTasksOfArea(cl.User,id,cl.Rol);
+
+	return c.SendStatus(200);
 }

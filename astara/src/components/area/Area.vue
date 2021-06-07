@@ -2,10 +2,10 @@
   <div>
     <span id="areaName" style="text-transform: uppercase;">{{AreaName}}</span>
     <button id="editNameBt" v-if="deleteable" @click="editAreaName" >Editar</button>
-
     <button v-if="deleteable" @click="deleteArea">Eliminar</button>
 
     <br />
+    <!--    switch goes here    -->
     <button @click="addTask">+ Tarea</button>
     <form @submit.capture="createTask">
       <input type="text" v-model="task.name" placeholder="Nombre">
@@ -26,8 +26,9 @@
       @enter="enter"
       @leave="leave"
     >
-      <div id="items" v-for="(item,index) in computedTasks" :key="item.name">
-        <Item :data-index="index" :name="item.name" :deadline="item.deadline" :done="item.done"/>
+      <div id="tasks" v-for="(tasks,index) in computedTasks" :key="tasks.id">
+        {{index}}
+        <!--<Item :data-index="index" :name="item.name" :deadline="item.deadline" :done="item.done"/>-->
       </div>
     </transition-group>
     <span id="load">Cargar más</span>
@@ -35,8 +36,6 @@
 </template>
 
 <script>
-import Item from '@/components/main/Item.vue';
-
 import Task from '@/components/item/Task.vue';
 import Axios, { AreaCorrespond }from '@/auth/auth';
 
@@ -45,7 +44,6 @@ import $ from 'jquery';
 export default {
   name: 'Area',
   components: {
-    Item,
     Task,
   },
   emits: ['updateAreaName','deleteArea'],
@@ -53,19 +51,24 @@ export default {
     return {
       deleteable: false,
       AreaName: "",
-      Items: [],
+      Tasks: [],
+      Goals: [],
       task:{
         name:"",
         deadline:"",
         dated:"",
         status:false,
       },
+      goal: {
+        name:"",
+        deadline:"",
+      },
       query:"",
     }
   },
   computed: {
     computedTasks(){
-      return this.Items.filter(task  => {
+      return this.Tasks.filter(task  => {
         return task.name.toLowerCase().indexOf(this.query.toLowerCase()) !== -1;
       });
     }
@@ -134,10 +137,15 @@ export default {
       e.preventDefault();
       //let formLenght = e.target.length -1;
 
-      const name  = e.target[0].value;
-      const deadline = e.target[1].value;
-      const dated =  e.target[2].value;
+      let name  = e.target[0].value;
+      let deadline = e.target[1].value;
+      let dated =  e.target[2].value;
       
+      if(name == "" || deadline == ""){
+        console.log("error");
+        return;
+      }
+
       Axios.post('/user/task/create',{
         slug:this.$route.params.name,
         name:name,
@@ -148,8 +156,8 @@ export default {
         if(!res.data.created){
           console.log("error");
         }else{
-          let data = await AreaCorrespond(this.$route.params.name);
-          this.Items = JSON.parse(data);
+          //let data = await AreaCorrespond(this.$route.params.name);
+          //this.Items = JSON.parse(data);
         }
       });
     },
@@ -168,6 +176,9 @@ export default {
     this.deleteable = data.deleteable;
     this.AreaName = data.areaName;
     //this.Items = JSON.parse(data);
+    Axios.post('/area/tasks',{slug: this.$route.params.name }).then((res)=>{
+      console.log(res);
+    });
   },
   mounted(){
     const options = {
