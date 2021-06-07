@@ -7,18 +7,7 @@
     <br />
     <!--    switch goes here    -->
     <button @click="addTask">+ Tarea</button>
-    <form @submit.capture="createTask">
-      <input type="text" v-model="task.name" placeholder="Nombre">
-      <label>Fecha límite
-        <input type="date" v-model="task.deadline" placeholder="Fecha límite">
-      </label>
-      <label>Lo voy a hacer el día
-        <input type="date" v-model="task.dated" placeholder="fechado para">
-      </label>
-      <button type="submit">Añadir</button>
-    </form>
-    <Task :task="task" id="newTaks" />
-    <!--<p>se abre formulario y se crea una nueva "tarea", las tareas se mueven hacia abajo con margin y luego se hace una animación tope guapa</p>-->
+    <CreateTask @taskCreated="getTasks"/>
     <input v-model="query" type="text">
     <div>
       <transition-group
@@ -27,10 +16,10 @@
         @enter="enter"
         @leave="leave"
       >
-        <div id="tasks" v-for="(task,index) in computedTasks" :key="task.id">
-          <!--<Item :data-index="index" :name="item.name" :deadline="item.deadline" :done="item.done"/>-->
-          <Task :task="task" :data-inex="index" />
-        </div>
+      <div id="tasks" v-for="(task, index) in computedTasks" :key="task.id">
+        <Task :task="task" :data-inex="index" />
+      </div>
+
       </transition-group>
     </div>
     <span id="load">Cargar más</span>
@@ -39,6 +28,8 @@
 
 <script>
 import Task from '@/components/item/Task.vue';
+import CreateTask from '@/components/item/CreateTask.vue';
+
 import Axios, { AreaCorrespond }from '@/auth/auth';
 
 import $ from 'jquery';
@@ -47,6 +38,7 @@ export default {
   name: 'Area',
   components: {
     Task,
+    CreateTask,
   },
   emits: ['updateAreaName','deleteArea'],
   data() {
@@ -87,7 +79,7 @@ export default {
       let index = $(tasks).children(1)[0].dataset.index;
       $(tasks).css({
         "opacity":1,
-        "height":"3rem",
+        "height":"4rem",
         "transform":"translateX(0vw)",
         "transition":"all .25s ease",
         "transition-delay":(index*0.1)+"s",
@@ -135,34 +127,6 @@ export default {
         $(e.target).text('Editar');
       }
     },
-    async createTask(e){
-      e.preventDefault();
-      //let formLenght = e.target.length -1;
-
-      let name  = e.target[0].value;
-      let deadline = e.target[1].value;
-      let dated =  e.target[2].value;
-      
-      if(name == "" || deadline == ""){
-        console.log("error");
-        return;
-      }
-
-      Axios.post('/user/task/create',{
-        slug:this.$route.params.name,
-        name:name,
-        deadline:deadline,
-        dated:dated,
-      }).then(async (res)=>{
-        console.log(res);
-        if(!res.data.created){
-          console.log("error");
-        }else{
-          //let data = await AreaCorrespond(this.$route.params.name);
-          //this.Items = JSON.parse(data);
-        }
-      });
-    },
     deleteArea(){
       Axios.post("/area/delete",{slug:this.$route.params.name}).then((res)=>{
         if(res.data.deleted){
@@ -170,19 +134,24 @@ export default {
           this.$router.push({name:'Main'});
         }
       })
-    }
+    },
+    getTasks(){
+      Axios.post('/area/tasks',{slug: this.$route.params.name }).then((res)=>{
+        this.Tasks = JSON.parse(res.data.tasks);
+      });
+    },
   },
   async created() {
     const slug = this.$router.currentRoute._value.params.name;
     let data = await AreaCorrespond(slug)
     this.deleteable = data.deleteable;
     this.AreaName = data.areaName;
-    //this.Items = JSON.parse(data);
-    Axios.post('/area/tasks',{slug: this.$route.params.name }).then((res)=>{
-      console.log(res);
-      console.log(JSON.parse(res.data.tasks));
-      this.Tasks = JSON.parse(res.data.tasks);
-    });
+    
+    this.getTasks();
+
+    //Axios.post('/area/tasks',{slug: this.$route.params.name }).then((res)=>{
+    //  this.Tasks = JSON.parse(res.data.tasks);
+    //});
   },
   mounted(){
     const options = {
@@ -205,7 +174,7 @@ export default {
   }
 }
 </script>
-<style>
+<style lang="scss">
 #newTask{
   border:2px solid red;
   border-radius:5px;

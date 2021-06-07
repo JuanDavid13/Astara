@@ -7,9 +7,9 @@
     <span>{{task.deadline}}</span> 
     <span>{{task.dated}}</span>
     <div>
-      <button>Crear</button>
-      <button>Editar</button>
-      <button>Eliminar</button>
+      <button @click="createNested">Crear</button>
+      <button @click="edit">Editar</button>
+      <button @click="remove">Eliminar</button>
     </div>
   </div>
 </template>
@@ -34,7 +34,16 @@ export default {
   methods: {
     setNew(){
       this.statusCopy = this.task.status;
-    }
+    },
+    createNested(){
+      console.log(this.task.id);
+    },
+    edit(){
+      console.log(this.task.id);
+    },
+    remove(){
+      console.log(this.task.id);
+    },
   }
 }
 
@@ -42,6 +51,7 @@ export default {
 
 <style lang="scss">
 .task{
+  height:4rem;
   padding:15px;
 
   border:1px solid var(--tertiary);
