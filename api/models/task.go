@@ -24,16 +24,16 @@ type Task struct{
 	Tasks *[]Task `json:"tasks"`;
 }
 
-func GetAllTasksOfArea(uid, areaid int, rol string) string {
-  fmt.Println("Getting all tasks of area:");
+func GetPaginatedTasksOfArea(uid, areaId, offset int, rol string) string {
+  fmt.Println("Getting paginated tasks of area:");
   db := db.GetDb(rol);
 
-	query := "SELECT TR.`Id`, TR.`Id_parent`, TR.`Name`, TR.`Deadline`,TR.`Children`,TR.`ChildrenDone`, TS.`Dated` FROM `Targets` AS TR JOIN `Task` AS TS ON(TR.`Id` = TS.`Id_target`) WHERE TR.`Id_usu` = ? AND TR.`Id_area` = ? AND TR.`Id_status` = ? ORDER BY TR.`Id` DESC;";
+	query := "SELECT TR.`Id`, TR.`Id_parent`, TR.`Name`, TR.`Deadline`,TR.`Children`,TR.`ChildrenDone`, TS.`Dated` FROM `Targets` AS TR JOIN `Task` AS TS ON(TR.`Id` = TS.`Id_target`) WHERE TR.`Id_usu` = ? AND TR.`Id_area` = ? AND TR.`Id_status` = ? ORDER BY TR.`Id` DESC LIMIT ?, 7;";
 
 	stmt, err := db.Prepare(query);
 	if err != nil { panic(err); }
 
-	rows, err := stmt.Query(uid,areaid,50);
+	rows, err := stmt.Query(uid,areaId,50, offset);
 	defer stmt.Close();
 
 	var (
@@ -41,7 +41,6 @@ func GetAllTasksOfArea(uid, areaid int, rol string) string {
 		Name, Deadline, Dated sql.NullString;
 	)
 
-	//tasks := []Task{};
 	tasks := make(map[int]*Task);
 
 	for rows.Next(){
@@ -59,7 +58,6 @@ func GetAllTasksOfArea(uid, areaid int, rol string) string {
 			if !ChildrenDone.Valid { task.Id = 0; }else{ task.ChildrenDone = int(ChildrenDone.Int64); }
 			if !Id_parent.Valid { task.Id_parent = 0; }else{ task.Id_parent = int(Id_parent.Int64); }
 
-			//fmt.Println(task);
 			tasks[int(Id.Int64)] = &task;
 		}
 	}
@@ -69,10 +67,58 @@ func GetAllTasksOfArea(uid, areaid int, rol string) string {
 	
 	nestedTasks := nestTasks(tasks);
 
-	fmt.Println();
-	//for _, s := range nestedTasks {
-	//	fmt.Printf("%+v\n",s);
-	//}
+	arrayTasks := arrayTasks(nestedTasks);
+
+	jsonTasks, err := json.Marshal(arrayTasks);
+	if err != nil { panic(err); }
+
+	return string(jsonTasks);
+
+}
+
+func GetAllTasksOfArea(uid, areaid int, rol string) string {
+  fmt.Println("Getting all tasks of area:");
+  db := db.GetDb(rol);
+
+	query := "SELECT TR.`Id`, TR.`Id_parent`, TR.`Name`, TR.`Deadline`,TR.`Children`,TR.`ChildrenDone`, TS.`Dated` FROM `Targets` AS TR JOIN `Task` AS TS ON(TR.`Id` = TS.`Id_target`) WHERE TR.`Id_usu` = ? AND TR.`Id_area` = ? AND TR.`Id_status` = ? ORDER BY TR.`Id` DESC;";
+
+	stmt, err := db.Prepare(query);
+	if err != nil { panic(err); }
+
+	rows, err := stmt.Query(uid,areaid,50);
+	defer stmt.Close();
+
+	var (
+		Id, Id_parent, Children, ChildrenDone sql.NullInt64;
+		Name, Deadline, Dated sql.NullString;
+	)
+
+	tasks := make(map[int]*Task);
+
+	for rows.Next(){
+		err := rows.Scan(&Id, &Id_parent, &Name, &Deadline, &Children, &ChildrenDone, &Dated);
+		if err != nil { panic(err); }
+
+		if Id.Valid  || Name.Valid || Deadline.Valid || Children.Valid || ChildrenDone.Valid {
+			task := Task{};
+
+			if !Id.Valid { task.Id = 0; }else{ fmt.Println(Id.Int64);task.Id= int(Id.Int64); }
+			if !Name.Valid { task.Name = ""; }else{ task.Name = Name.String; }
+			if !Deadline.Valid { task.Deadline = ""; }else{ task.Deadline = Deadline.String; }
+			if !Dated.Valid { task.Deadline = ""; }else{ task.Dated = Dated.String; }
+			if !Children.Valid { task.Children = 0; }else{ task.Children = int(Children.Int64); }
+			if !ChildrenDone.Valid { task.Id = 0; }else{ task.ChildrenDone = int(ChildrenDone.Int64); }
+			if !Id_parent.Valid { task.Id_parent = 0; }else{ task.Id_parent = int(Id_parent.Int64); }
+
+			tasks[int(Id.Int64)] = &task;
+		}
+	}
+	for _, s := range tasks{
+		fmt.Printf("%+v\n",s);
+	}
+	
+	nestedTasks := nestTasks(tasks);
+
 	arrayTasks := arrayTasks(nestedTasks);
 
 	jsonTasks, err := json.Marshal(arrayTasks);

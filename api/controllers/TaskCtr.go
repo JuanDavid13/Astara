@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	//"fmt"
+	"fmt"
 	//"reflect"
 
 	"encoding/json"
@@ -39,6 +39,33 @@ func CreateTask(c *fiber.Ctx) error {
 	}else{
 		return c.JSON(fiber.Map{ "created":true, });
 	}
+}
+
+func GetPaginatedTasks(c *fiber.Ctx) error {
+	type response struct {
+		Slug string `json:"slug"`;
+		Offset int `json:"offset"`;
+	}
+	res := response{};
+
+	fmt.Println(res.Offset);
+	fmt.Println(res.Slug);
+
+	if err := json.Unmarshal(c.Body(), &res); err != nil { panic(err); /*return c.SendStatus(400);*/ }
+	if res.Offset < 0  || res.Slug == "" { return c.SendStatus(404); }
+
+	cl := c.Locals("claims").(jwt.Claims);
+	
+	id := GetIdFromSlug(cl.User, cl.Rol, res.Slug);
+	if id == -1 { return c.JSON(fiber.Map{ "error":true, }); }
+
+	tasks := GetPaginatedTasksOfArea(cl.User, id, res.Offset, cl.Rol);
+
+	return c.JSON(fiber.Map{
+		"error":false,
+		"tasks":tasks,
+	});
+
 }
 
 func GetAllTasks(c *fiber.Ctx) error {

@@ -23,7 +23,7 @@
 
       </transition-group>
     </div>
-    <span id="load">Cargar más</span>
+    <span v-if="!allLoaded" id="load">Cargar más</span>
   </div>
 </template>
 
@@ -59,6 +59,8 @@ export default {
         deadline:"",
       },
       query:"",
+      total:10,
+      allLoaded: false,
     }
   },
   computed: {
@@ -145,21 +147,45 @@ export default {
     this.deleteable = data.deleteable;
     this.AreaName = data.areaName;
     
-    this.getTasks();
+    //this.getTasks();
   },
   mounted(){
     const options = {
       root: null,
-      threshold: 0.2,
-      rootMargin: "-10px"
+      //threshold: 0.3,
+      threshold: 1,
+      //rootMargin: "-50px"
+      rootMargin: "0px"
     };
 
     $('#load').ready(()=>{
       let observer = new IntersectionObserver((entries)=>{
         entries.forEach(entry =>{
-          if(!entry.isIntersecting || entry.intersectionRatio == 1)
-            return;
-          console.log(entry);
+          //if(!entry.isIntersecting || entry.intersectionRatio == 1)
+            //return;
+          if(!this.allLoaded){
+            console.log(entry);
+            //setInterval(()=>{
+              if(entry.isIntersecting){
+                console.log(entry);
+                console.log('asked form more');
+
+                Axios.post('/area/paginated-tasks',{
+                  offset: this.Tasks.length,
+                  slug:this.$route.params.name
+                }).then((res)=>{
+                  if(res.data.error){
+                    console.log('error');
+                  }else{
+                    this.Tasks = this.Tasks.concat(JSON.parse(res.data.tasks));
+
+                    if(this.Tasks.length >= this.total)
+                      this.allLoaded = true;
+                  }
+                });
+              }
+            //},3000);
+          }
         });
       },options);
 
