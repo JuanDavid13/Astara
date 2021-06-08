@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="areaSection">
     <span id="areaName" style="text-transform: uppercase;">{{AreaName}}</span>
     <button id="editNameBt" v-if="deleteable" @click="editAreaName" >Editar</button>
     <button v-if="deleteable" @click="deleteArea">Eliminar</button>
@@ -15,9 +15,10 @@
         @before-enter="beforeEnter"
         @enter="enter"
         @leave="leave"
+        mode="out-in"
       >
       <div id="tasks" v-for="(task, index) in computedTasks" :key="task.id">
-        <Task :task="task" :data-inex="index" @taskDeleted="getTasks" />
+        <Task :task="task" :data-index="index" @taskDeleted="getTasks" @getTasks="getTasks"/>
       </div>
 
       </transition-group>
@@ -69,35 +70,32 @@ export default {
   },
   methods: {
     beforeEnter(tasks){
+      let index = $(tasks).children(1)[0].dataset.index;
       $(tasks).css({
         "opacity":0,
-        "height":0,
-        "transform":"translateX(5vw)",
+        //"height":0,
+        "transform":"translateX(-5vw)",
+        "transition":"all .5s ease-in-out",
+        "transition-delay":(index*.1)+"s",
       });
     },
     enter(tasks){
-      let index = $(tasks).children(1)[0].dataset.index;
-      $(tasks).css({
-        "opacity":1,
-        "height":"4rem",
-        "transform":"translateX(0vw)",
-        "transition":"all .25s ease",
-        "transition-delay":(index*0.1)+"s",
+      $('.areaSection').ready(()=>{
+        $(tasks).css({
+          "opacity":1,
+          //"height":"4rem",
+          "transform":"translateX(0vw)",
+          "transition":"all .5s ease-in-out",
+        });
       });
     },
     leave(tasks){
       $(tasks).css({
         "opacity":0,
         "height":0,
+        "transition":"all .5s ease-in-out",
         "transform":"translateX(-5vw)",
       });
-    },
-    //delete from here
-    getItemsFromAreas(slug) {
-      console.log(slug);
-      Axios.get('/area').then((res)=>{
-        console.log(res);
-      })
     },
     getSlugfromName(name){
       return name.repplace(" ","-").trim();
@@ -148,10 +146,6 @@ export default {
     this.AreaName = data.areaName;
     
     this.getTasks();
-
-    //Axios.post('/area/tasks',{slug: this.$route.params.name }).then((res)=>{
-    //  this.Tasks = JSON.parse(res.data.tasks);
-    //});
   },
   mounted(){
     const options = {
@@ -175,6 +169,9 @@ export default {
 }
 </script>
 <style lang="scss">
+.areaSection{
+  padding:1.5rem;
+}
 #newTask{
   border:2px solid red;
   border-radius:5px;

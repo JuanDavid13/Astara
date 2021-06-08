@@ -81,3 +81,26 @@ func DeleteTask(c *fiber.Ctx) error {
 	}
 	return c.JSON(fiber.Map{ "deleted":true, });
 }
+
+func EditTask(c *fiber.Ctx) error {
+	type response struct {
+		Name string `json:"name"`;
+		Deadline string `json:"deadline"`;
+		Dated string `json:"dated"`;
+		TaskId int `json:"task_id"`;
+	}	
+	res := response{};
+
+	if err := json.Unmarshal(c.Body(), &res); err != nil { panic(err); }
+
+	if res.Name == "" || res.Deadline == "" || res.Dated == "" || res.TaskId <= 0{ return c.SendStatus(400); }
+	
+	cl := c.Locals("claims").(jwt.Claims);
+
+
+	if !UpdateTask(cl.User, res.TaskId, cl.Rol, res.Name, res.Deadline, res.Dated) {
+		return c.JSON(fiber.Map{ "updated":false });
+	}else{
+		return c.JSON(fiber.Map{ "updated":true });
+	}
+}

@@ -1,4 +1,4 @@
-package models;
+package models
 
 import (
 	"fmt"
@@ -28,7 +28,7 @@ func GetAllTasksOfArea(uid, areaid int, rol string) string {
   fmt.Println("Getting all tasks of area:");
   db := db.GetDb(rol);
 
-	query := "SELECT TR.`Id`, TR.`Id_parent`, TR.`Name`, TR.`Deadline`,TR.`Children`,TR.`ChildrenDone`, TS.`Dated` FROM `Targets` AS TR JOIN `Task` AS TS ON(TR.`Id` = TS.`Id_target`) WHERE TR.`Id_usu` = ? AND TR.`Id_area` = ? AND TR.`Id_status` = ?;";
+	query := "SELECT TR.`Id`, TR.`Id_parent`, TR.`Name`, TR.`Deadline`,TR.`Children`,TR.`ChildrenDone`, TS.`Dated` FROM `Targets` AS TR JOIN `Task` AS TS ON(TR.`Id` = TS.`Id_target`) WHERE TR.`Id_usu` = ? AND TR.`Id_area` = ? AND TR.`Id_status` = ? ORDER BY TR.`Id` DESC;";
 
 	stmt, err := db.Prepare(query);
 	if err != nil { panic(err); }
@@ -51,10 +51,7 @@ func GetAllTasksOfArea(uid, areaid int, rol string) string {
 		if Id.Valid  || Name.Valid || Deadline.Valid || Children.Valid || ChildrenDone.Valid {
 			task := Task{};
 
-			//Dated
-			//Id_parent
-
-			if !Id.Valid { task.Id = 0; }else{ task.Id= int(Id.Int64); }
+			if !Id.Valid { task.Id = 0; }else{ fmt.Println(Id.Int64);task.Id= int(Id.Int64); }
 			if !Name.Valid { task.Name = ""; }else{ task.Name = Name.String; }
 			if !Deadline.Valid { task.Deadline = ""; }else{ task.Deadline = Deadline.String; }
 			if !Dated.Valid { task.Deadline = ""; }else{ task.Dated = Dated.String; }
@@ -62,8 +59,7 @@ func GetAllTasksOfArea(uid, areaid int, rol string) string {
 			if !ChildrenDone.Valid { task.Id = 0; }else{ task.ChildrenDone = int(ChildrenDone.Int64); }
 			if !Id_parent.Valid { task.Id_parent = 0; }else{ task.Id_parent = int(Id_parent.Int64); }
 
-			//tasks = append(tasks, task);
-			fmt.Println(task);
+			//fmt.Println(task);
 			tasks[int(Id.Int64)] = &task;
 		}
 	}
@@ -148,6 +144,31 @@ func RemoveTask(uid, id int, rol string) bool {
 	_, err = stmt.Exec(id, uid);
   defer stmt.Close();
   if err != nil && err != sql.ErrNoRows { return false; /*panic(err);*/}
+
+	return true;
+}
+
+func UpdateTask(uid, taskId int, rol, name, deadline, dated string) bool {
+  fmt.Println("Update Task:");
+  db := db.GetDb(rol);
+  
+	queryTarget := "UPDATE `Targets` SET Name = ?, Deadline = ? WHERE Id = ?;";
+
+  stmt, err := db.Prepare(queryTarget);
+  if err != nil && err != sql.ErrNoRows { /*return false;*/ panic(err); }
+
+	_, err = stmt.Exec(name, deadline, taskId);
+  defer stmt.Close();
+  if err != nil && err != sql.ErrNoRows { /*return false;*/ panic(err);}
+
+	queryTask := "UPDATE `Task` SET Dated = ? WHERE Id_target = ?;";
+
+  stmt, err = db.Prepare(queryTask);
+  if err != nil && err != sql.ErrNoRows { /*return false;*/ panic(err); }
+
+	_, err = stmt.Exec(dated, taskId);
+  defer stmt.Close();
+  if err != nil && err != sql.ErrNoRows { /*return false;*/ panic(err);}
 
 	return true;
 }

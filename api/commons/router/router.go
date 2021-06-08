@@ -36,7 +36,7 @@ func RouterSetUp(app *fiber.App) {
 		task := user.Group("/task");
 			task.Post("/create",CreateTask);
 			task.Post("/delete",DeleteTask);
-			//task.Post("/edit",CreateTask);
+			task.Post("/edit",EditTask);
 
 		info := user.Group("/profile");
 			info.Get("/info",GetInfo);
