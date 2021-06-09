@@ -1,7 +1,8 @@
 package controllers
 
 import (
-	"fmt"
+	//"fmt"
+	"strconv"
 	//reflect
 
 	"encoding/json"
@@ -34,7 +35,7 @@ func CreateGoal(c *fiber.Ctx) error {
 	if id == -1 { return c.JSON(fiber.Map{ "created":false, }); }
 
 	//create a new task
-	if !CreateNewTask(cl.User, id, cl.Rol, res.Name, res.Deadline, res.Description) {
+	if !CreateNewGoal(cl.User, id, cl.Rol, res.Name, res.Deadline, res.Description) {
 		return c.JSON(fiber.Map{ "created":false, });
 	}else{
 		return c.JSON(fiber.Map{ "created":true, });
@@ -42,24 +43,33 @@ func CreateGoal(c *fiber.Ctx) error {
 }
 
 func GetPaginatedGoals(c *fiber.Ctx) error {
-	type response struct {
-		Slug string `json:"slug"`;
-		Offset int `json:"offset"`;
-	}
-	res := response{};
+	//type response struct {
+	//	Slug string `json:"slug"`; //--> llega como parametro
+	//	Offset int `json:"offset"`; //--> llega como parametro
+	//	//cambiar offset por limit --> primera solucion
+	//}
+	//
+	//res := response{};
 
-	fmt.Println(res.Offset);
-	fmt.Println(res.Slug);
+	//fmt.Println(res.Offset);
+	//fmt.Println(res.Slug);
 
-	if err := json.Unmarshal(c.Body(), &res); err != nil { panic(err); /*return c.SendStatus(400);*/ }
-	if res.Offset < 0  || res.Slug == "" { return c.SendStatus(404); }
+	//if err := json.Unmarshal(c.Body(), &res); err != nil { panic(err); /*return c.SendStatus(400);*/ }
+
+	slug := c.Params("slug");
+	offset := c.Params("offset");
+
+	offsetInt, err := strconv.Atoi(offset);
+	if err != nil { panic(err); /*return c.SendStatus(400);*/ }
+
+	if offsetInt < 0  || slug == "" { return c.SendStatus(400); }
 
 	cl := c.Locals("claims").(jwt.Claims);
 	
-	id := GetIdFromSlug(cl.User, cl.Rol, res.Slug);
+	id := GetIdFromSlug(cl.User, cl.Rol, slug);
 	if id == -1 { return c.JSON(fiber.Map{ "error":true, }); }
 
-	tasks := GetPaginatedTasksOfArea(cl.User, id, res.Offset, cl.Rol);
+	tasks := GetPaginated(cl.User, id, offsetInt, cl.Rol);
 
 	return c.JSON(fiber.Map{
 		"error":false,
@@ -106,31 +116,29 @@ func DeleteGoal(c *fiber.Ctx) error {
 	cl := c.Locals("claims").(jwt.Claims);
 
 	c.Status(200);
-	if !RemoveTask(cl.User, res.Id, cl.Rol){
+	if !RemoveGoal(cl.User, res.Id, cl.Rol){
 		return c.JSON(fiber.Map{ "deleted":false, });
 	}
+
 	return c.JSON(fiber.Map{ "deleted":true, });
 }
 
 func EditGoal(c *fiber.Ctx) error {
 	type response struct {
 		Name string `json:"name"`;
-		Deadline string `json:"deadline"`;
-		Dated string `json:"dated"`;
-		TaskId int `json:"task_id"`;
+		Description string `json:"description"`;
+		GoalId int `json:"goalId"`;
 	}	
 	res := response{};
 
-	if err := json.Unmarshal(c.Body(), &res); err != nil { panic(err); }
+	if err := json.Unmarshal(c.Body(), &res); err != nil { /*return c.SendStatus(400);*/ panic(err); }
 
-	if res.Name == "" || res.Deadline == "" || res.Dated == "" || res.TaskId <= 0{ return c.SendStatus(400); }
+	if res.Name == "" || res.Description == "" || res.GoalId <= 0{ return c.SendStatus(400); }
 	
 	cl := c.Locals("claims").(jwt.Claims);
 
-
-	if !UpdateTask(cl.User, res.TaskId, cl.Rol, res.Name, res.Deadline, res.Dated) {
+	if !UpdateExistingGoal(cl.User, res.GoalId, cl.Rol, res.Name, res.Description) {
 		return c.JSON(fiber.Map{ "updated":false });
 	}else{
-		return c.JSON(fiber.Map{ "updated":true });
-	}
+		return c.JSON(fiber.Map{ "updated":true }); }
 }
