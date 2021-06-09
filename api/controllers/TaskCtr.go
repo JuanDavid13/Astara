@@ -68,11 +68,13 @@ func GetPaginatedTasks(c *fiber.Ctx) error {
 
 }
 
+//delete
+/*
 func GetAllTasks(c *fiber.Ctx) error {
 	type response struct { Slug string `json:"slug"`; }
 	res := response{};
 
-	if err := json.Unmarshal(c.Body(),&res); err != nil { return c.SendStatus(400); /*panic(err);*/ }
+	//if err := json.Unmarshal(c.Body(),&res); err != nil { return c.SendStatus(400); /*panic(err); }
 
 	if res.Slug == "" { return c.SendStatus(400); }
 
@@ -90,6 +92,7 @@ func GetAllTasks(c *fiber.Ctx) error {
 		"tasks":tasks,
 	});
 }
+*/
 
 func DeleteTask(c *fiber.Ctx) error {
 	

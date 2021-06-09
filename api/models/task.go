@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"sort"
 	//"reflect"
 	//"os"
 	"encoding/json"
@@ -67,7 +68,14 @@ func GetPaginatedTasksOfArea(uid, areaId, offset int, rol string) string {
 	
 	nestedTasks := nestTasks(tasks);
 
-	arrayTasks := arrayTasks(nestedTasks);
+	sortedIds:= make([]int, 0 ,len(nestedTasks));
+	for k := range nestedTasks {
+		sortedIds= append(sortedIds, k);
+	}
+
+	sort.Ints(sortedIds);
+
+	arrayTasks := arrayTasks(sortedIds, nestedTasks);
 
 	jsonTasks, err := json.Marshal(arrayTasks);
 	if err != nil { panic(err); }
@@ -75,7 +83,8 @@ func GetPaginatedTasksOfArea(uid, areaId, offset int, rol string) string {
 	return string(jsonTasks);
 
 }
-
+//delete
+/*
 func GetAllTasksOfArea(uid, areaid int, rol string) string {
   fmt.Println("Getting all tasks of area:");
   db := db.GetDb(rol);
@@ -117,15 +126,16 @@ func GetAllTasksOfArea(uid, areaid int, rol string) string {
 		fmt.Printf("%+v\n",s);
 	}
 	
-	nestedTasks := nestTasks(tasks);
+	//nestedTasks := nestTasks(tasks);
 
-	arrayTasks := arrayTasks(nestedTasks);
+	//arrayTasks := arrayTasks(nestedTasks);
 
 	jsonTasks, err := json.Marshal(arrayTasks);
 	if err != nil { panic(err); }
 
 	return string(jsonTasks);
 }
+*/
 
 func nestTasks(tasks map[int]*Task) map[int]*Task{
 	for _, v := range tasks	{
@@ -142,10 +152,13 @@ func nestTasks(tasks map[int]*Task) map[int]*Task{
 	return tasks;
 };
 
-func arrayTasks(tasks map[int]*Task) []Task{
+//func arrayTasks(tasks map[int]*Task) []Task{
+func arrayTasks(order []int, tasks map[int]*Task) []Task{
 	arrayTasks := []Task{};
-	for _,v :=range tasks {
-		arrayTasks = append(arrayTasks,*v);
+	//for _,v :=range tasks {
+	for _,v :=range order {
+		//arrayTasks = append(arrayTasks,*v);
+		arrayTasks = append(arrayTasks,*tasks[v]);
 	}
 	return arrayTasks;
 }

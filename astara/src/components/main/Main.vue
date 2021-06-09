@@ -1,57 +1,53 @@
 <template>
   <div id="main">
-  <button>+ Tarea</button>
-  <button>+ Objetivo</button>
-  <!--<p class="splitChar" data-splitting>Todos los objetivos</p>
-  <div id="items" v-for="item in Items" :key="item.name">
-    <Item :name="item.name" :deadline="item.deadline" />
-  </div>-->
-
-  <!--<p>Objetivos del usuario</p>
-  <div id="goals" v-for="goal in DashGoals" :key="goal.id">
-    <DashGoal :id="goal.id" :name="goal.name" :deadline="goal.deadline" :progress="goal.progress" />
-  </div>-->
-
-  <!--<div @click="hideModal" id="modal">
-    <div id="modalCont">
-      <span>Hello</span>
+    <div>
+      <span>Objetivos principales</span>
+      <!--<div v-for="(goal, index) in mainGoals" :key="goal.id">
+        <MainGoal :goal="goal" />
+      </div>-->
     </div>
-  </div>-->
-</div>
+    <div>
+      <span>Tareas</span>
+      <!--<div v-for="(task, index) in mainTasks" :key="task.id">
+        <Task :task="task" />
+      </div>-->
+    </div>
+  </div>
 </template>
 
 <script>
-//import Item from '@/components/main/Item.vue';
-//import DashGoal from '@/components/item/Goal.vue';
+//import Task from '@/components/item/Task.vue';
+//import MainGoal from '@/components/item/Goal.vue';
 
-import Axios from '@/auth/auth';
-
+//import Axios from '@/auth/auth';
 
 export default {
   name: 'Main',
   components: {
-    //Item,
-    //DashGoal
+    //Task,
+    //MainGoal,
   },
   data() {
     return{
-      Items: [],
-      DashGoals: [],
-      //Task: [],
-      //Events: []
+      mainGoals: [],
+      mainTasks: [],
     }
   },
   methods: {
-    getTargets(){
-      Axios.get('/user/targets').then((res)=>{ this.Items = JSON.parse(res.data); });
+    getMainTargets(){
+      //Axios.get('/task').then((res)=>{
+
+      //});
     },
-    getGoals(){
-      Axios.get('/user/goal').then((res)=>{ this.DashGoals = JSON.parse(res.data); });
+    getMainGoals(){
+      //Axios.get('/goal').then((res)=>{
+
+      //});
     },
   },
   created() {
-    this.getTargets();
-    this.getGoals();
+    this.getMainTargets();
+    this.getMainGoals();
   }
 }
 

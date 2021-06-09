@@ -4,32 +4,59 @@
     <button id="editNameBt" v-if="deleteable" @click="editAreaName" >Editar</button>
     <button v-if="deleteable" @click="deleteArea">Eliminar</button>
 
+    <input v-model="query" type="text">
     <br />
     <!--    switch goes here    -->
-    <button @click="addTask">+ Tarea</button>
-    <CreateTask @taskCreated="getTasks"/>
-    <input v-model="query" type="text">
-    <div>
-      <transition-group
-        name="search-fade"
-        @before-enter="beforeEnter"
-        @enter="enter"
-        @leave="leave"
-        mode="out-in"
-      >
-      <div id="tasks" v-for="(task, index) in computedTasks" :key="task.id">
-        <Task :task="task" :data-index="index" @taskDeleted="getTasks" @getTasks="getTasks"/>
-      </div>
-
-      </transition-group>
+    <div id="switch">
+      <button @click="toggleView">Tareas</button>
+      <button @click="toggleView">Objetivos</button>
     </div>
-    <span v-if="!allLoaded" id="load">Cargar más</span>
+    <div v-if="viewTasks">
+      <button @click="addTask">+ Tarea</button>
+      <CreateTask @taskCreated="getTasks"/>
+      <div>
+        <transition-group
+          name="search-fade"
+          @before-enter="beforeEnter"
+          @enter="enter"
+          @leave="leave"
+          mode="out-in"
+        >
+        <div id="tasks" v-for="(task, index) in computedTasks" :key="task.id">
+          <Task :task="task" :data-index="index" @taskDeleted="getTasks" @getTasks="getTasks"/>
+        </div>
+
+        </transition-group>
+      </div>
+      <span v-if="!allLoaded" id="load">Cargar más</span>
+    </div>
+    <div v-else>
+      <button @click="addGoal">+ Goal</button>
+      <CreateGoal @goalCreated="getGoals"/>
+      <div>
+        <transition-group
+          name="search-fade"
+          @css="false"
+          @before-enter="beforeEnter"
+          @enter="enter"
+          @leave="leave"
+          mode="out-in"
+        >
+        <div id="goal" v-for="(goal, index) in computedGoals" :key="goal.id">
+          <Goal :goal="goal" :data-index="index" @goalDeleted="getGoals" @getGoals="getGoals"/>
+        </div>
+
+        </transition-group>
+      </div>
+      <span v-if="!allLoaded" id="load">Cargar más</span>
+    </div>
   </div>
 </template>
 
 <script>
 import Task from '@/components/item/Task.vue';
 import CreateTask from '@/components/item/CreateTask.vue';
+import CreateGoal from '@/components/item/CreateGoal.vue';
 
 import Axios, { AreaCorrespond }from '@/auth/auth';
 
@@ -40,6 +67,7 @@ export default {
   components: {
     Task,
     CreateTask,
+    CreateGoal,
   },
   emits: ['updateAreaName','deleteArea'],
   data() {
@@ -61,6 +89,7 @@ export default {
       query:"",
       total:10,
       allLoaded: false,
+      viewTasks:true,
     }
   },
   computed: {
@@ -71,6 +100,12 @@ export default {
     }
   },
   methods: {
+    toggleView(){
+      if(this.viewTasks)
+        this.viewTasks = false
+      else
+        this.viewTasks = true;
+    },
     beforeEnter(tasks){
       let index = $(tasks).children(1)[0].dataset.index;
       $(tasks).css({
@@ -136,9 +171,26 @@ export default {
       })
     },
     getTasks(){
-      Axios.post('/area/tasks',{slug: this.$route.params.name }).then((res)=>{
-        this.Tasks = JSON.parse(res.data.tasks);
+      //Axios.post('/area/tasks',{slug: this.$route.params.name }).then((res)=>{
+      //  console.log(res);
+      //  this.Tasks = JSON.parse(res.data.tasks);
+      //});
+
+      Axios.post('/area/paginated-tasks',{
+        offset: this.Tasks.length,
+        slug:this.$route.params.name
+      }).then((res)=>{
+        console.log(res);
+        if(res.data.error){
+          console.log('error');
+        }else{
+          this.Tasks = this.Tasks.concat(JSON.parse(res.data.tasks));
+
+          if(this.Tasks.length >= this.total)
+            this.allLoaded = true;
+        }
       });
+
     },
   },
   async created() {
@@ -169,20 +221,8 @@ export default {
               if(entry.isIntersecting){
                 console.log(entry);
                 console.log('asked form more');
+                this.getTasks();
 
-                Axios.post('/area/paginated-tasks',{
-                  offset: this.Tasks.length,
-                  slug:this.$route.params.name
-                }).then((res)=>{
-                  if(res.data.error){
-                    console.log('error');
-                  }else{
-                    this.Tasks = this.Tasks.concat(JSON.parse(res.data.tasks));
-
-                    if(this.Tasks.length >= this.total)
-                      this.allLoaded = true;
-                  }
-                });
               }
             //},3000);
           }

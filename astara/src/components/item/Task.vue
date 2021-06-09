@@ -3,6 +3,7 @@
     <span v-if="err" class="errorMsg" style="margin-bottom:15px;">{{errMsg}}</span>
     <br />
     <!--<input type="checkbox" v-model=statusCopy disabled>-->
+    <span>{{task.id}}</span>
     <span>{{task.status}}</span>
     <span>{{task.name}}</span> 
     <span>{{task.deadline}}</span> 
