@@ -9,7 +9,6 @@
     <span>{{task.deadline}}</span> 
     <span>{{task.dated}}</span>
     <div>
-      <button @click="createNested">Crear</button>
       <button @click="edit">Editar</button>
       <button v-if="onEdit" @click="cancel">Cancelar</button>
       <button @click="remove">Eliminar</button>
@@ -107,9 +106,6 @@ export default {
       return false;
 
       return true;
-    },
-    createNested(){
-      console.log(this.task.id);
     },
     cancel(e){
       let name = $(e.path[2]).children()[2];

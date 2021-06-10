@@ -2,6 +2,7 @@
 export function GetErrMsg(errorName) {
   switch(errorName) {
     case 'lackInput':{ return "Debe de completar todos los campos obligatorios"; }
+    case 'nameRequired': { return "Debe de introducir un nombre"; }
 
     case 'noUser':{ return "El usuario introducido no existe"; }
     case 'alreadyCreated':{ return "Ya existe un usuario con ese nombre o email"; }

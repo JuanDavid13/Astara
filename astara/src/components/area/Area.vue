@@ -13,7 +13,7 @@
     </div>
     <div v-if="viewTasks">
       <button @click="addTask">+ Tarea</button>
-      <CreateTask @taskCreated="getTasks"/>
+      <CreateTask @taskCreated="getTasks"  />
       <div>
         <transition-group
           name="search-fade"
@@ -32,7 +32,7 @@
     </div>
     <div v-else>
       <button @click="addGoal">+ Goal</button>
-      <CreateGoal @goalCreated="getGoals"/>
+      <CreateGoal v-if="creatingGoal" @goalCreated="getGoals" @cancelAddGoal="cancelAddGoal"/>
       <div>
         <transition-group
           name="search-fade"
@@ -90,6 +90,7 @@ export default {
       total:10,
       allLoaded: false,
       viewTasks:true,
+      creatingGoal:false,
     }
   },
   computed: {
@@ -100,6 +101,8 @@ export default {
     }
   },
   methods: {
+    addGoal(){ this.creatingGoal = true; },
+    cancelAddGoal(){ this.creatingGoal = false; },
     toggleView(){
       if(this.viewTasks)
         this.viewTasks = false
