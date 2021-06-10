@@ -30,15 +30,13 @@ func CreateGoal(c *fiber.Ctx) error {
 
 	cl := c.Locals("claims").(jwt.Claims);
 
-	//get the id of the area it is from 
-	id := GetIdFromSlug(cl.User, cl.Rol, res.Slug);
-	if id == -1 { return c.JSON(fiber.Map{ "created":false, }); }
+	areaid := GetIdFromSlug(cl.User, cl.Rol, res.Slug);
+	if areaid == -1 { return c.JSON(fiber.Map{ "error":true, }); }
 
-	//create a new task
-	if !CreateNewGoal(cl.User, id, cl.Rol, res.Name, res.Deadline, res.Description) {
-		return c.JSON(fiber.Map{ "created":false, });
+	if !CreateNewGoal(cl.User, areaid, cl.Rol, res.Name, res.Deadline, res.Description) {
+		return c.JSON(fiber.Map{ "error":true, });
 	}else{
-		return c.JSON(fiber.Map{ "created":true, });
+		return c.JSON(fiber.Map{ "error":false, });
 	}
 }
 

@@ -171,7 +171,7 @@ func CreateNewGoal(uid, areaid int, rol, name, deadline, description string) boo
   fmt.Println("Create Goal:");
   db := db.GetDb(rol);
   
-	targetQuery := "INSERT INTO `Targets` (`Id_usu`,`Id_area`,`Name`) VALUES(?, ?, ?);";
+	targetQuery := "INSERT INTO `Targets` (`Id_usu`,`Id_area`,`Name`,`Deadline`) VALUES(?, ?, ?, ?);";
 
   targetStmt, err := db.Prepare(targetQuery);
   if err != nil && err != sql.ErrNoRows { /*return false;*/panic(err); }
@@ -183,9 +183,9 @@ func CreateNewGoal(uid, areaid int, rol, name, deadline, description string) boo
 	targetId, err := res.LastInsertId();
 	if err != nil { return false; }
 
-	taskQuery := "INSERT INTO `Goals` (`Id_target`,`Description`) VALUES(?, ?);";
+	goalQuery := "INSERT INTO `Goals` (`Id_target`,`Description`) VALUES(?, ?);";
 
-  taskStmt, err := db.Prepare(taskQuery);
+  taskStmt, err := db.Prepare(goalQuery);
   if err != nil && err != sql.ErrNoRows { /*return false;*/panic(err); }
 
 	_ , err = taskStmt.Exec(targetId,description);
@@ -195,8 +195,6 @@ func CreateNewGoal(uid, areaid int, rol, name, deadline, description string) boo
 	return true;
 }
 
-//can be unify with task into:
-// Remove Target(...)
 func RemoveGoal(uid, id int, rol string) bool {
   fmt.Println("Remove Task:");
   db := db.GetDb(rol);

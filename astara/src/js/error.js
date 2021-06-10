@@ -16,6 +16,8 @@ export function GetErrMsg(errorName) {
       
     case 'wrongEmail':{ return "el correo electrónico introducido no es valido. Ej: ejemplo@gmail.com"; }
 
+    case 'wrongDate':{ return "La fecha introducida no es valida"; }
+
     case 'updateErr':{ return "Ha ocurrido un error al intentar actualizar la información"; }
     default:{ return "Ha ocurrido un error"; }
   }

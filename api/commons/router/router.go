@@ -36,10 +36,11 @@ func RouterSetUp(app *fiber.App) {
 			task.Post("/delete",DeleteTask);
 			task.Post("/edit",EditTask);
 
-		goal := user.Group("/goal");
-			goal.Post("/create",CreateGoal);
-			goal.Post("/delete",DeleteGoal);
-			goal.Post("/edit",EditGoal);
+	goal := api.Group("/goal");
+		goal.Use(middleware);
+		goal.Post("/create",CreateGoal);
+		goal.Post("/delete",DeleteGoal);
+		goal.Post("/edit",EditGoal);
 
 		info := user.Group("/profile");
 			info.Get("/info",GetInfo);

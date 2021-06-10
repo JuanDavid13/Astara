@@ -17,8 +17,6 @@ type Task struct{
 	Id_usu int `json:"id_usus"`;
 	Id_area int `json:"id_area"`;
 	Id_status int `json:"id_status"`;
-	Children int `json:"children"`;
-	ChildrenDone int `json:"chilldrenDone"`;
 	Name string `json:"name"`;
 	Deadline string `json:"deadline"`;
 	Dated string `json:"dated"`;
@@ -29,7 +27,7 @@ func GetPaginatedTasksOfArea(uid, areaId, offset int, rol string) string {
   fmt.Println("Getting paginated tasks of area:");
   db := db.GetDb(rol);
 
-	query := "SELECT TR.`Id`, TR.`Id_parent`, TR.`Name`, TR.`Deadline`,TR.`Children`,TR.`ChildrenDone`, TS.`Dated` FROM `Targets` AS TR JOIN `Task` AS TS ON(TR.`Id` = TS.`Id_target`) WHERE TR.`Id_usu` = ? AND TR.`Id_area` = ? AND TR.`Id_status` = ? ORDER BY TR.`Id` DESC LIMIT ?, 7;";
+	query := "SELECT TR.`Id`, TR.`Id_parent`, TR.`Name`, TR.`Deadline`, TS.`Dated` FROM `Targets` AS TR JOIN `Task` AS TS ON(TR.`Id` = TS.`Id_target`) WHERE TR.`Id_usu` = ? AND TR.`Id_area` = ? AND TR.`Id_status` = ? ORDER BY TR.`Id` DESC LIMIT ?, 7;";
 
 	stmt, err := db.Prepare(query);
 	if err != nil { panic(err); }
@@ -45,7 +43,7 @@ func GetPaginatedTasksOfArea(uid, areaId, offset int, rol string) string {
 	tasks := make(map[int]*Task);
 
 	for rows.Next(){
-		err := rows.Scan(&Id, &Id_parent, &Name, &Deadline, &Children, &ChildrenDone, &Dated);
+		err := rows.Scan(&Id, &Id_parent, &Name, &Deadline, &Dated);
 		if err != nil { panic(err); }
 
 		if Id.Valid  || Name.Valid || Deadline.Valid || Children.Valid || ChildrenDone.Valid {
@@ -55,8 +53,6 @@ func GetPaginatedTasksOfArea(uid, areaId, offset int, rol string) string {
 			if !Name.Valid { task.Name = ""; }else{ task.Name = Name.String; }
 			if !Deadline.Valid { task.Deadline = ""; }else{ task.Deadline = Deadline.String; }
 			if !Dated.Valid { task.Deadline = ""; }else{ task.Dated = Dated.String; }
-			if !Children.Valid { task.Children = 0; }else{ task.Children = int(Children.Int64); }
-			if !ChildrenDone.Valid { task.Id = 0; }else{ task.ChildrenDone = int(ChildrenDone.Int64); }
 			if !Id_parent.Valid { task.Id_parent = 0; }else{ task.Id_parent = int(Id_parent.Int64); }
 
 			tasks[int(Id.Int64)] = &task;

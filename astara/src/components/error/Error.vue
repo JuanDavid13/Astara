@@ -19,7 +19,7 @@ export default{
       this.hasError = false;
       setTimeout(()=>{ this.message = "Error inesperado"; },500);
     },
-    setErr(e,msg){
+    setErr(msg){
       this.hasError = true;
       this.message = msg; 
     },

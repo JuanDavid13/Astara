@@ -3,8 +3,9 @@
     <Error ref="error"/>
     <form @submit.capture="createGoal">
       <input type="text" placeholder="Nombre">
-      <label> Descripción
-        <input type="text" placeholder="Descripción">
+      <input type="text" placeholder="Descripción">
+      <label> Fecha límite 
+        <input type="date">
       </label>
       <button type="submit">Añadir</button>
       <button @click="cancelAddGoal">Cancelar</button>
@@ -37,23 +38,31 @@ export default {
 
       let name  = e.target[0].value;
       let description = e.target[1].value;
+      let deadline = e.target[2].value;
+
+      console.log(deadline);
 
       if(name == ""){
-        this.$refs.error.setErr(e,GetErrMsg('nameRequired'));
+        this.$refs.error.setErr(GetErrMsg('nameRequired'));
+        return;
+      }
+      if(deadline == "" || deadline == "0000-00-00"){
+        this.$refs.error.setErr(GetErrMsg('nameRequired'));
         return;
       }
 
-      //Axios.post('/user/goal/create',{
-      //  slug:this.$route.params.name,
-      //  name:name,
-      //  description:description,
-      //}).then(async (res)=>{
-      //  console.log(res);
-      //  if(!res.data.created)
-      //    console.log("error");
-      //  else
-      //    this.$emit('taskCreated');
-      //});
+      Axios.post('/goal/create',{
+        slug:this.$route.params.name,
+        name:name,
+        description:description,
+        deadline: deadline,
+      }).then(async (res)=>{
+        console.log(res);
+        if(res.data.error)
+          this.$refs.error.setErr(GetErrMsg());
+        else
+          this.$emit('updateGoals');
+      });
     },
   }
 
