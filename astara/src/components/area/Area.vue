@@ -10,7 +10,7 @@
     <router-link :to="{ name: 'Tasks', params: { name: 'TFG' }}" >tareas</router-link>
     <router-link :to="{ name: 'Goals', params: { name: 'TFG' }}" >objetivos</router-link>
 
-    <router-view :query="query" @remove="remove"></router-view>
+    <router-view :query="query" ></router-view>
   </div>
 </template>
 
@@ -63,12 +63,6 @@ export default {
         $('#areaName').replaceWith("<span id='areaName' style='text-transform: uppercase;'>"+this.AreaName +"</span>");
         $(e.target).text('Editar');
       }
-    },
-    remove(id){
-      console.log(id);
-      Axios.post('/area/remove-target',{id: id}).then((res)=>{
-        console.log(res);
-      });
     },
   },
   async created() {

@@ -208,9 +208,9 @@ func RmvTarget(uid, targetId int, rol string) bool {
   query := "DELETE FROM `Targets` WHERE `Id_usu` = ? AND `Id` = ?;";
   stmt, err := db.Prepare(query);
 
-  if err != nil { /*return false;*/ panic(err); }
+  if err != nil { return false; /*panic(err);*/ }
 
-  if _, err := stmt.Exec(uid, targetId); err != nil { /*return false;*/ panic(err); }
+  if _, err := stmt.Exec(uid, targetId); err != nil { return false; /*panic(err);*/ }
 
   return true;
 }

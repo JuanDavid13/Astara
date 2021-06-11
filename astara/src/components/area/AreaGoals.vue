@@ -33,7 +33,6 @@ export default {
     Goal,
     CreateGoal,
   },
-  emits: ['remove'],
   props:['query'],
   data() {
     return {
@@ -69,7 +68,17 @@ export default {
       });
     },
     remove(id){
-      this.$emit('remove',id);
+      Axios.post('/area/remove-target',{id: id}).then((res)=>{
+        console.log(res);
+        if(res.data.error){
+          console.log('error');
+        }else{
+          if(!res.data.deleted)
+            console.log('error')
+          else
+            this.getGoals();
+        }
+      });
     },
   },
   mounted(){

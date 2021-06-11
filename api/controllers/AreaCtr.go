@@ -165,7 +165,8 @@ func RemoveTarget(c *fiber.Ctx) error {
 		});
 	}else{
 		return c.JSON(fiber.Map{
-			"error":true,
+			"error":false,
+			"deleted":true,
 		});
 	}
 }
