@@ -5,12 +5,8 @@
     <button v-if="deleteable" @click="deleteArea">Eliminar</button>
 
     <input v-model="query" type="text">
+
     <br />
-    <!--    switch goes here    -->
-    <div id="switch">
-      <button @click="showTasks">Tareas</button>
-      <button @click="showGoals">Objetivos</button>
-    </div>
     <router-link :to="{ name: 'Tasks', params: { name: 'TFG' }}" >tareas</router-link>
     <router-link :to="{ name: 'Goals', params: { name: 'TFG' }}" >objetivos</router-link>
 
@@ -19,6 +15,7 @@
 </template>
 
 <script>
+import Axios, { AreaCorrespond }from '@/auth/auth';
 
 export default {
   name: 'Area',
@@ -32,24 +29,20 @@ export default {
     }
   },
   methods: {
-    getSlugfromName(name){
-      return name.repplace(" ","-").trim();
-    },
-    getSlug(){
-      return this.$route.params.name;
-    },
+    getSlugfromName(name){ return name.repplace(" ","-").trim(); },
+    getSlug(){ return this.$route.params.name; },
     deleteArea(){
       Axios.post("/area/delete",{slug:this.$route.params.name}).then((res)=>{
         if(res.data.deleted){
           this.$emit('deleteArea',this.$route.params.name);
           this.$router.push({name:'Main'});
         }
-      })
+      });
     },
     async editAreaName(e){
       if($('#areaName')[0].nodeName.localeCompare("SPAN") == 0){ 
         $('#areaName').replaceWith("<input id='areaName' type='text' value='" + this.AreaName + "' minlength='3' maxlength='20'>");
-      $(e.target).text('Aceptar');
+        $(e.target).text('Aceptar');
       }else{
         if($('#areaName').val().localeCompare(this.AreaName) != 0){
           if($('#areaName').val().length < 3){
@@ -57,9 +50,9 @@ export default {
             return;
           }
           await Axios.post('/area/edit',{ oldName: this.AreaName ,name: $('#areaName').val() }).then((res)=>{
-            if(!res.data.changed){
+            if(!res.data.changed)
               this.AreaName = "Error";
-            }else{
+            else{
               this.$emit('updateAreaName', this.AreaName, $('#areaName').val());
               this.AreaName = $('#areaName').val();
               let slug = $('#areaName').val();
@@ -71,13 +64,14 @@ export default {
         $(e.target).text('Editar');
       }
     },
+  },
   async created() {
-    let data = await AreaCorrespond(this.$router.currentRoute._value.params.name)
+    console.log("data");
+    let data = await AreaCorrespond(this.$router.currentRoute._value.params.name);
+    console.log(data);
     this.deleteable = data.deleteable;
     this.AreaName = data.areaName;
-    
   },
-}
 }
 </script>
 <style lang="scss">

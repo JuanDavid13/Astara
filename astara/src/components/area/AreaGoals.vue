@@ -90,6 +90,7 @@ export default {
           }
         });
       },options);
+      console.log('observing');
       observer.observe($('#loadGoals')[0]);
     });
   }
