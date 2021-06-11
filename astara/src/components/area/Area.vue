@@ -8,109 +8,27 @@
     <br />
     <!--    switch goes here    -->
     <div id="switch">
-      <button @click="toggleView">Tareas</button>
-      <button @click="toggleView">Objetivos</button>
+      <button @click="showTasks">Tareas</button>
+      <button @click="showGoals">Objetivos</button>
     </div>
-    <div v-if="viewTasks">
-      <button @click="addTask">+ Tarea</button>
-      <CreateTask @taskCreated="getTasks"  />
-      <div>
-        <transition-group
-          name="search-fade"
-          @before-enter="beforeEnter"
-          @enter="enter"
-          @leave="leave"
-          mode="out-in"
-        >
-        <div id="tasks" v-for="(task, index) in computedTasks" :key="task.id">
-          <Task :task="task" :data-index="index" @taskDeleted="getTasks" @getTasks="getTasks"/>
-        </div>
+    <router-link :to="{ name: 'Tasks', params: { name: 'TFG' }}" >tareas</router-link>
+    <router-link :to="{ name: 'Goals', params: { name: 'TFG' }}" >objetivos</router-link>
 
-        </transition-group>
-      </div>
-      <span v-if="!allLoaded" id="load">Cargar más</span>
-    </div>
-    <div v-else>
-      <button @click="addGoal">+ Goal</button>
-      <CreateGoal v-if="creatingGoal" @updateGoals="getGoals" @cancelAddGoal="cancelAddGoal"/>
-      <div>
-        <transition-group
-          name="search-fade"
-          @css="false"
-          @before-enter="beforeEnter"
-          @enter="enter"
-          @leave="leave"
-          mode="out-in"
-        >
-        <div id="goal" v-for="(goal, index) in computedGoals" :key="goal.id">
-          <Goal :goal="goal" :data-index="index" @goalDeleted="getGoals" @getGoals="getGoals"/>
-        </div>
-
-        </transition-group>
-      </div>
-      <span v-if="!allLoaded" id="load">Cargar más</span>
-    </div>
+    <router-view :query="query"></router-view>
   </div>
 </template>
 
 <script>
-import Task from '@/components/item/Task.vue';
-
-import CreateTask from '@/components/item/CreateTask.vue';
-import CreateGoal from '@/components/item/CreateGoal.vue';
-
-import Axios, { AreaCorrespond }from '@/auth/auth';
-
-import $ from 'jquery';
 
 export default {
   name: 'Area',
-  components: {
-    Task,
-    CreateTask,
-    CreateGoal,
-  },
   emits: ['updateAreaName','deleteArea'],
   data() {
     return {
       deleteable: false,
       AreaName: "",
 
-      viewTasks:true,
-
       query:"",
-
-      Goals: [],
-      goal: {
-        name:"",
-        description:"",
-        deadline:"",
-        status:false,
-      },
-      allGoalsLoaded:false,
-      creatingGoal:false,
-
-      Tasks: [],
-      task:{
-        name:"",
-        deadline:"",
-        dated:"",
-        status:false,
-      },
-      allTasksLoaded:false,
-      allLoaded: false, //--> cambiar por
-
-      creatingTask:false,
-
-      total:100,
-
-    }
-  },
-  computed: {
-    computedTasks(){
-      return this.Tasks.filter(task  => {
-        return task.name.toLowerCase().indexOf(this.query.toLowerCase()) !== -1;
-      });
     }
   },
   methods: {
@@ -127,54 +45,6 @@ export default {
           this.$router.push({name:'Main'});
         }
       })
-    },
-    toggleView(){
-      if(this.viewTasks)
-        this.viewTasks = false
-      else
-        this.viewTasks = true;
-    },
-    
-    addGoal(){ this.creatingGoal = true; },
-    cancelAddGoal(){ this.creatingGoal = false; },
-    getGoals(){
-      //let slug = this.getSlug();
-      let route = '/area/'+ this.getSlug() +'/paginated-tasks/' + this.Goals.length;
-      Axios.get(route).then((res)=>{
-        console.log(res);
-        if(res.data.error){
-          console.log('error');
-        }
-      });
-    },
-
-    beforeEnter(tasks){
-      let index = $(tasks).children(1)[0].dataset.index;
-      $(tasks).css({
-        "opacity":0,
-        //"height":0,
-        "transform":"translateX(-5vw)",
-        "transition":"all .5s ease-in-out",
-        "transition-delay":(index*.1)+"s",
-      });
-    },
-    enter(tasks){
-      $('.areaSection').ready(()=>{
-        $(tasks).css({
-          "opacity":1,
-          //"height":"4rem",
-          "transform":"translateX(0vw)",
-          "transition":"all .5s ease-in-out",
-        });
-      });
-    },
-    leave(tasks){
-      $(tasks).css({
-        "opacity":0,
-        "height":0,
-        "transition":"all .5s ease-in-out",
-        "transform":"translateX(-5vw)",
-      });
     },
     async editAreaName(e){
       if($('#areaName')[0].nodeName.localeCompare("SPAN") == 0){ 
@@ -201,62 +71,13 @@ export default {
         $(e.target).text('Editar');
       }
     },
-    getTasks(){
-      //Axios.post('/area/tasks',{slug: this.$route.params.name }).then((res)=>{
-      //  console.log(res);
-      //  this.Tasks = JSON.parse(res.data.tasks);
-      //});
-
-      Axios.post('/area/paginated-tasks',{
-        offset: this.Tasks.length,
-        slug:this.$route.params.name
-      }).then((res)=>{
-        if(res.data.error){
-          console.log('error');
-        }else{
-          this.Tasks = this.Tasks.concat(JSON.parse(res.data.tasks));
-
-          if(this.Tasks.length >= this.total)
-            this.allLoaded = true;
-        }
-      });
-
-    },
-  },
   async created() {
     let data = await AreaCorrespond(this.$router.currentRoute._value.params.name)
-
     this.deleteable = data.deleteable;
     this.AreaName = data.areaName;
     
-    //this.getTasks(); -->already got by pagination
   },
-  mounted(){
-    const options = {
-      root: null,
-      //threshold: 0.3,
-      threshold: 1,
-      //rootMargin: "-50px"
-      rootMargin: "0px"
-    };
-
-    $('#load').ready(()=>{
-      let observer = new IntersectionObserver((entries)=>{
-        entries.forEach(entry =>{
-          if(!this.allLoaded){
-            console.log(entry);
-            if(entry.isIntersecting){
-              console.log(entry);
-              console.log('asked form more');
-              this.getTasks();
-            }
-          }
-        });
-      },options);
-
-      observer.observe($('#load')[0]);
-    });
-  }
+}
 }
 </script>
 <style lang="scss">

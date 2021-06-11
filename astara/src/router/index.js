@@ -1,13 +1,12 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
 
-import Home from '../views/Home.vue'
-import Login from '../views/Login.vue'
+import Home from '../views/Home.vue';
+import Login from '../views/Login.vue';
 
-//import Main from '../views/Main.vue'
-import Main from '../components/main/Main.vue'
-
-//import Area from '../views/Area.vue'
-import Area from '../components/area/Area.vue'
+import Main from '../components/main/Main.vue';
+import Area from '../components/area/Area.vue';
+import AreaTasks from '../components/area/AreaTasks.vue';
+import AreaGoals from '../components/area/AreaGoals.vue';
 
 const Auth = require('../auth/auth');
 
@@ -35,6 +34,18 @@ const routes = [
         path: '/area/:name',
         name: 'Area',
         component: Area,
+        children: [
+          {
+            path: 'tasks',
+            name: 'Tasks',
+            component: AreaTasks 
+          },
+          {
+            path: 'goals',
+            name: 'Goals',
+            component: AreaGoals 
+          }
+        ]
       }
     ]
   },

@@ -7,7 +7,7 @@
         <router-link :to="{name: 'Main'}">MAIN</router-link>
         <transition-group name="list" mode="out-in">
           <div class="area" v-for="area in areas" :key="area.name" >
-            <router-link :to="{ name: 'Area', params: { name: area.slug } }" >{{area.name}}</router-link>
+            <router-link :to="{ name: 'Tasks', params: { name: area.slug } }" >{{area.name}}</router-link>
           </div>
         </transition-group>
       </div> 
