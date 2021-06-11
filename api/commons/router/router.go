@@ -59,6 +59,6 @@ func RouterSetUp(app *fiber.App) {
 		//area.Post("/tasks",GetAllTasks); //cambiar por get
 		area.Post("/paginated-tasks",GetPaginatedTasks);
 
-		area.Get("/:slug/paginated-tasks/:offset",GetPaginatedGoals);
+		area.Get("/:slug/paginated-tasks/:size",GetPagGoals);
 }
 

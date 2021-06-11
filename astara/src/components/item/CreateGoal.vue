@@ -23,7 +23,7 @@ export default {
   components:{
     Error,
   },
-  emits: ['goalCreated','cancelAddGoal'],
+  emits: ['updateGoals','cancelAddGoal'],
   data() {
     return{
 

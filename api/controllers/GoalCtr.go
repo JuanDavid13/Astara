@@ -40,38 +40,24 @@ func CreateGoal(c *fiber.Ctx) error {
 	}
 }
 
-func GetPaginatedGoals(c *fiber.Ctx) error {
-	//type response struct {
-	//	Slug string `json:"slug"`; //--> llega como parametro
-	//	Offset int `json:"offset"`; //--> llega como parametro
-	//	//cambiar offset por limit --> primera solucion
-	//}
-	//
-	//res := response{};
-
-	//fmt.Println(res.Offset);
-	//fmt.Println(res.Slug);
-
-	//if err := json.Unmarshal(c.Body(), &res); err != nil { panic(err); /*return c.SendStatus(400);*/ }
-
+func GetPagGoals(c *fiber.Ctx) error {
 	slug := c.Params("slug");
-	offset := c.Params("offset");
+	size := c.Params("size");
 
-	offsetInt, err := strconv.Atoi(offset);
-	if err != nil { panic(err); /*return c.SendStatus(400);*/ }
-
-	if offsetInt < 0  || slug == "" { return c.SendStatus(400); }
+	sizeInt, err := strconv.Atoi(size);
+	if err != nil { /*panic(err);*/ return c.SendStatus(400); }
+	if sizeInt < 0  || slug == "" { return c.SendStatus(400); }
 
 	cl := c.Locals("claims").(jwt.Claims);
 	
 	id := GetIdFromSlug(cl.User, cl.Rol, slug);
 	if id == -1 { return c.JSON(fiber.Map{ "error":true, }); }
 
-	tasks := GetPaginated(cl.User, id, offsetInt, cl.Rol);
+	goals := GetPaginatedGoals(cl.User, id, sizeInt, cl.Rol);
 
 	return c.JSON(fiber.Map{
 		"error":false,
-		"tasks":tasks,
+		"goals":goals,
 	});
 
 }

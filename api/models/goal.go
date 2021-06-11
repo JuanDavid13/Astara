@@ -20,7 +20,7 @@ type Goal struct {
 	Children			int			`json:"children"`;
 	ChildrenDone	int			`json:"childrenDone"`;
 	Id_parent			int			`json:"id_parent"`;
-	Goals					*[]Goal	`json:"goals"`;
+	Tasks					*[]Task`json:"tasks"`;
 }
 
 func calcProgress(children, childrenDone int64) int {
@@ -28,30 +28,31 @@ func calcProgress(children, childrenDone int64) int {
 }
 
 
-func GetPaginated(uid, areaId, offset int, rol string) string {
+func GetPaginatedGoals(uid, areaId, size int, rol string) string {
   fmt.Println("Getting paginated tasks of area:");
   db := db.GetDb(rol);
 
-	query := "SELECT TR.`Id`, TR.`Id_parent`, TR.`Name`, TR.`Deadline`,TR.`Children`,TR.`ChildrenDone`, TS.`Dated` FROM `Targets` AS TR JOIN `Task` AS TS ON(TR.`Id` = TS.`Id_target`) WHERE TR.`Id_usu` = ? AND TR.`Id_area` = ? AND TR.`Id_status` = ? ORDER BY TR.`Id` DESC LIMIT ?, 7;";
+	query := "SELECT TR.`Id`, TR.`Name`, G.`Description`, TR.`Deadline`, G.`Children`, G.`ChildrenDone` FROM `Goals` AS G JOIN `Targets` AS TR ON(G.`Id_target` = TR.`Id`) WHERE TR.`Id_usu` = ? AND TR.`Id_area` = ? AND TR.`Id_status` = 50 ORDER BY TR.`Id` DESC LIMIT ?;";
 
 	stmt, err := db.Prepare(query);
 	if err != nil { panic(err); }
 
-	rows, err := stmt.Query(uid,areaId,50, offset);
+	limit := (size+5);
+	rows, err := stmt.Query(uid, areaId, limit);
 	defer stmt.Close();
 
 	var (
-		Id, Id_parent, Children, ChildrenDone sql.NullInt64;
-		Name, Description sql.NullString;
+		Id, Children, ChildrenDone sql.NullInt64;
+		Name, Description, Deadline sql.NullString;
 	)
 
 	goals := make(map[int]*Goal);
 
 	for rows.Next(){
-		err := rows.Scan(&Id, &Id_parent, &Name, &Children, &ChildrenDone);
+		err := rows.Scan(&Id, &Name, &Description, &Deadline, &Children, &ChildrenDone);
 		if err != nil { panic(err); }
 
-		if Id.Valid  || Name.Valid || Description.Valid || Children.Valid || ChildrenDone.Valid {
+		//if Id.Valid  || Name.Valid || Description.Valid || Children.Valid || ChildrenDone.Valid {
 			goal := Goal{};
 
 			if !Id.Valid { goal.Id = 0; }else{ goal.Id= int(Id.Int64); }
@@ -59,31 +60,64 @@ func GetPaginated(uid, areaId, offset int, rol string) string {
 			if !Description.Valid { goal.Description = ""; }else{ goal.Description = Description.String; }
 			if !Children.Valid { goal.Children = 0; }else{ goal.Children = int(Children.Int64); }
 			if !ChildrenDone.Valid { goal.Id = 0; }else{ goal.ChildrenDone = int(ChildrenDone.Int64); }
-			if !Id_parent.Valid { goal.Id_parent = 0; }else{ goal.Id_parent = int(Id_parent.Int64); }
 
 			goals[int(Id.Int64)] = &goal;
-		}
+		//}
 	}
-	for _, s := range goals{
-		fmt.Printf("%+v\n",s);
-	}
+
+	//for _, s := range goals{
+	//	fmt.Printf("%+v\n",s);
+	//}
 	
-	nestedGoals := nestGoals(goals);
+
+	taskQuery := "SELECT TR.`Id`, TR.`Id_parent`, TR.`Deadline`, TS.`Dated`, TR.`Name` FROM `Task` AS TS JOIN `Targets` AS TR ON (TS.`Id_target` = TR.`Id`) JOIN `Goals` AS G ON (G.`Id` = TR.`Id_parent`)	WHERE TR.`Id_usu` = ? AND TR.`Id_area` = ? AND TR.`Id_status` = 50;";
+
+	taskStmt, err := db.Prepare(taskQuery);
+	if err != nil { panic(err); }
+
+	taskRows, err := taskStmt.Query(uid, areaId);
+	if err != nil { panic(err); }
+	defer taskStmt.Close();
+
+	var (
+		IdTask, Id_parent sql.NullInt64;
+		DeadlineTask, Dated, NameTask sql.NullString;
+	)
+
+	tasks := []Task{};
+	for taskRows.Next() {
+		err := taskRows.Scan(&IdTask, &Id_parent, &DeadlineTask, &Dated, &NameTask);
+		if err != nil { panic(err); }
+
+
+		task := Task{};
+
+		if IdTask.Valid { task.Id = int(IdTask.Int64); }else{ task.Id = 0; }
+		if Id_parent.Valid { task.Id_parent = int(Id_parent.Int64); }else{ task.Id_parent = 0; }
+		if DeadlineTask.Valid { task.Deadline = DeadlineTask.String; }else{ task.Deadline = ""; }
+		if NameTask.Valid { task.Name = NameTask.String; }else{ task.Name = ""; }
+		if Dated.Valid { task.Dated = Dated.String; }else{ task.Dated = ""; }
+
+		tasks = append(tasks, task);
+	}
+
+	
+	nestedGoals := nestGoals(tasks, goals);
+	//nestedGoals := nestGoals(goals);
 
 	sortedIds:= make([]int, 0 ,len(nestedGoals));
-	for k := range nestedGoals{
+	for k := range goals{
 		sortedIds= append(sortedIds, k);
 	}
 
 	sort.Ints(sortedIds);
 
-	arrayTasks := arrayGoals(sortedIds, nestedGoals);
+	arrayGoals := arrayGoals(sortedIds, nestedGoals);
 
-	jsonTasks, err := json.Marshal(arrayTasks);
+	jsonGoals, err := json.Marshal(arrayGoals);
 	if err != nil { panic(err); }
 
-	return string(jsonTasks);
-
+	return string(jsonGoals);
 }
 
 //delete
@@ -140,17 +174,14 @@ func GetAllGoals(uid, areaid int, rol string) string {
 }
 */
 
-//can be unify
-//or better yet, deleted from tasks
-//move deadline to task
-//move children and children done to goal
+/*
 func nestGoals(goals map[int]*Goal) map[int]*Goal{
 	for _, v := range goals {
 		if v.Id_parent != 0 {
-			if goals[v.Id_parent].Goals == nil {
-				var g = goals[v.Id_parent].Goals;
-				g = &[]Goal{*v};
-				goals[v.Id_parent].Goals = g;
+			if goals[v.Id_parent].Tasks == nil {
+				var g = goals[v.Id_parent].Tasks;
+				g = &[]Task{*v};
+				goals[v.Id_parent].Tasks = g;
 
 				delete(goals,v.Id);
 			}
@@ -158,6 +189,19 @@ func nestGoals(goals map[int]*Goal) map[int]*Goal{
 	}
 	return goals;
 };
+*/
+func nestGoals(tasks []Task, goals map[int]*Goal) map[int]*Goal {
+	for _, v := range tasks{
+		if goals[v.Id_parent].Tasks == nil {
+			var t = goals[v.Id_parent].Tasks;
+			t = &[]Task{v};
+			goals[v.Id_parent].Tasks = t;
+		}else{
+			*goals[v.Id_parent].Tasks = append(*goals[v.Id_parent].Tasks, v);
+		}
+	}
+	return goals;
+}
 
 func arrayGoals(order []int, goals map[int]*Goal) []Goal {
 	arrayGoals := []Goal{};

@@ -20,7 +20,7 @@ type Task struct{
 	Name string `json:"name"`;
 	Deadline string `json:"deadline"`;
 	Dated string `json:"dated"`;
-	Tasks *[]Task `json:"tasks"`;
+	//Tasks *[]Task `json:"tasks"`;
 }
 
 func GetPaginatedTasksOfArea(uid, areaId, offset int, rol string) string {
@@ -62,16 +62,17 @@ func GetPaginatedTasksOfArea(uid, areaId, offset int, rol string) string {
 		fmt.Printf("%+v\n",s);
 	}
 	
-	nestedTasks := nestTasks(tasks);
+	//nestedTasks := nestTasks(tasks);
 
-	sortedIds:= make([]int, 0 ,len(nestedTasks));
-	for k := range nestedTasks {
+	//sortedIds:= make([]int, 0 ,len(nestedTasks));
+	sortedIds:= make([]int, 0 ,len(tasks));
+	for k := range tasks {
 		sortedIds= append(sortedIds, k);
 	}
 
 	sort.Ints(sortedIds);
 
-	arrayTasks := arrayTasks(sortedIds, nestedTasks);
+	arrayTasks := arrayTasks(sortedIds, tasks);
 
 	jsonTasks, err := json.Marshal(arrayTasks);
 	if err != nil { panic(err); }
@@ -133,6 +134,7 @@ func GetAllTasksOfArea(uid, areaid int, rol string) string {
 }
 */
 
+/*
 func nestTasks(tasks map[int]*Task) map[int]*Task{
 	for _, v := range tasks	{
 		if v.Id_parent != 0 {
@@ -147,6 +149,7 @@ func nestTasks(tasks map[int]*Task) map[int]*Task{
 	}
 	return tasks;
 };
+*/
 
 //func arrayTasks(tasks map[int]*Task) []Task{
 func arrayTasks(order []int, tasks map[int]*Task) []Task{

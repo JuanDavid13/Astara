@@ -5,12 +5,20 @@
     <!--<input type="checkbox" v-model=statusCopy disabled>-->
     <span>{{goal.status}}</span>
     <span>{{goal.name}}</span> 
+    <span>{{goal.progress}}%</span>
     <span>{{goal.deadline}}</span> 
     <div>
-      <button @click="createNested">Crear</button>
+      <button @click="createNested">Crear Tarea</button>
+
       <button @click="edit">Editar</button>
       <button v-if="onEdit" @click="cancel">Cancelar</button>
+
       <button @click="remove">Eliminar</button>
+      <div v-if="showNested">
+        <div v-for="(task, index) in nestedTask" :key="task.id">
+          </NestedTask />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -42,6 +50,8 @@ export default {
       onEdit: false,
       statusCopy:false,
       goalCopy: {},
+
+      showNested:false,
 
       err: false,
       errMsg: "",

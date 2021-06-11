@@ -32,7 +32,7 @@
     </div>
     <div v-else>
       <button @click="addGoal">+ Goal</button>
-      <CreateGoal v-if="creatingGoal" @goalCreated="getGoals" @cancelAddGoal="cancelAddGoal"/>
+      <CreateGoal v-if="creatingGoal" @updateGoals="getGoals" @cancelAddGoal="cancelAddGoal"/>
       <div>
         <transition-group
           name="search-fade"
@@ -55,6 +55,7 @@
 
 <script>
 import Task from '@/components/item/Task.vue';
+
 import CreateTask from '@/components/item/CreateTask.vue';
 import CreateGoal from '@/components/item/CreateGoal.vue';
 
@@ -74,23 +75,35 @@ export default {
     return {
       deleteable: false,
       AreaName: "",
-      Tasks: [],
+
+      viewTasks:true,
+
+      query:"",
+
       Goals: [],
+      goal: {
+        name:"",
+        description:"",
+        deadline:"",
+        status:false,
+      },
+      allGoalsLoaded:false,
+      creatingGoal:false,
+
+      Tasks: [],
       task:{
         name:"",
         deadline:"",
         dated:"",
         status:false,
       },
-      goal: {
-        name:"",
-        deadline:"",
-      },
-      query:"",
-      total:10,
-      allLoaded: false,
-      viewTasks:true,
-      creatingGoal:false,
+      allTasksLoaded:false,
+      allLoaded: false, //--> cambiar por
+
+      creatingTask:false,
+
+      total:100,
+
     }
   },
   computed: {
@@ -101,14 +114,40 @@ export default {
     }
   },
   methods: {
-    addGoal(){ this.creatingGoal = true; },
-    cancelAddGoal(){ this.creatingGoal = false; },
+    getSlugfromName(name){
+      return name.repplace(" ","-").trim();
+    },
+    getSlug(){
+      return this.$route.params.name;
+    },
+    deleteArea(){
+      Axios.post("/area/delete",{slug:this.$route.params.name}).then((res)=>{
+        if(res.data.deleted){
+          this.$emit('deleteArea',this.$route.params.name);
+          this.$router.push({name:'Main'});
+        }
+      })
+    },
     toggleView(){
       if(this.viewTasks)
         this.viewTasks = false
       else
         this.viewTasks = true;
     },
+    
+    addGoal(){ this.creatingGoal = true; },
+    cancelAddGoal(){ this.creatingGoal = false; },
+    getGoals(){
+      //let slug = this.getSlug();
+      let route = '/area/'+ this.getSlug() +'/paginated-tasks/' + this.Goals.length;
+      Axios.get(route).then((res)=>{
+        console.log(res);
+        if(res.data.error){
+          console.log('error');
+        }
+      });
+    },
+
     beforeEnter(tasks){
       let index = $(tasks).children(1)[0].dataset.index;
       $(tasks).css({
@@ -137,9 +176,6 @@ export default {
         "transform":"translateX(-5vw)",
       });
     },
-    getSlugfromName(name){
-      return name.repplace(" ","-").trim();
-    },
     async editAreaName(e){
       if($('#areaName')[0].nodeName.localeCompare("SPAN") == 0){ 
         $('#areaName').replaceWith("<input id='areaName' type='text' value='" + this.AreaName + "' minlength='3' maxlength='20'>");
@@ -165,14 +201,6 @@ export default {
         $(e.target).text('Editar');
       }
     },
-    deleteArea(){
-      Axios.post("/area/delete",{slug:this.$route.params.name}).then((res)=>{
-        if(res.data.deleted){
-          this.$emit('deleteArea',this.$route.params.name);
-          this.$router.push({name:'Main'});
-        }
-      })
-    },
     getTasks(){
       //Axios.post('/area/tasks',{slug: this.$route.params.name }).then((res)=>{
       //  console.log(res);
@@ -183,7 +211,6 @@ export default {
         offset: this.Tasks.length,
         slug:this.$route.params.name
       }).then((res)=>{
-        console.log(res);
         if(res.data.error){
           console.log('error');
         }else{
@@ -197,12 +224,12 @@ export default {
     },
   },
   async created() {
-    const slug = this.$router.currentRoute._value.params.name;
-    let data = await AreaCorrespond(slug)
+    let data = await AreaCorrespond(this.$router.currentRoute._value.params.name)
+
     this.deleteable = data.deleteable;
     this.AreaName = data.areaName;
     
-    //this.getTasks();
+    //this.getTasks(); -->already got by pagination
   },
   mounted(){
     const options = {
@@ -216,18 +243,13 @@ export default {
     $('#load').ready(()=>{
       let observer = new IntersectionObserver((entries)=>{
         entries.forEach(entry =>{
-          //if(!entry.isIntersecting || entry.intersectionRatio == 1)
-            //return;
           if(!this.allLoaded){
             console.log(entry);
-            //setInterval(()=>{
-              if(entry.isIntersecting){
-                console.log(entry);
-                console.log('asked form more');
-                this.getTasks();
-
-              }
-            //},3000);
+            if(entry.isIntersecting){
+              console.log(entry);
+              console.log('asked form more');
+              this.getTasks();
+            }
           }
         });
       },options);
