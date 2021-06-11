@@ -2,7 +2,6 @@
   <button @click="addGoal">+ Goal</button>
   <CreateGoal v-if="creatingGoal" @updateGoals="getGoals" @cancelAddGoal="cancelAddGoal"/>
   <div>
-    {{computedGoals}}
     <transition-group
       name="search-fade"
       @before-enter="beforeEnter"
@@ -11,7 +10,7 @@
       mode="out-in"
     >
     <div id="goal" v-for="(goal, index) in computedGoals" :key="goal.id">
-      <Goal :goal="goal" :data-index="index" @goalDeleted="getGoals" @getGoals="getGoals"/>
+      <Goal :goal="goal" :data-index="index" @remove="remove"/>
     </div>
 
     </transition-group>
@@ -21,6 +20,7 @@
 
 <script>
 import Goal from '@/components/item/Goal.vue';
+//import Goal from '@/components/item/goal.vue';
 import CreateGoal from '@/components/item/CreateGoal.vue';
 
 import Axios, { AreaCorrespond }from '@/auth/auth';
@@ -33,6 +33,7 @@ export default {
     Goal,
     CreateGoal,
   },
+  emits: ['remove'],
   props:['query'],
   data() {
     return {
@@ -58,17 +59,17 @@ export default {
     addGoal(){ this.creatingGoal = true; },
     cancelAddGoal(){ this.creatingGoal = false; },
     getGoals(){
-      console.log('asked');
-      //let slug = this.getSlug();
-      let route = '/area/'+ this.getSlug() +'/paginated-tasks/' + this.Goals.length;
+      let route = '/area/'+ this.$route.params.name +'/paginated-tasks/' + this.Goals.length;
       Axios.get(route).then((res)=>{
-        console.log(res);
         if(res.data.error){
           console.log('error');
           return;
         }
-        this.Goals = res.goals;
+        this.Goals = JSON.parse(res.data.goals);
       });
+    },
+    remove(id){
+      this.$emit('remove',id);
     },
   },
   mounted(){
@@ -78,19 +79,17 @@ export default {
       rootMargin: "0px"
     };
 
-    $('#load').ready(()=>{
+    $('document').ready(()=>{
       let observer = new IntersectionObserver((entries)=>{
         entries.forEach(entry =>{
           if(!this.allLoaded){
-            console.log(entry);
             if(entry.isIntersecting){
-              if(entry.target.id.localeCompare('loadTasks') == 0)
-                this.getGoals();
+              this.getGoals();
+              console.log(entry);
             }
           }
         });
       },options);
-      console.log('observing');
       observer.observe($('#loadGoals')[0]);
     });
   }

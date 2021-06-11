@@ -1,24 +1,22 @@
 <template>
   <div class="goal">
     <span v-if="err" class="errorMsg" style="margin-bottom:15px;">{{errMsg}}</span>
-    <br />
-    <!--<input type="checkbox" v-model=statusCopy disabled>-->
-    <span>{{goal.status}}</span>
-    <span>{{goal.name}}</span> 
-    <span>{{goal.progress}}%</span>
-    <span>{{goal.deadline}}</span> 
     <div>
-      <button @click="createNested">Crear Tarea</button>
+      <!--<input type="checkbox" v-model=statusCopy disabled>-->
+      <!--<span>{{goal.status}}</span>-->
+      <span>{{goal.name}}</span> 
+      <span>{{goal.deadline}}</span>
+      <div>
+        <button @click="createNested">Crear Tarea</button>
 
-      <button @click="edit">Editar</button>
-      <button v-if="onEdit" @click="cancel">Cancelar</button>
+        <button @click="edit">Editar</button>
+        <button v-if="onEdit" @click="cancel">Cancelar</button>
 
-      <button @click="remove">Eliminar</button>
-      <div v-if="showNested">
-        <div v-for="(task, index) in nestedTask" :key="task.id">
-          </NestedTask />
-        </div>
+        <button @click="remove">Eliminar</button>
       </div>
+    </div>
+    <div class="nestedTasks" v-for="(task, index) in goal.tasks" :key="task.id">
+      <NestedTask :task="task" />
     </div>
   </div>
 </template>
@@ -27,29 +25,26 @@
 import Axios from '@/auth/auth';
 import { GetErrMsg } from '@/js/error.js';
 
-//import nestedTask from '@/components/item/NestedTask.vue';
+import NestedTask from '@/components/item/NestedTask.vue';
 
 import $ from 'jquery';
 
 export default {
-  name: 'Task',
-  //components:{
-  //  nestedTask,
-  //},
-  emits: ['goalDeleted','getGoals'],
+  name: 'Goal',
+  components:{
+    NestedTask,
+  },
+  emits: ['remove','getGoals'],
   props: {
-    goal: {
-      id: 0,
-      name: "",
-      deadline: "",
-      status: false,
-    },
+    goal: Object,
   },
   data(){
     return {
       onEdit: false,
       statusCopy:false,
       goalCopy: {},
+
+      nestedTask:[],
 
       showNested:false,
 
@@ -155,14 +150,7 @@ export default {
       }
     },
     remove(){
-      Axios.post('/user/task/delete',{id:this.task.id}).then((res)=>{
-        if(!res.data.deleted)
-          console.log("error");
-        else
-          this.$emit('taskDeleted');
-        //nota:
-        //podría pasarle el id del eliminado y así poder hacer una transición
-      });
+      this.$emit('remove',this.goal.id);
     },
   }
 }
@@ -172,14 +160,18 @@ export default {
 <style lang="scss">
 .goal{
   margin-top:15px;
-  height:4rem;
+  height:fit-content;
+  max-height:10rem;
   padding:15px;
 
   border:1px solid var(--tertiary);
   border-radius:5px;
 
   display: flex;
-  flex-direction:row;
+  flex-direction:column;
   justify-content:space-between;
+}
+.nestedTasks{
+  width:90%;
 }
 </style>

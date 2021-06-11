@@ -1,6 +1,9 @@
 <template>
   <div class="nestedTask">
-    <span>Tarea anidada</span>
+    <span>{{task.id}}</span>
+    <span>{{task.name}}</span>
+    <span>{{task.deadline}}</span>
+    <span>{{task.dated}}</span>
       <button @click="edit">Editar</button>
       <button v-if="onEdit" @click="cancel">Cancelar</button>
       <button @click="remove">Eliminar</button>
@@ -14,7 +17,10 @@ import { GetErrMsg } from '@/js/error.js';
 import $ from 'jquery';
 
 export default{
-  name: 'nestedTask',
+  name: 'NestedTask',
+  props:{
+    task: Object,
+  },
   data() {
     return {
       onEdit: false,
@@ -121,14 +127,7 @@ export default{
       }
     },
     remove(){
-      Axios.post('/user/task/delete',{id:this.task.id}).then((res)=>{
-        if(!res.data.deleted)
-          console.log("error");
-        else
-          this.$emit('taskDeleted');
-        //nota:
-        //podría pasarle el id del eliminado y así poder hacer una transición
-      });
+      this.$emit('remove',task.id);
     },
   }
 }
@@ -136,7 +135,7 @@ export default{
 
 <style>
 .nestedTask{
-  
+  width:90%;  
 }
 
 </style>

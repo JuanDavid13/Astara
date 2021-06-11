@@ -10,7 +10,7 @@
     <router-link :to="{ name: 'Tasks', params: { name: 'TFG' }}" >tareas</router-link>
     <router-link :to="{ name: 'Goals', params: { name: 'TFG' }}" >objetivos</router-link>
 
-    <router-view :query="query"></router-view>
+    <router-view :query="query" @remove="remove"></router-view>
   </div>
 </template>
 
@@ -64,11 +64,15 @@ export default {
         $(e.target).text('Editar');
       }
     },
+    remove(id){
+      console.log(id);
+      Axios.post('/area/remove-target',{id: id}).then((res)=>{
+        console.log(res);
+      });
+    },
   },
   async created() {
-    console.log("data");
     let data = await AreaCorrespond(this.$router.currentRoute._value.params.name);
-    console.log(data);
     this.deleteable = data.deleteable;
     this.AreaName = data.areaName;
   },

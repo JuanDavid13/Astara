@@ -58,6 +58,7 @@ func GetPaginatedGoals(uid, areaId, size int, rol string) string {
 			if !Id.Valid { goal.Id = 0; }else{ goal.Id= int(Id.Int64); }
 			if !Name.Valid { goal.Name = ""; }else{ goal.Name = Name.String; }
 			if !Description.Valid { goal.Description = ""; }else{ goal.Description = Description.String; }
+			if !Deadline.Valid { goal.Deadline = ""; }else{ goal.Deadline = Deadline.String; }
 			if !Children.Valid { goal.Children = 0; }else{ goal.Children = int(Children.Int64); }
 			if !ChildrenDone.Valid { goal.Id = 0; }else{ goal.ChildrenDone = int(ChildrenDone.Int64); }
 
@@ -70,7 +71,7 @@ func GetPaginatedGoals(uid, areaId, size int, rol string) string {
 	//}
 	
 
-	taskQuery := "SELECT TR.`Id`, TR.`Id_parent`, TR.`Deadline`, TS.`Dated`, TR.`Name` FROM `Task` AS TS JOIN `Targets` AS TR ON (TS.`Id_target` = TR.`Id`) JOIN `Goals` AS G ON (G.`Id` = TR.`Id_parent`)	WHERE TR.`Id_usu` = ? AND TR.`Id_area` = ? AND TR.`Id_status` = 50;";
+	taskQuery := "SELECT TR.`Id`, TR.`Id_parent`, TR.`Deadline`, TS.`Dated`, TR.`Name` FROM `Task` AS TS JOIN `Targets` AS TR ON (TS.`Id_target` = TR.`Id`) WHERE TR.`Id_usu` = ? AND TR.`Id_area` = ? AND TR.`Id_parent` IS NOT NULL AND TR.`Id_status` = 50;";
 
 	taskStmt, err := db.Prepare(taskQuery);
 	if err != nil { panic(err); }
@@ -101,6 +102,10 @@ func GetPaginatedGoals(uid, areaId, size int, rol string) string {
 		tasks = append(tasks, task);
 	}
 
+	fmt.Println("tasks");
+	for s := range tasks{
+		fmt.Printf("%+v",s);
+	}
 	
 	nestedGoals := nestGoals(tasks, goals);
 	//nestedGoals := nestGoals(goals);
@@ -191,6 +196,7 @@ func nestGoals(goals map[int]*Goal) map[int]*Goal{
 };
 */
 func nestGoals(tasks []Task, goals map[int]*Goal) map[int]*Goal {
+
 	for _, v := range tasks{
 		if goals[v.Id_parent].Tasks == nil {
 			var t = goals[v.Id_parent].Tasks;

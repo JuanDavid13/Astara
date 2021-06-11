@@ -147,3 +147,25 @@ func ChangeAreaName(c *fiber.Ctx) error {
 					return c.JSON(fiber.Map{ "changed":false, });
 	}else{	return c.JSON(fiber.Map{ "changed":true, }); }
 } 
+
+func RemoveTarget(c *fiber.Ctx) error {
+	type response struct { Id int `json:"id"`; }
+	res := response{};
+
+	err := json.Unmarshal(c.Body(), &res);
+	if err != nil { panic(err); /*return c.SendStatus(400);*/}
+
+	if res.Id <= 0 { return c.SendStatus(400); }
+
+	cl := c.Locals("claims").(jwt.Claims);
+
+	if !RmvTarget(cl.User, res.Id, cl.Rol){
+		return c.JSON(fiber.Map{
+			"error":true,
+		});
+	}else{
+		return c.JSON(fiber.Map{
+			"error":true,
+		});
+	}
+}

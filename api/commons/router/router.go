@@ -54,6 +54,7 @@ func RouterSetUp(app *fiber.App) {
 		area.Post("/correspond",AreaCheck);
 		area.Post("/create",CreateArea);
 		area.Post("/delete",DeleteArea);
+		area.Post("/remove-target",RemoveTarget);
 		area.Post("/edit",ChangeAreaName);
 		
 		//area.Post("/tasks",GetAllTasks); //cambiar por get

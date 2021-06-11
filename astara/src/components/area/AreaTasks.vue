@@ -58,12 +58,9 @@ export default {
       }).then((res)=>{
         if(res.data.error){
           console.log('error');
-        }else{
-          this.Tasks = this.Tasks.concat(JSON.parse(res.data.tasks));
-
-          if(this.Tasks.length >= this.total)
-            this.allTasksLoaded = true;
+          return;
         }
+        this.Tasks = this.Tasks.concat(JSON.parse(res.data.tasks));
       });
     },
     beforeEnter(tasks){
@@ -107,11 +104,8 @@ export default {
       let observer = new IntersectionObserver((entries)=>{
         entries.forEach(entry =>{
           if(!this.allLoaded){
-            console.log(entry);
-            if(entry.isIntersecting){
-              if(entry.target.id.localeCompare('loadTasks') == 0)
-                this.getTasks();
-            }
+            if(entry.isIntersecting)
+              this.getTasks();
           }
         });
       },options);

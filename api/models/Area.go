@@ -199,3 +199,18 @@ func ChangeName(uid int , rol, oldName, name, slug string) bool {
 
   return true;
 }
+
+func RmvTarget(uid, targetId int, rol string) bool {
+  fmt.Println("removing target");
+
+  db := db.GetDb(rol);
+
+  query := "DELETE FROM `Targets` WHERE `Id_usu` = ? AND `Id` = ?;";
+  stmt, err := db.Prepare(query);
+
+  if err != nil { /*return false;*/ panic(err); }
+
+  if _, err := stmt.Exec(uid, targetId); err != nil { /*return false;*/ panic(err); }
+
+  return true;
+}
