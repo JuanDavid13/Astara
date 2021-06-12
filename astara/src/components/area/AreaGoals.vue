@@ -23,7 +23,7 @@ import Goal from '@/components/item/Goal.vue';
 //import Goal from '@/components/item/goal.vue';
 import CreateGoal from '@/components/item/CreateGoal.vue';
 
-import Axios, { AreaCorrespond }from '@/auth/auth';
+import Axios from '@/auth/auth';
 
 import $ from 'jquery';
 

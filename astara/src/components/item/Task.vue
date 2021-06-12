@@ -24,7 +24,7 @@ import $ from 'jquery';
 
 export default {
   name: 'Task',
-  emits: ['taskDeleted','getTasks'],
+  emits: ['remove','getTasks'],
   props: {
     task: {
       id: 0,
@@ -140,14 +140,7 @@ export default {
       }
     },
     remove(){
-      Axios.post('/user/task/delete',{id:this.task.id}).then((res)=>{
-        if(!res.data.deleted)
-          console.log("error");
-        else
-          this.$emit('taskDeleted');
-        //nota:
-        //podría pasarle el id del eliminado y así poder hacer una transición
-      });
+      this.$emit('remove',this.task.id);
     },
   }
 }

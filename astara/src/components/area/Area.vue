@@ -16,6 +16,7 @@
 
 <script>
 import Axios, { AreaCorrespond }from '@/auth/auth';
+import $ from 'jquery';
 
 export default {
   name: 'Area',

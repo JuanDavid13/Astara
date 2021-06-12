@@ -110,6 +110,7 @@ export default{
       }
     },
     edit(e){
+      return;
       this.taskCopy = $.extend(false, {}, this.task);
       let name = $(e.path[2]).children()[2];
       let deadline = $(e.path[2]).children()[3];

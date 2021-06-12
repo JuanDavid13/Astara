@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import Home from '../views/Home.vue';
 import Login from '../views/Login.vue';
+import Landing from '../views/Landing.vue';
 
 import Main from '../components/main/Main.vue';
 import Area from '../components/area/Area.vue';
@@ -12,10 +13,10 @@ const Auth = require('../auth/auth');
 
 const routes = [
   {
-    path: '/',
+    path: '/dashboard',
     name: 'Home',
     component: Home,
-    redirect: '/', //little trick here
+    redirect: '/dashboard', //little trick here
     meta: { auth: true },
     beforeEnter: async (to, from, next) => {
       let isAuthenticated = await Auth.Validate();
@@ -63,6 +64,12 @@ const routes = [
     name: 'Login',
     component: Login,
     meta: { auth: false}
+  },
+  {
+    path: '/',
+    name: 'Landing' ,
+    component: Landing,
+    meta: { auth: false }
   }
 ]
 

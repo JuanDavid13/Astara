@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="nestedTasks" v-for="(task, index) in goal.tasks" :key="task.id">
-      <NestedTask :task="task" />
+      <NestedTask :task="task" :data-index="index" />
     </div>
   </div>
 </template>
@@ -85,7 +85,7 @@ export default {
       if($(name)[0].nodeName.localeCompare("INPUT") == 0){
         $(name).replaceWith("<span>" + this.taskCopy.name + "</span>");
         $(deadline).replaceWith("<span>" + this.taskCopy.deadline + "</span>");
-        $(dated).replaceWith("<span>" + this.taskCopy.dated + "</span>");
+        //$(dated).replaceWith("<span>" + this.taskCopy.dated + "</span>");
 
         let editBtn = $(e.path[1]).children()[1];
         $(editBtn).text('Editar')
@@ -133,21 +133,23 @@ export default {
       }
     },
     edit(e){
-      this.taskCopy = $.extend(false, {}, this.task);
-      let name = $(e.path[2]).children()[2];
-      let deadline = $(e.path[2]).children()[3];
-      let dated = $(e.path[2]).children()[4];
+      console.log(e);
+      return;
+      //this.taskCopy = $.extend(false, {}, this.task);
+      //let name = $(e.path[2]).children(2)[0];
+      //let deadline = $(e.path[2]).children()[3];
+      //let dated = $(e.path[2]).children()[4];
 
-      if($(name)[0].nodeName.localeCompare("SPAN") == 0){
-        $(name).replaceWith("<input type='text' value='" + this.taskCopy.name + "' minlength='4' maxlength='20'>");
-        $(deadline).replaceWith("<input type='date' value='" + this.taskCopy.deadline + "'>");
-        $(dated).replaceWith("<input type='date' value='" + this.taskCopy.dated + "'>");
+      //if($(name)[0].nodeName.localeCompare("SPAN") == 0){
+      //  $(name).replaceWith("<input type='text' value='" + this.taskCopy.name + "' minlength='4' maxlength='20'>");
+      //  $(deadline).replaceWith("<input type='date' value='" + this.taskCopy.deadline + "'>");
+      //  $(dated).replaceWith("<input type='date' value='" + this.taskCopy.dated + "'>");
 
-        $(e.path[0]).text('Aceptar');
-        this.onEdit = true;
-      }else{
-        this.submitData(e);
-      }
+      //  $(e.path[0]).text('Aceptar');
+      //  this.onEdit = true;
+      //}else{
+      //  this.submitData(e);
+      //}
     },
     remove(){
       this.$emit('remove',this.goal.id);

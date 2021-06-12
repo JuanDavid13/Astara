@@ -9,7 +9,7 @@
     mode="out-in"
   >
   <div id="tasks" v-for="(task, index) in computedTasks" :key="task.id">
-    <Task :task="task" :data-index="index" @taskDeleted="getTasks" @getTasks="getTasks"/>
+    <Task :task="task" :data-index="index" @remove="remove" @getTasks="getTasks"/>
   </div>
   </transition-group>
   <span v-if="!allTasksLoaded" id="loadTasks">Cargar más</span>
@@ -19,7 +19,7 @@
 import Task from '@/components/item/Task.vue';
 import CreateTask from '@/components/item/CreateTask.vue';
 
-import Axios, { AreaCorrespond }from '@/auth/auth';
+import Axios from '@/auth/auth';
 
 import $ from 'jquery';
 
@@ -61,6 +61,19 @@ export default {
           return;
         }
         this.Tasks = this.Tasks.concat(JSON.parse(res.data.tasks));
+      });
+    },
+    remove(id){
+      Axios.post('/area/remove-target',{id: id}).then((res)=>{
+        console.log(res);
+        if(res.data.error){
+          console.log('error');
+        }else{
+          if(!res.data.deleted)
+            console.log('error')
+          else
+            this.getTasks();
+        }
       });
     },
     beforeEnter(tasks){

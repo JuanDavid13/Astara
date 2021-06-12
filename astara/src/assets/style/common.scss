@@ -13,6 +13,7 @@ $Ltxt:#37352F;
 $ghost:#E8E9F3;
 
 $gold:#F0A202;
+$goldShadow:rgba(240,162,2,0.3);
 
 //$errorBg:#FFA3A5;
 //$errorBg:#FAAA8D;
@@ -28,6 +29,7 @@ $errorTxt:#F2545B;
   --gold:#{$gold};
   --errorTxt:#{$errorTxt};
   --errorBg:#{$errorBg};
+  --goldShadow:#{$goldShadow};
 }
 
 .lightTheme{
