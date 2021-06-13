@@ -44,6 +44,7 @@ export default {
         deadline:"",
         status:false,
       },
+      tasks:[],
       allGoalsLoaded:false,
       creatingGoal:false,
     }
@@ -70,7 +71,9 @@ export default {
 
         if(this.Goals.length == JSON.parse(res.data.goals).length)
           this.allGoalsLoaded = true;
+        
         this.Goals = JSON.parse(res.data.goals);
+
       });
     },
   },

@@ -1,6 +1,7 @@
 <template>
   <div class="goal">
     <Error ref="error"/>
+    {{goal.id}}
     <div class="goalHeading">
       <!--<input type="checkbox" v-model="userCopy.status">-->
       <h4 v-if="!onEdit">{{goalCopy.name}}</h4> 
@@ -22,7 +23,7 @@
     <div class="nest">
       <div> <!--buttons part-->
         <button @click="createNested">Crear tarea</button>
-        <!--<button v-if="goalCopy.tasks.length > 0" @click="viewNested">Ver tareas</button>-->
+        <button v-if="goalCopy.tasks.length > 0" @click="viewNested">Ver tareas</button>
       </div>
       <CreateTask v-if="createTask" :id="goalCopy.id" @taskCreated="taskCreated"/>
       <div v-if="viewTasks"> <!--nested part-->
@@ -30,7 +31,6 @@
           <Task :task="task" :data-index="index"
             @nodeleted="nodeleted"
             @deleted="taskRemoved"
-            @getTasks="getGoals"
           />
         </div>
       </div>
@@ -126,11 +126,13 @@ export default {
         this.$refs.error.setErr(GetErrMsg());
     },
     taskCreated(){
-      this.$emit('getGoals',true);
+      this.$emit('getGoals',false);
+      this.updateTasks();
       this.createTask = false; 
     },
     taskRemoved(){
-      this.$emit('getGoals',true);
+      this.$emit('getGoals',false);
+      this.updateTasks();
     },
     createNested(e){
       if(!this.createTask){
@@ -161,14 +163,25 @@ export default {
         }else{
           if(!res.data.deleted)
             this.$refs.error.setErr(GetErrMsg());
-          else
+          else{
             this.$emit('getGoals',true);
+          }
         }
       });
     },
+    updateTasks(){
+      Axios.post('/user/task/goal-tasks',{ id: this.goal.id }).then((res)=>{
+        if(res.data.error)
+          this.$refs.error.setErr(GetErrMsg());
+        else
+          this.goalCopy.tasks = JSON.parse(res.data.tasks);
+      });
+    }
   },
   created(){
     this.goalCopy = $.extend(true, {}, this.goal);
+    if(this.goalCopy.tasks == null)
+      this.goalCopy.tasks = [];
   },
 }
 

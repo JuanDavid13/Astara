@@ -131,10 +131,8 @@ export default {
         }else{
           if(!res.data.deleted)
             this.$emit('nodeleted');
-          else{
-            console.log('deleted');
+          else
             this.$emit('deleted');
-          }
         }
       });
     },

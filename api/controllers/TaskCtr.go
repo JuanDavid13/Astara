@@ -166,3 +166,25 @@ func EditTask(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{ "updated":true });
 	}
 }
+
+func GetTasksOfGoal(c *fiber.Ctx) error {
+	type response struct {
+		Id int `json:"id"`;
+	}	
+	res := response{};
+
+	err := json.Unmarshal(c.Body(),&res);
+	if err != nil { panic(err); }
+
+	if res.Id <= 0 { return c.SendStatus(400); }
+
+	cl := c.Locals("claims").(jwt.Claims);
+
+	tasks := GetTasksByGoal(cl.User, res.Id, cl.Rol);
+	
+	c.Status(200);
+	return c.JSON(fiber.Map{
+		"error":false,
+		"tasks":tasks,
+	});
+}

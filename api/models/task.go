@@ -255,3 +255,44 @@ func UpdateTask(uid, taskId int, rol, name, deadline, dated string) bool {
 
 	return true;
 }
+
+func GetTasksByGoal(uid, goalId int, rol string) string {
+	fmt.Println("getting tasks of goal");
+  db := db.GetDb(rol);
+
+	tasks := []Task{};
+  
+	query := "SELECT TR.`Id`, TR.`Name`, TR.`Deadline`, TS.`Dated` FROM `Targets` AS TR JOIN `Task` AS TS ON (TR.`Id` = TS.`Id_target`) WHERE TR.`Id_parent` = ? AND TR.`Id_status` = 50;";
+
+  stmt, err := db.Prepare(query);
+  //if err != nil && err != sql.ErrNoRows { return false; /*panic(err);*/ }
+  if err != nil && err != sql.ErrNoRows { return ""; /*panic(err);*/ }
+
+	rows, err := stmt.Query(goalId);
+  defer stmt.Close();
+  //if err != nil && err != sql.ErrNoRows { return false; /*panic(err);*/}
+  if err != nil && err != sql.ErrNoRows { return ""; /*panic(err);*/}
+
+	var (
+		Id sql.NullInt64;
+		Name, Deadline, Dated sql.NullString;
+	)
+
+	for rows.Next(){
+		task := Task{};
+
+		rows.Scan(&Id, &Name, &Deadline, &Dated);
+
+		if !Id.Valid{ task.Id = 0; }else{ task.Id = int(Id.Int64); }
+		if !Name.Valid{ task.Name = ""; }else{ task.Name = Name.String; }
+		if !Deadline.Valid{ task.Deadline = ""; }else{ task.Deadline = Deadline.String; }
+		if !Dated.Valid{ task.Dated = ""; }else{ task.Dated = Dated.String; }
+		
+		tasks = append(tasks, task);
+	}
+	
+	jsonTasks, err := json.Marshal(tasks);
+	if err != nil { panic(err); }
+
+	return string(jsonTasks);
+}
