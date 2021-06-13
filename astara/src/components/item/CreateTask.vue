@@ -29,7 +29,7 @@ export default {
   props:['id'],
   data(){
     return{
-      taskId: -1,
+      parentId: -1,
     }
   },
   methods: {
@@ -42,31 +42,29 @@ export default {
       let dated =  e.target[2].value;
       
       if(name == "" || deadline == "" || this.id == 0){
-        console.log('algo');
         this.$refs.error.setErr(GetErrMsg('lackInput'));
         return;
       }
       if(this.id == null)
-        this.taskId = -1;
+        this.parentId = -1;
 
       Axios.post('/user/task/create',{
         slug:this.$route.params.name,
         name:name,
         deadline:deadline,
         dated:dated,
-        id:this.taskId,
+        id:this.parentId,
       }).then(async (res)=>{
-        console.log(res);
         if(!res.data.created){
           this.$refs.error.setError(GetErrMsg());
           return;
         }
-        this.$emit('taskCreated');
+        this.$emit('taskCreated', true);
       });
     },
   },
   created(){
-    this.taskId = this.id;
+    this.parentId = this.id;
   },
 
 }

@@ -29,7 +29,7 @@ func calcProgress(children, childrenDone int64) int {
 
 
 func GetPaginatedGoals(uid, areaId, size int, rol string, paginated bool) string {
-  fmt.Println("Getting paginated tasks of area:");
+  fmt.Println("Getting paginated goals:");
   db := db.GetDb(rol);
 
 	query := "SELECT TR.`Id`, TR.`Name`, G.`Description`, TR.`Deadline`, G.`Children`, G.`ChildrenDone` FROM `Goals` AS G JOIN `Targets` AS TR ON(G.`Id_target` = TR.`Id`) WHERE TR.`Id_usu` = ? AND TR.`Id_area` = ? AND TR.`Id_status` = 50 ORDER BY TR.`Id` DESC LIMIT ?;";

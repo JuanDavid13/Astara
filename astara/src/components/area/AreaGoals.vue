@@ -59,7 +59,9 @@ export default {
     addGoal(){ this.creatingGoal = true; },
     cancelAddGoal(){ this.creatingGoal = false; },
     getGoals(paginated){
-      let route = '/area/'+ this.$route.params.name +'/paginated-tasks/' + this.Goals.length + '/' + paginated;
+      if(paginated == null)
+        paginated = false;
+      let route = '/area/'+ this.$route.params.name +'/paginated-goals/' + this.Goals.length + '/' + paginated;
       Axios.get(route).then((res)=>{
         if(res.data.error){
           this.$refs.error.setErr(GetErrMsg());
@@ -97,7 +99,7 @@ export default {
         entries.forEach(entry =>{
           setInterval(()=>{
             if(!this.allGoalsLoaded && entry.isIntersecting){
-              this.getGoals();
+              this.getGoals(true);
             }
           },200)
         });

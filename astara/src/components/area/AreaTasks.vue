@@ -60,8 +60,13 @@ export default {
   },
   methods: {
     getTasks(paginated){
+      console.log(paginated);
+      if(paginated == null)
+        paginated = false;
+
       let url = '/area/' + this.$route.params.name + '/paginated-tasks/' + this.Tasks.length + '/' + paginated;
       Axios.get(url).then((res)=>{
+        console.log(res);
         if(res.data.error){
           this.$refs.error.setErr(GetErrMsg());
           return;

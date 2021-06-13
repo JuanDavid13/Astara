@@ -76,6 +76,7 @@ export default {
           return;
         }
         this.$emit('getTasks',false);
+        this.onEdit = false;
       });
     },
     validateInputs(){

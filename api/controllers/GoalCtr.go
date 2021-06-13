@@ -51,7 +51,7 @@ func GetPagGoals(c *fiber.Ctx) error {
 	sizeInt, err := strconv.Atoi(size);
 	if err != nil { /*panic(err);*/ return c.SendStatus(400); }
 
-	if sizeInt <= 0  || slug == "" { return c.SendStatus(400); }
+	if sizeInt < 0  || slug == "" { return c.SendStatus(400); }
 
 	cl := c.Locals("claims").(jwt.Claims);
 	
