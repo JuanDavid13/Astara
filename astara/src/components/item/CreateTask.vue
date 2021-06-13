@@ -1,11 +1,12 @@
 <template>
   <div>
+    <Error ref="error" />
     <form @submit.capture="createTask">
       <input type="text" placeholder="Nombre">
       <label>Fecha límite
         <input type="date" placeholder="Fecha límite">
       </label>
-      <label>Lo voy a hacer el día
+      <label>Planeo hacerlo:
         <input type="date" placeholder="fechado para">
       </label>
       <button type="submit">Añadir</button>
@@ -15,9 +16,22 @@
 
 <script>
 import Axios from '@/auth/auth';
+
+import { GetErrMsg } from '@/js/error.js';
+import Error from '@/components/error/Error.vue';
+
 export default {
   name: 'CreateTask',
+  components: {
+    Error,
+  },
   emits: ['taskCreated'],
+  props:['id'],
+  data(){
+    return{
+      taskId: -1,
+    }
+  },
   methods: {
     async createTask(e){
       e.preventDefault();
@@ -27,32 +41,37 @@ export default {
       let deadline = e.target[1].value;
       let dated =  e.target[2].value;
       
-      if(name == "" || deadline == ""){
-        console.log("error");
+      if(name == "" || deadline == "" || this.id == 0){
+        console.log('algo');
+        this.$refs.error.setErr(GetErrMsg('lackInput'));
         return;
       }
+      if(this.id == null)
+        this.taskId = -1;
 
       Axios.post('/user/task/create',{
         slug:this.$route.params.name,
         name:name,
         deadline:deadline,
         dated:dated,
+        id:this.taskId,
       }).then(async (res)=>{
         console.log(res);
         if(!res.data.created){
-          console.log("error");
-        }else{
-          this.$emit('taskCreated');
-          //let data = await AreaCorrespond(this.$route.params.name);
-          //this.Items = JSON.parse(data);
+          this.$refs.error.setError(GetErrMsg());
+          return;
         }
+        this.$emit('taskCreated');
       });
     },
-  }
+  },
+  created(){
+    this.taskId = this.id;
+  },
 
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 
 </style>

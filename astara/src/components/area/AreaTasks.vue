@@ -1,4 +1,5 @@
 <template>
+  <Error ref="error" />
   <button @click="addTask">+ Tarea</button>
   <CreateTask @taskCreated="getTasks"  />
   <transition-group
@@ -9,17 +10,23 @@
     mode="out-in"
   >
   <div id="tasks" v-for="(task, index) in computedTasks" :key="task.id">
-    <Task :task="task" :data-index="index" @remove="remove" @getTasks="getTasks"/>
+    <Task :task="task" :data-index="index"
+      @deleted="getTasks"
+      @nodeleted="nodeleted"
+      @getTasks="getTasks"
+    />
   </div>
   </transition-group>
-  <span v-if="!allTasksLoaded" id="loadTasks">Cargar más</span>
+  <span id="loadTasks" :class="{ loaderInv: allTasksLoaded }" >Cargar más</span>
 </template>
 
 <script>
+import { GetErrMsg } from '@/js/error.js';
+import Axios from '@/auth/auth';
+
 import Task from '@/components/item/Task.vue';
 import CreateTask from '@/components/item/CreateTask.vue';
-
-import Axios from '@/auth/auth';
+import Error from '@/components/error/Error.vue';
 
 import $ from 'jquery';
 
@@ -28,6 +35,7 @@ export default {
   components: {
     Task,
     CreateTask,
+    Error,
   },
   props:['query'],
   data(){
@@ -51,30 +59,22 @@ export default {
     },
   },
   methods: {
-    getTasks(){
-      Axios.post('/area/paginated-tasks',{
-        offset: this.Tasks.length,
-        slug:this.$route.params.name
-      }).then((res)=>{
+    getTasks(paginated){
+      let url = '/area/' + this.$route.params.name + '/paginated-tasks/' + this.Tasks.length + '/' + paginated;
+      Axios.get(url).then((res)=>{
         if(res.data.error){
-          console.log('error');
+          this.$refs.error.setErr(GetErrMsg());
           return;
         }
-        this.Tasks = this.Tasks.concat(JSON.parse(res.data.tasks));
+        //this.Tasks = this.Tasks.concat(JSON.parse(res.data.tasks));
+        if(this.Tasks.length == JSON.parse(res.data.tasks).length)
+          this.allTasksLoaded = true;
+        this.Tasks = JSON.parse(res.data.tasks);
+
       });
     },
-    remove(id){
-      Axios.post('/area/remove-target',{id: id}).then((res)=>{
-        console.log(res);
-        if(res.data.error){
-          console.log('error');
-        }else{
-          if(!res.data.deleted)
-            console.log('error')
-          else
-            this.getTasks();
-        }
-      });
+    nodeleted(){
+      console.log('deletedd');
     },
     beforeEnter(tasks){
       //console.log($(tasks).children(0)[0].dataset.index);
@@ -113,13 +113,14 @@ export default {
       rootMargin: "0px"
     };
 
-    $('#load').ready(()=>{
+    $(document).ready(()=>{
       let observer = new IntersectionObserver((entries)=>{
         entries.forEach(entry =>{
-          if(!this.allLoaded){
-            if(entry.isIntersecting)
-              this.getTasks();
-          }
+          setInterval(()=>{
+            if(!this.allTasksLoaded && entry.isIntersecting){
+              this.getTasks(true);
+            }
+          },1000);
         });
       },options);
       observer.observe($('#loadTasks')[0]);
@@ -128,6 +129,11 @@ export default {
 }
 </script>
 
-<style lang="scss">
-
+<style scoped ="scss">
+#loadTasks{
+  transition:all .25s ease;
+}
+  .loaderInv{
+    opacity:0;
+  }
 </style>

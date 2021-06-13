@@ -1,17 +1,24 @@
 <template>
   <div class="task">
-    <span v-if="err" class="errorMsg" style="margin-bottom:15px;">{{errMsg}}</span>
+    <Error ref="error" />
     <br />
     <!--<input type="checkbox" v-model=statusCopy disabled>-->
-    <span>{{task.id}}</span>
-    <span>{{task.status}}</span>
-    <span>{{task.name}}</span> 
-    <span>{{task.deadline}}</span> 
-    <span>{{task.dated}}</span>
+    <!--<span>{{task.id}}</span>-->
+    <span>{{taskCopy.status}}</span>
+    <span v-show="!onEdit" class="taskName">{{taskCopy.name}}</span> 
+    <input v-show="onEdit" type="text" v-model="taskCopy.name" :placeholder="taskCopy.name">
+
+    <span v-show="!onEdit" class="taskDeadline">{{taskCopy.deadline}}</span> 
+    <input v-show="onEdit" type="date" v-model="taskCopy.deadline">
+
+    <span v-show="!onEdit" class="taskDated">{{taskCopy.dated}}</span>
+    <input v-show="onEdit" type="date" v-model="taskCopy.dated">
+
     <div>
-      <button @click="edit">Editar</button>
+      <button v-if="!onEdit" @click="edit">Editar</button>
+      <button v-if="onEdit" @click="submitData">Aceptar</button>
       <button v-if="onEdit" @click="cancel">Cancelar</button>
-      <button @click="remove">Eliminar</button>
+      <button @click="remove">X</button>
     </div>
   </div>
 </template>
@@ -20,11 +27,16 @@
 import Axios from '@/auth/auth';
 import { GetErrMsg } from '@/js/error.js';
 
+import Error from '@/components/error/Error.vue';
+
 import $ from 'jquery';
 
 export default {
   name: 'Task',
-  emits: ['remove','getTasks'],
+  components: {
+    Error,
+  },
+  emits: ['nodeleted','deleted','getTasks'],
   props: {
     task: {
       id: 0,
@@ -45,103 +57,89 @@ export default {
   },
   methods: {
     submitData(e){
-      this.taskCopy.name = $(e.path[2]).children()[2].value;
-      this.taskCopy.deadline = $(e.path[2]).children()[3].value;
-      this.taskCopy.dated = $(e.path[2]).children()[4].value;
+      if(!this.validateInputs(e))
+        return;
 
-      if (this.validateInputs()){
-        Axios.post('user/task/edit', {
-          name: this.taskCopy.name, 
-          deadline: this.taskCopy.deadline, 
-          dated: this.taskCopy.dated, 
-          task_id: this.task.id,
-        }).then((res)=>{
-          if(!res.data.updated){
-            this.err = true;
-            this.errMsg = GetErrMsg();
-            return
-          }
-          this.$emit('getTasks');
-          this.turnBackInputs(e);
-        });
-      }
-    },
-    turnBackInputs(e){
-      let name = $(e.path[2]).children()[2];
-      let deadline = $(e.path[2]).children()[3];
-      let dated = $(e.path[2]).children()[4];
+      //this.taskCopy.name = $(e.path[2]).children('.taskName').val();
+      //this.taskCopy.deadline = $(e.path[2]).children('.taskDeadline').val();
+      //this.taskCopy.dated = $(e.path[2]).children('.taskDated').val();
 
-      console.log(name);
-      console.log(deadline);
-      console.log(dated);
-
-      if($(name)[0].nodeName.localeCompare("INPUT") == 0){
-        $(name).replaceWith("<span>" + this.taskCopy.name + "</span>");
-        $(deadline).replaceWith("<span>" + this.taskCopy.deadline + "</span>");
-        $(dated).replaceWith("<span>" + this.taskCopy.dated + "</span>");
-
-        let editBtn = $(e.path[1]).children()[1];
-        $(editBtn).text('Editar')
-        this.onEdit = false;
-      }
+      Axios.post('user/task/edit', {
+        name: this.taskCopy.name, 
+        deadline: this.taskCopy.deadline, 
+        dated: this.taskCopy.dated, 
+        task_id: this.task.id,
+      }).then((res)=>{
+        if(!res.data.updated){
+          this.$refs.error.setErr(GetErrMsg());
+          this.cancel();
+          return;
+        }
+        this.$emit('getTasks',false);
+      });
     },
     validateInputs(){
-      if(this.taskCopy.name.localeCompare("") == 0 || this.taskCopy.deadline.localeCompare("") == 0 || this.taskCopy.deadline.localeCompare("0000-00-00") == 0){
-        this.err = true;
-        this.errMsg = GetErrMsg('lackInputs');
-        return false;
-      }
 
       if(this.taskCopy.name.length < 4){
-        this.err = true;
-        this.errMsg = GetErrMsg('shotName');
+        this.$refs.error.setErr(GetErrMsg());
         return false;
       }
 
+      let taskdeadline = new Date(this.task.deadline).getTime();
+      let taskcopydeadline = new Date(this.taskCopy.deadline).getTime();
+      ///console.log(taskdeadline == taskcopydeadline);
+      let taskdated = new Date(this.task.dated).getTime();
+      let taskcopydated = new Date(this.taskCopy.dated).getTime();
+
+      //brute comparison
       if(
-            this.taskCopy.name.localeCompare(this.task.name) == 0 &&
-            this.taskCopy.deadline.localeCompare(this.task.deadline) == 0 &&
-            this.taskCopy.dated.localeCompare(this.task.dated) == 0
+          this.taskCopy.name.localeCompare(this.task.name) == 0 &&
+          taskdeadline == taskcopydeadline && 
+          taskdated == taskcopydated
         )
       return false;
 
       return true;
     },
-    cancel(e){
-      let name = $(e.path[2]).children()[2];
-      let deadline = $(e.path[2]).children()[3];
-      let dated = $(e.path[2]).children()[4];
-
-      if($(name)[0].nodeName.localeCompare("SPAN") != 0){
-        $(name).replaceWith("<span>" + this.task.name + "</span>");
-        $(deadline).replaceWith("<span>" + this.task.deadline + "</span>");
-        $(dated).replaceWith("<span>" + this.task.dated + "</span>");
-
-        let editBtn = $(e.path[1]).children()[1];
-        $(editBtn).text('Editar')
-        this.onEdit = false;
-      }
+    cancel(){
+      this.onEdit = false;
+      this.taskCopy.name = this.task.name;
+      this.taskCopy.deadline = this.task.deadline;
+      this.taskCopy.dated = this.task.dated;
     },
     edit(e){
-      this.taskCopy = $.extend(false, {}, this.task);
-      let name = $(e.path[2]).children()[2];
-      let deadline = $(e.path[2]).children()[3];
-      let dated = $(e.path[2]).children()[4];
-
-      if($(name)[0].nodeName.localeCompare("SPAN") == 0){
-        $(name).replaceWith("<input type='text' value='" + this.taskCopy.name + "' minlength='4' maxlength='20'>");
-        $(deadline).replaceWith("<input type='date' value='" + this.taskCopy.deadline + "'>");
-        $(dated).replaceWith("<input type='date' value='" + this.taskCopy.dated + "'>");
-
-        $(e.path[0]).text('Aceptar');
+      if($(e.path[0]).text().localeCompare('Editar') === 0)
         this.onEdit = true;
-      }else{
-        this.submitData(e);
-      }
+      else
+        this.$refs.error.setErr(GetErrMsg());
+
+      //$(e.path[2]).children('.taskName')[0]; //--> the name of the task
+      //$(e.path[2]).children('.taskDeadline')[0]; //--> the deadline of the task
+      //$(e.path[2]).children('.taskDated')[0]; //--> the dated time of the task
+
+      //if($(e.path[2]).children('.taskName')[0].nodeName.localeCompare("SPAN") == 0){
+      //  $(e.path[2]).children('.taskName').replaceWith("<input class='taskName' type='text' value='" + this.taskCopy.name + "' minlength='4' maxlength='20'>");
+      //  $(e.path[2]).children('.taskDeadline').replaceWith("<input class='taskDeadline' type='date' value='" + this.taskCopy.deadline + "'>");
+      //  $(e.path[2]).children('.taskDated').replaceWith("<input class='taskDated' type='date' value='" + this.taskCopy.dated + "'>");
+      //}
     },
     remove(){
-      this.$emit('remove',this.task.id);
+      Axios.post('/area/remove-target',{id: this.task.id}).then((res)=>{
+        if(res.data.error || res.status == 400){
+          this.$emit('nodeleted');
+        }else{
+          if(!res.data.deleted)
+            this.$emit('nodeleted');
+          else{
+            console.log('deleted');
+            this.$emit('deleted');
+          }
+        }
+      });
     },
+  },
+  created(){
+    this.taskCopy = $.extend(true,{},this.task);
   }
 }
 

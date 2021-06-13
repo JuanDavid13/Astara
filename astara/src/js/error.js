@@ -18,6 +18,8 @@ export function GetErrMsg(errorName) {
 
     case 'wrongDate':{ return "La fecha introducida no es valida"; }
 
+    case 'taskNoDeleted': { return "No se ha podido eliminar la tarea"; }
+
     case 'updateErr':{ return "Ha ocurrido un error al intentar actualizar la información"; }
     default:{ return "Ha ocurrido un error"; }
   }

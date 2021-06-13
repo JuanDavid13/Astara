@@ -28,7 +28,7 @@ func calcProgress(children, childrenDone int64) int {
 }
 
 
-func GetPaginatedGoals(uid, areaId, size int, rol string) string {
+func GetPaginatedGoals(uid, areaId, size int, rol string, paginated bool) string {
   fmt.Println("Getting paginated tasks of area:");
   db := db.GetDb(rol);
 
@@ -37,7 +37,9 @@ func GetPaginatedGoals(uid, areaId, size int, rol string) string {
 	stmt, err := db.Prepare(query);
 	if err != nil { panic(err); }
 
-	limit := (size+5);
+	limit := size;
+	if paginated {limit += 5;}
+
 	rows, err := stmt.Query(uid, areaId, limit);
 	defer stmt.Close();
 

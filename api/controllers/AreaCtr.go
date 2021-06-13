@@ -152,6 +152,9 @@ func RemoveTarget(c *fiber.Ctx) error {
 	type response struct { Id int `json:"id"`; }
 	res := response{};
 
+	fmt.Println("Id");
+	fmt.Println(res.Id);
+
 	err := json.Unmarshal(c.Body(), &res);
 	if err != nil { panic(err); /*return c.SendStatus(400);*/}
 

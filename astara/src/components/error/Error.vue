@@ -1,40 +1,59 @@
 <template>
-  <div class="error errClosed" :class="{err: hasError}">
-    {{message}}
+  <div class="error" :class="{mistaken: error}">
+    <span>{{message}}</span>
     <button @click="closeErr">X</button>
   </div>
 </template>
-
 <script>
 export default{
-  name: 'Error',
-  data() {
+  name: 'error',
+  data(){
     return{
-      hasError: false,
-      message:"Error inesperado",
+      message:"",
+      error: false,
     }
   },
   methods:{
-    closeErr(){
-      this.hasError = false;
-      setTimeout(()=>{ this.message = "Error inesperado"; },500);
-    },
     setErr(msg){
-      this.hasError = true;
-      this.message = msg; 
+      this.message = msg;
+      this.error = true;
     },
+    closeErr(){
+      this.error = false;
+      setTimeout(()=>{
+        this.message = "Error inesperado";
+      },500);
+    }
   }
 }
 </script>
-
-<style lang="scss">
+<style scoped lang="scss">
+@import '@/assets/style/common.scss';
 .error{
-  color:red;
-  height:0;
+  position:relative;
+  height:0;  
+  max-height:5rem;
+  padding:0;
   overflow:hidden;
-  transition:height .25s ease-in-out;
-}
-.err{
-  height:3rem;
+  background-color:var(--errorBg);
+  color:var(--errorTxt);
+  transition:all .25s ease;
+  border-radius:5px;
+  
+  & button{
+    position:absolute;
+    top:5px;
+    right:5px;
+    background-color:transparent;
+    color:var(--errorTxt);
+    border:none;
+    cursor:pointer;
+    font-size:1rem;
+  }
+} 
+.mistaken{
+  height:fit-content;  
+  padding:10px;
+  border:2px solid var(--errorTxt);
 }
 </style>

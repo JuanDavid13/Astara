@@ -30,7 +30,6 @@ func RouterSetUp(app *fiber.App) {
 	user:= api.Group("/user");
 		user.Use(middleware);
 
-		//user.Get("/task",GetTargets);
 		task := user.Group("/task");
 			task.Post("/create",CreateTask);
 			task.Post("/delete",DeleteTask);
@@ -58,8 +57,10 @@ func RouterSetUp(app *fiber.App) {
 		area.Post("/edit",ChangeAreaName);
 		
 		//area.Post("/tasks",GetAllTasks); //cambiar por get
-		area.Post("/paginated-tasks",GetPaginatedTasks);
+		//area.Post("/paginated-tasks",GetPaginatedTasks);
 
-		area.Get("/:slug/paginated-tasks/:size",GetPagGoals);
+		area.Get("/:slug/paginated-tasks/:size/:paginated",GetPagTasks);
+
+		area.Get("/:slug/paginated-goals/:size/:paginated",GetPagGoals);
 }
 

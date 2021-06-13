@@ -43,17 +43,22 @@ func CreateGoal(c *fiber.Ctx) error {
 func GetPagGoals(c *fiber.Ctx) error {
 	slug := c.Params("slug");
 	size := c.Params("size");
+	pag:= c.Params("paginated");
+
+	paginated, err := strconv.ParseBool(pag);
+	if err != nil { return c.SendStatus(400); }
 
 	sizeInt, err := strconv.Atoi(size);
 	if err != nil { /*panic(err);*/ return c.SendStatus(400); }
-	if sizeInt < 0  || slug == "" { return c.SendStatus(400); }
+
+	if sizeInt <= 0  || slug == "" { return c.SendStatus(400); }
 
 	cl := c.Locals("claims").(jwt.Claims);
 	
 	id := GetIdFromSlug(cl.User, cl.Rol, slug);
 	if id == -1 { return c.JSON(fiber.Map{ "error":true, }); }
 
-	goals := GetPaginatedGoals(cl.User, id, sizeInt, cl.Rol);
+	goals := GetPaginatedGoals(cl.User, id, sizeInt, cl.Rol, paginated);
 
 	return c.JSON(fiber.Map{
 		"error":false,

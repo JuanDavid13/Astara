@@ -22,7 +22,7 @@
          </g>
         </svg>
       </div>
-      <button><router-link :to="{ name: 'Login' }">Entrar</router-link></button>
+      <router-link :to="{ name: 'Login' }"><button>Entrar</button></router-link>
     </nav>
     <header>
       <div>

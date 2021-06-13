@@ -1,13 +1,17 @@
 <template>
-  <Error ref="error" />
   <button @click="addGoal">+ Goal</button>
   <CreateGoal v-if="creatingGoal" @updateGoals="getGoals" @cancelAddGoal="cancelAddGoal"/>
   <div>
+    {{Goals}}
     <transition-group
       name="search-fade"
+      @before-enter="beforeEnter"
+      @enter="enter"
+      @leave="leave"
       mode="out-in"
     >
     <div id="goal" v-for="(goal, index) in computedGoals" :key="goal.id">
+      {{goal}}
       <Goal :goal="goal" :data-index="index" @remove="remove" @getGoals="getGoals"/>
     </div>
 
@@ -17,11 +21,9 @@
 </template>
 
 <script>
-import { GetErrMsg } from '@/js/error.js';
 import Goal from '@/components/item/Goal.vue';
 //import Goal from '@/components/item/goal.vue';
 import CreateGoal from '@/components/item/CreateGoal.vue';
-import Error from '@/components/error/Error.vue';
 
 import Axios from '@/auth/auth';
 
@@ -32,7 +34,6 @@ export default {
   components: {
     Goal,
     CreateGoal,
-    Error,
   },
   props:['query'],
   data() {
@@ -50,20 +51,22 @@ export default {
   },
   computed: {
     computedGoals(){
-      return this.Goals.filter(goal => {
-        return goal.name.toLowerCase().indexOf(this.query.toLowerCase()) !== -1;
-      });
+      //return this.Goals.filter(goal => {
+      //  return goal.name.toLowerCase().indexOf(this.query.toLowerCase()) !== -1;
+      //});
+      return this.Goals;
     }
   },
   methods: {
     addGoal(){ this.creatingGoal = true; },
     cancelAddGoal(){ this.creatingGoal = false; },
-    getGoals(paginated){
-      let route = '/area/'+ this.$route.params.name +'/paginated-tasks/' + this.Goals.length + '/' + paginated;
+    getGoals(){
+      console.log('asked');
+      let route = '/area/'+ this.$route.params.name +'/paginated-tasks/' + this.Goals.length;
       Axios.get(route).then((res)=>{
         console.log(res);
         if(res.data.error){
-          this.$refs.error.setErr(GetErrMsg());
+          console.log('error');
           return;
         }
         this.Goals = JSON.parse(res.data.goals);

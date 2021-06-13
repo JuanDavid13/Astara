@@ -23,16 +23,19 @@ type Task struct{
 	//Tasks *[]Task `json:"tasks"`;
 }
 
-func GetPaginatedTasksOfArea(uid, areaId, offset int, rol string) string {
-  fmt.Println("Getting paginated tasks of area:");
+func GetPaginatedTasks(uid, areaId, size int, rol string, paginated bool) string {
+  fmt.Println("Getting paginated tasks:");
   db := db.GetDb(rol);
 
-	query := "SELECT TR.`Id`, TR.`Id_parent`, TR.`Name`, TR.`Deadline`, TS.`Dated` FROM `Targets` AS TR JOIN `Task` AS TS ON(TR.`Id` = TS.`Id_target`) WHERE TR.`Id_usu` = ? AND TR.`Id_area` = ? AND TR.`Id_status` = ? ORDER BY TR.`Id` DESC LIMIT ?, 7;";
+	query := "SELECT TR.`Id`, TR.`Id_parent`, TR.`Name`, TR.`Deadline`, TS.`Dated` FROM `Targets` AS TR JOIN `Task` AS TS ON(TR.`Id` = TS.`Id_target`) WHERE TR.`Id_parent` IS NULL AND TR.`Id_usu` = ? AND TR.`Id_area` = ? AND TR.`Id_status` = 50 ORDER BY TR.`Id` DESC LIMIT ?;";
 
 	stmt, err := db.Prepare(query);
 	if err != nil { panic(err); }
 
-	rows, err := stmt.Query(uid,areaId,50, offset);
+	limit := size;
+	if paginated {limit += 5;}
+
+	rows, err := stmt.Query(uid, areaId, limit);
 	defer stmt.Close();
 
 	var (
@@ -162,28 +165,50 @@ func arrayTasks(order []int, tasks map[int]*Task) []Task{
 	return arrayTasks;
 }
 
-func CreateNewTask(uid, areaid int, rol, name, deadline, dated string) bool {
+func CreateNewTask(uid, areaid, goalId int, rol, name, deadline, dated string) bool {
   fmt.Println("Create Task:");
   db := db.GetDb(rol);
-  
-	targetQuery := "INSERT INTO `Targets` (`Id_usu`,`Id_area`,`Name`,`Deadline`) VALUES(?, ?, ?, ?);";
 
-  targetStmt, err := db.Prepare(targetQuery);
-  if err != nil && err != sql.ErrNoRows { /*return false;*/panic(err); }
 
-	res, err := targetStmt.Exec(uid, areaid, name, deadline);
-  defer targetStmt.Close();
-  if err != nil && err != sql.ErrNoRows { /*return false;*/panic(err);}
+	targtId := -1;
 
-	targetId, err := res.LastInsertId();
-	if err != nil { return false; }
+	if goalId == -1 {
+		targetQuery := "INSERT INTO `Targets` (`Id_usu`,`Id_area`,`Name`,`Deadline`) VALUES(?, ?, ?, ?);";
+
+		targetStmt, err := db.Prepare(targetQuery);
+		if err != nil && err != sql.ErrNoRows { /*return false;*/panic(err); }
+
+		res, err := targetStmt.Exec(uid, areaid, name, deadline);
+		defer targetStmt.Close();
+		if err != nil && err != sql.ErrNoRows { /*return false;*/panic(err);}
+		
+		targetId, err := res.LastInsertId();
+		if err != nil { return false; }
+
+		targtId = int(targetId);
+	}else{
+		targetQuery := "INSERT INTO `Targets` (`Id_parent`,`Id_usu`,`Id_area`,`Name`,`Deadline`) VALUES(?, ?, ?, ?, ?);";
+
+		targetStmt, err := db.Prepare(targetQuery);
+		if err != nil && err != sql.ErrNoRows { /*return false;*/panic(err); }
+
+		res, err := targetStmt.Exec(goalId, uid, areaid, name, deadline);
+		defer targetStmt.Close();
+		if err != nil && err != sql.ErrNoRows { /*return false;*/panic(err);}
+
+		targetId, err := res.LastInsertId();
+		if err != nil { return false; }
+
+		targtId = int(targetId);
+	}
+
 
 	taskQuery := "INSERT INTO `Task` (`Id_target`,`Dated`) VALUES(?, ?);";
 
   taskStmt, err := db.Prepare(taskQuery);
   if err != nil && err != sql.ErrNoRows { /*return false;*/panic(err); }
 
-	_ , err = taskStmt.Exec(targetId, dated);
+	_ , err = taskStmt.Exec(targtId, dated);
   defer taskStmt.Close();
   if err != nil && err != sql.ErrNoRows { /*return false;*/panic(err);}
 
