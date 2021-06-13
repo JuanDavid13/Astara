@@ -61,13 +61,14 @@ export default {
     getGoals(paginated){
       let route = '/area/'+ this.$route.params.name +'/paginated-tasks/' + this.Goals.length + '/' + paginated;
       Axios.get(route).then((res)=>{
-        console.log(res);
         if(res.data.error){
           this.$refs.error.setErr(GetErrMsg());
           return;
         }
+
+        if(this.Goals.length == JSON.parse(res.data.goals).length)
+          this.allGoalsLoaded = true;
         this.Goals = JSON.parse(res.data.goals);
-        console.log(this.Goals);
       });
     },
     remove(id){
@@ -94,12 +95,11 @@ export default {
     $('document').ready(()=>{
       let observer = new IntersectionObserver((entries)=>{
         entries.forEach(entry =>{
-          if(!this.allLoaded){
-            if(entry.isIntersecting){
+          setInterval(()=>{
+            if(!this.allGoalsLoaded && entry.isIntersecting){
               this.getGoals();
-              console.log(entry);
             }
-          }
+          },200)
         });
       },options);
       observer.observe($('#loadGoals')[0]);

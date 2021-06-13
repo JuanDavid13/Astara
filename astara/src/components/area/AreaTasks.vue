@@ -120,7 +120,7 @@ export default {
             if(!this.allTasksLoaded && entry.isIntersecting){
               this.getTasks(true);
             }
-          },1000);
+          },200);
         });
       },options);
       observer.observe($('#loadTasks')[0]);
