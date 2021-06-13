@@ -3,13 +3,19 @@
     <Error ref="error"/>
     <div class="goalHeading">
       <!--<input type="checkbox" v-model="userCopy.status">-->
-      <h4>{{goalCopy.name}}</h4> 
+      <h4 v-if="!onEdit">{{goalCopy.name}}</h4> 
+      <input v-if="onEdit" type="text" v-model="goalCopy.name">
       <!--<span>{{goalCopy.progress}}</span>-->
     </div>
-    <p class="limit">{{goalCopy.deadline}}</p>
-    <p class="desc">{{goalCopy.description}}</p>
+    <p v-if="!onEdit" class="limit">{{goalCopy.deadline}}</p>
+    <input v-if="onEdit" type="date" v-model="goalCopy.deadline" >
+
+    <p v-if="!onEdit" class="desc">{{goalCopy.description}}</p>
+    <input v-if="onEdit" type="text" v-model="goalCopy.description" >
+
     <div class="actionBtns" >
-      <button @click="edit">Editar</button>
+      <button v-if="!onEdit" @click="edit">Editar</button>
+      <button v-if="onEdit" @click="submitData">Aceptar</button>
       <button v-if="onEdit" @click="cancel">Cancelar</button>
       <button @click="remove">X</button>
     </div>
@@ -65,102 +71,66 @@ export default {
   },
   methods: {
     submitData(e){
-      this.taskCopy.name = $(e.path[2]).children()[2].value;
-      this.taskCopy.deadline = $(e.path[2]).children()[3].value;
-      this.taskCopy.dated = $(e.path[2]).children()[4].value;
+      if(!this.validateInputs(e))
+        return;
 
-      if (this.validateInputs()){
-        Axios.post('user/task/edit', {
-          name: this.taskCopy.name, 
-          deadline: this.taskCopy.deadline, 
-          dated: this.taskCopy.dated, 
-          task_id: this.task.id,
-        }).then((res)=>{
-          if(!res.data.updated){
-            this.$refs.error.setErr(GetErrMsg());
-            return
-          }
-          this.$emit('getTasks');
-          this.turnBackInputs(e);
-        });
-      }
-    },
-    turnBackInputs(e){
-      let name = $(e.path[2]).children()[2];
-      let deadline = $(e.path[2]).children()[3];
-
-      if($(name)[0].nodeName.localeCompare("INPUT") == 0){
-        $(name).replaceWith("<span>" + this.taskCopy.name + "</span>");
-        $(deadline).replaceWith("<span>" + this.taskCopy.deadline + "</span>");
-        //$(dated).replaceWith("<span>" + this.taskCopy.dated + "</span>");
-
-        let editBtn = $(e.path[1]).children()[1];
-        $(editBtn).text('Editar')
+      Axios.post('goal/edit', {
+        name: this.goalCopy.name, 
+        deadline: this.goalCopy.deadline, 
+        description: this.goalCopy.description, 
+        goal_id: this.goal.id,
+      }).then((res)=>{
+        if(!res.data.updated){
+          this.$refs.error.setErr(GetErrMsg());
+          return
+        }
+        this.$emit('getGoals',true);
         this.onEdit = false;
-      }
+      });
     },
     validateInputs(){
-      if(this.taskCopy.name.localeCompare("") == 0 || this.taskCopy.deadline.localeCompare("") == 0 || this.taskCopy.deadline.localeCompare("0000-00-00") == 0){
-        this.err = true;
-        this.errMsg = GetErrMsg('lackInputs');
+      if(this.goalCopy.name.length < 4){
+        this.$refs.error.setErr(GetErrMsg());
         return false;
       }
 
-      if(this.taskCopy.name.length < 4){
-        this.err = true;
-        this.errMsg = GetErrMsg('shotName');
+      let goalCopyDeadline = new Date(this.goalCopy.deadline).getTime();
+      let goalDeadline = new Date(this.goal.deadline).getTime();
+
+      if(goalCopyDeadline == 0 || goalCopyDeadline == null){ //check this
+        this.$refs.error.setErr(GetErrMsg());
         return false;
       }
+
 
       if(
-            this.taskCopy.name.localeCompare(this.task.name) == 0 &&
-            this.taskCopy.deadline.localeCompare(this.task.deadline) == 0 &&
-            this.taskCopy.dated.localeCompare(this.task.dated) == 0
+            this.goalCopy.name.localeCompare(this.goal.name) == 0 &&
+            this.goalCopy.description.localeCompare(this.goal.description) == 0 &&
+            goalCopyDeadline == goalDeadline
+
         )
       return false;
 
       return true;
     },
-    cancel(e){
-      let name = $(e.path[2]).children()[2];
-      let deadline = $(e.path[2]).children()[3];
-      let dated = $(e.path[2]).children()[4];
-
-      if($(name)[0].nodeName.localeCompare("SPAN") != 0){
-        $(name).replaceWith("<span>" + this.task.name + "</span>");
-        $(deadline).replaceWith("<span>" + this.task.deadline + "</span>");
-        $(dated).replaceWith("<span>" + this.task.dated + "</span>");
-
-        let editBtn = $(e.path[1]).children()[1];
-        $(editBtn).text('Editar')
-        this.onEdit = false;
-      }
+    cancel(){
+      this.onEdit = false;
+      this.goalCopy.name = this.goal.name;
+      this.goalCopy.description = this.goal.description;
+      this.goalCopy.deadline = this.goal.deadline;
     },
     edit(e){
-      console.log(e);
-      return;
-      //this.taskCopy = $.extend(false, {}, this.task);
-      //let name = $(e.path[2]).children(2)[0];
-      //let deadline = $(e.path[2]).children()[3];
-      //let dated = $(e.path[2]).children()[4];
-
-      //if($(name)[0].nodeName.localeCompare("SPAN") == 0){
-      //  $(name).replaceWith("<input type='text' value='" + this.taskCopy.name + "' minlength='4' maxlength='20'>");
-      //  $(deadline).replaceWith("<input type='date' value='" + this.taskCopy.deadline + "'>");
-      //  $(dated).replaceWith("<input type='date' value='" + this.taskCopy.dated + "'>");
-
-      //  $(e.path[0]).text('Aceptar');
-      //  this.onEdit = true;
-      //}else{
-      //  this.submitData(e);
-      //}
+      if($(e.path[0]).text().localeCompare('Editar') === 0)
+        this.onEdit = true;
+      else
+        this.$refs.error.setErr(GetErrMsg());
     },
     taskCreated(){
-      this.$emit('getGoals');
+      this.$emit('getGoals',true);
       this.createTask = false; 
     },
     taskRemoved(){
-      this.$emit('getGoals');
+      this.$emit('getGoals',true);
     },
     createNested(e){
       if(!this.createTask){
@@ -185,7 +155,16 @@ export default {
 
     },
     remove(){
-      this.$emit('remove',this.goal.id);
+      Axios.post('/area/remove-target',{ id: this.goal.id }).then((res)=>{
+        if(res.data.error){
+          this.$refs.error.setErr(GetErrMsg());
+        }else{
+          if(!res.data.deleted)
+            this.$refs.error.setErr(GetErrMsg());
+          else
+            this.$emit('getGoals',true);
+        }
+      });
     },
   },
   created(){

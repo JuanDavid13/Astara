@@ -113,20 +113,22 @@ func DeleteGoal(c *fiber.Ctx) error {
 }
 
 func EditGoal(c *fiber.Ctx) error {
+
 	type response struct {
 		Name string `json:"name"`;
 		Description string `json:"description"`;
-		GoalId int `json:"goalId"`;
+		Deadline string `json:"deadline"`;
+		GoalId int `json:"goal_id"`;
 	}	
 	res := response{};
 
 	if err := json.Unmarshal(c.Body(), &res); err != nil { /*return c.SendStatus(400);*/ panic(err); }
 
-	if res.Name == "" || res.Description == "" || res.GoalId <= 0{ return c.SendStatus(400); }
+	if res.Name == "" || res.GoalId <= 0{ return c.SendStatus(400); }
 	
 	cl := c.Locals("claims").(jwt.Claims);
 
-	if !UpdateExistingGoal(cl.User, res.GoalId, cl.Rol, res.Name, res.Description) {
+	if !UpdateGoal(cl.User, res.GoalId, cl.Rol, res.Name, res.Description,res.Deadline) {
 		return c.JSON(fiber.Map{ "updated":false });
 	}else{
 		return c.JSON(fiber.Map{ "updated":true }); }

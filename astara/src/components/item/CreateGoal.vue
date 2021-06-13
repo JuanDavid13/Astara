@@ -40,8 +40,6 @@ export default {
       let description = e.target[1].value;
       let deadline = e.target[2].value;
 
-      console.log(deadline);
-
       if(name == ""){
         this.$refs.error.setErr(GetErrMsg('nameRequired'));
         return;
@@ -57,11 +55,10 @@ export default {
         description:description,
         deadline: deadline,
       }).then(async (res)=>{
-        console.log(res);
         if(res.data.error)
           this.$refs.error.setErr(GetErrMsg());
         else
-          this.$emit('updateGoals');
+          this.$emit('updateGoals',true);
       });
     },
   }

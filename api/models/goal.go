@@ -248,7 +248,7 @@ func CreateNewGoal(uid, areaid int, rol, name, deadline, description string) boo
 }
 
 func RemoveGoal(uid, id int, rol string) bool {
-  fmt.Println("Remove Task:");
+  fmt.Println("Remove Goal:");
   db := db.GetDb(rol);
   
 	query := "DELETE FROM `Targets` WHERE `Id` = ? AND `Id_usu` = ?;";
@@ -263,20 +263,20 @@ func RemoveGoal(uid, id int, rol string) bool {
 	return true;
 }
 
-func UpdateExistingGoal(uid, taskId int, rol, name, description string) bool {
-  fmt.Println("Update Task:");
+func UpdateGoal(uid, taskId int, rol, name, description, deadline string) bool {
+  fmt.Println("Update Goal:");
   db := db.GetDb(rol);
   
-	queryTarget := "UPDATE `Targets` SET `Name ` = ? WHERE Id = ?;";
+	queryTarget := "UPDATE `Targets` SET `Name` = ?, `Deadline` = ? WHERE Id = ?;";
 
   stmt, err := db.Prepare(queryTarget);
   if err != nil && err != sql.ErrNoRows { /*return false;*/ panic(err); }
 
-	_, err = stmt.Exec(name, taskId);
+	_, err = stmt.Exec(name, deadline, taskId);
   defer stmt.Close();
   if err != nil && err != sql.ErrNoRows { /*return false;*/ panic(err);}
 
-	queryTask := "UPDATE `Goal` SET Description = ? WHERE Id_target = ?;";
+	queryTask := "UPDATE `Goals` SET `Description` = ? WHERE Id_target = ?;";
 
   stmt, err = db.Prepare(queryTask);
   if err != nil && err != sql.ErrNoRows { /*return false;*/ panic(err); }

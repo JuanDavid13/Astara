@@ -8,7 +8,7 @@
       mode="out-in"
     >
     <div id="goal" v-for="(goal, index) in computedGoals" :key="goal.id">
-      <Goal :goal="goal" :data-index="index" @remove="remove" @getGoals="getGoals"/>
+      <Goal :goal="goal" :data-index="index" @getGoals="getGoals"/>
     </div>
 
     </transition-group>
@@ -71,19 +71,6 @@ export default {
         if(this.Goals.length == JSON.parse(res.data.goals).length)
           this.allGoalsLoaded = true;
         this.Goals = JSON.parse(res.data.goals);
-      });
-    },
-    remove(id){
-      Axios.post('/area/remove-target',{id: id}).then((res)=>{
-        console.log(res);
-        if(res.data.error){
-          console.log('error');
-        }else{
-          if(!res.data.deleted)
-            console.log('error')
-          else
-            this.getGoals();
-        }
       });
     },
   },
