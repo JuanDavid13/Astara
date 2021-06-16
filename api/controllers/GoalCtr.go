@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	//"fmt"
+	"fmt"
 	"strconv"
 	//reflect
 
@@ -22,6 +22,9 @@ func CreateGoal(c *fiber.Ctx) error {
 		Description string `json:"description"`;
 	}
 	res := response{};
+
+	fmt.Println("Name");
+	fmt.Println(res.Name);
 
 	if err := json.Unmarshal(c.Body(),&res); err != nil { /*return c.SendStatus(400);*/ panic(err); }
 

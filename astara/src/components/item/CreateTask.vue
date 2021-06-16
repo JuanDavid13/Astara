@@ -2,14 +2,14 @@
   <div id="createTask">
     <Error ref="error" />
     <form @submit.capture="createTask">
-      <input type="text" placeholder="Nombre">
+      <input id="name" type="text" placeholder="Nombre" autocomplete="off" spellcheck="false" minlenght="3" maxlenght="50">
       <label>
         <span class="info">Fecha límite</span>
-        <input type="date" placeholder="Fecha límite">
+        <input id="deadline" type="date" placeholder="Fecha límite">
       </label>
       <label>
         <span class="info">Planeo hacerlo:</span>
-        <input type="date" placeholder="fechado para">
+        <input id="dated" type="date" placeholder="fechado para">
       </label>
       <div>
         <button type="submit">Añadir</button>
@@ -25,12 +25,14 @@ import Axios from '@/auth/auth';
 import { GetErrMsg } from '@/js/error.js';
 import Error from '@/components/error/Error.vue';
 
+import $ from 'jquery';
+
 export default {
   name: 'CreateTask',
   components: {
     Error,
   },
-  emits: ['taskCreated','cancelAddGoal'],
+  emits: ['taskCreated','cancelAddTask'],
   props:['id'],
   data(){
     return{
@@ -42,9 +44,9 @@ export default {
       e.preventDefault();
       //let formLenght = e.target.length -1;
 
-      let name  = e.target[0].value;
-      let deadline = e.target[1].value;
-      let dated =  e.target[2].value;
+      let name  = $('#name').val();
+      let deadline = $('#deadline').val();
+      let dated =  $('#dated').val();
       
       if(name == "" || deadline == "" || this.id == 0){
         this.$refs.error.setErr(GetErrMsg('lackInput'));
@@ -59,16 +61,17 @@ export default {
         deadline:deadline,
         dated:dated,
         id:this.parentId,
-      }).then(async (res)=>{
+      }).then((res)=>{
         if(!res.data.created){
           this.$refs.error.setError(GetErrMsg());
           return;
         }
         this.$emit('taskCreated', true);
+        this.cancel();
       });
     },
     cancel(){
-      this.$emit('cancelAddGoal');
+      this.$emit('cancelAddTask');
     }
   },
   created(){

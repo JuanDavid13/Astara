@@ -2,7 +2,7 @@
   <div id="areaTasks">
     <Error ref="error" />
     <button id="addTask" @click="addTask">+ Tarea</button>
-    <CreateTask v-if="creatingTask" @taskCreated="getTasks"  @cancelAddGoal="cancelAddGoal"/>
+    <CreateTask v-if="creatingTask" @taskCreated="getTasks"  @cancelAddTask="cancelAddTask"/>
 
     <transition-group
       name="search-fade"
@@ -85,7 +85,7 @@ export default {
     addTask(){
       this.creatingTask = true;
     },
-    cancelAddGoal(){
+    cancelAddTask(){
       this.creatingTask = false;
     },
     nodeleted(){

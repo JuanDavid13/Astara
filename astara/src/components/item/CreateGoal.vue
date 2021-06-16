@@ -2,13 +2,13 @@
   <div id="createGoal">
     <Error ref="error"/>
     <form @submit.capture="createGoal">
-      <input type="text" placeholder="Nombre">
+      <input id="nombre" type="text" autocomplete="off" placeholder="Nombre" spellcheck="false" minlength="3" max-length="50">
       <label>
         <span class="info">Fecha límite </span>
-        <input type="date">
+        <input id="deadline" type="date" >
       </label>
       <!--<input type="text" placeholder="Descripción">-->
-      <textarea placeholder="Descripción"></textarea>
+      <textarea id="descripcion" placeholder="Descripción"></textarea>
       <div>
         <button type="submit">Añadir</button>
         <button type="reset" @click="cancelAddGoal">Cancelar</button>
@@ -22,6 +22,8 @@ import Axios from '@/auth/auth';
 import Error from '@/components/error/Error.vue';
 import { GetErrMsg } from '@/js/error.js';
 
+import $ from 'jquery';
+
 export default {
   name: 'CreateGoal',
   components:{
@@ -30,14 +32,13 @@ export default {
   emits: ['updateGoals','cancelAddGoal'],
   methods: {
     cancelAddGoal(){ this.$emit('cancelAddGoal'); },
-    openCreate(){ this.opened = true; },
+    //openCreate(){ this.opened = true; },
     async createGoal(e){
       e.preventDefault();
-      //let formLenght = e.target.length -1;
 
-      let name  = e.target[0].value;
-      let description = e.target[1].value;
-      let deadline = e.target[2].value;
+      let name  = $('#nombre').val();
+      let description = $('#descripcion').val();
+      let deadline = $('#deadline').val();
 
       if(name == ""){
         this.$refs.error.setErr(GetErrMsg('nameRequired'));
@@ -56,8 +57,10 @@ export default {
       }).then(async (res)=>{
         if(res.data.error)
           this.$refs.error.setErr(GetErrMsg());
-        else
+        else{
           this.$emit('updateGoals',true);
+          this.$emit('cancelAddGoal'); //close form
+        }
       });
     },
   }

@@ -28,12 +28,12 @@ func CreateTask(c *fiber.Ctx) error {
 
 	if res.Name == "" || res.Deadline == "" || res.Slug == "" || res.Id == 0 { return c.SendStatus(400); }
 
-
 	cl := c.Locals("claims").(jwt.Claims);
 
 	//get the id of the area it is from 
 	areaId := GetIdFromSlug(cl.User, cl.Rol, res.Slug);
-	if areaId == -1 { return c.JSON(fiber.Map{ "created":false, }); }
+	//if areaId == -1 { return c.JSON(fiber.Map{ "created":false, }); }
+	if areaId == -1 { return c.SendStatus(400); }
 
 	//create a new task
 	if !CreateNewTask(cl.User, areaId, res.Id, cl.Rol, res.Name, res.Deadline, res.Dated) {
