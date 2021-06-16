@@ -31,6 +31,7 @@
           <Task :task="task" :data-index="index"
             @nodeleted="nodeleted"
             @deleted="taskRemoved"
+            @getTasks="updateTasks"
           />
         </div>
       </div>
