@@ -174,10 +174,15 @@ export default{
 
 <style scoped lang="scss">
 #formWrap{
-  border:1px solid var(--contrary);
-  border-radius:7px;
+  //border-top:1px solid var(--contrary);
+  border-left:1px solid var(--tertiary);
+
+  //border-radius:7px;
   padding: 15px;
   height:fit-content;
+  max-height:1000px;
+
+  transition: all .25s ease;
 
   box-shadow: 0 0 20px rgba(0,0,0,.2);
 

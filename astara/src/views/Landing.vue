@@ -2,30 +2,14 @@
   <div id="landing">
     <nav>
       <div>
-        <svg id="navLogo" width="50px" height="50px" version="1.1" viewBox="0 0 46.029 46" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-         <metadata>
-          <rdf:RDF>
-           <cc:Work rdf:about="">
-            <dc:format>image/svg+xml</dc:format>
-            <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-            <dc:title/>
-           </cc:Work>
-          </rdf:RDF>
-         </metadata>
-         <g class="logoPath" transform="translate(-67.199 -88.399)" fill-opacity="0" stroke="#F0A202" stroke-width="2">
-          <circle transform="rotate(-90)" cx="-111.4" cy="90.229" r="22" opacity=".998"/>
-          <ellipse cx="90.229" cy="111.4" rx="9.7289" ry="9.7289" opacity=".998"/>
-          <path transform="rotate(-90)" d="m-104.93 82.991a22 22 0 0 1-6.4733-15.097" opacity=".998"/>
-          <path transform="rotate(-90)" d="m-111.41 112.22a22 22 0 0 1 6.1568-14.466" opacity=".998"/>
-          <path transform="rotate(-90)" d="m-111.37 67.199a22 22 0 0 1-6.5907 15.702 22 22 0 0 1-15.823 6.2941" opacity=".998"/>
-          <path transform="rotate(-90)" d="m-133.97 91.135a22 22 0 0 1 22.561 20.993" opacity=".998"/>
-         </g>
-        </svg>
-        <span>Astara</span>
+        <logoName :size="2"/>
       </div>
       <router-link :to="{ name: 'Login' }"><button class="simpleBtn">Entrar</button></router-link>
     </nav>
     <header>
+      <div id="headerImg">
+          <div class="img"></div>
+      </div>
       <div>
       <svg id="logo" width="10%" height="10%" version="1.1" viewBox="0 0 46.029 46" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
        <metadata>
@@ -55,7 +39,8 @@
     <main>
       <hr>
       <div class="feature">
-        <div class="featureImg">
+        <div class="featureImg" id="firstImg">
+          <div class="img"></div>
         </div>
         <div class="featureCont">
           <h2 class="splitChars" data-splitting>Crea listas de tareas y objetivos</h2>
@@ -68,7 +53,8 @@
 
       <hr>
       <div class="feature reverse">
-        <div class="featureImg">
+        <div class="featureImg" id="secondImg">
+          <div class="img"></div>
         </div>
         <div class="featureCont">
           <h2 class="splitChars" data-splitting>Añade nuevas areas</h2>
@@ -82,7 +68,8 @@
 
       <hr>
       <div class="feature">
-        <div class="featureImg">
+        <div class="featureImg" id="thirdImg">
+          <div class="img"></div>
         </div>
         <div class="featureCont">
           <h2 class="splitChars" data-splitting>Encuentra tus tareas</h2>
@@ -93,8 +80,9 @@
       </div>
 
       <hr>
-      <div class="feature reverse">
-        <div class="featureImg">
+      <div class="feature reverse" >
+        <div class="featureImg" id="fourImg">
+          <div class="img"></div>
         </div>
         <div class="featureCont">
           <h2 class="splitChars" data-splitting>Short-Cuts</h2>
@@ -105,8 +93,9 @@
       </div>
 
       <hr>
-      <div class="feature">
-        <div class="featureImg">
+      <div class="feature" id="fifthFeature">
+        <div class="featureImg" id="fifthImg">
+          <div class="img"></div>
         </div>
         <div class="featureCont">
           <h2 class="splitChars" data-splitting>White mode</h2>
@@ -129,17 +118,70 @@
 import "splitting/dist/splitting.css";
 import Splitting from "splitting";
 
+import logoName from '@/components/commons/logoName.vue'
+import { parallax } from '@/js/parallax.js';
+
+import $ from 'jquery';
+
 export default {
   name: 'Landing',
+  components:{
+    logoName,
+  },
   mounted(){
+    parallax();
     Splitting();
+
+    const options1 = {
+      root: null,
+      threshold: 0,
+      rootMargin: "0px"
+    };
+
+    const options2 = {
+      root: null,
+      threshold: 0,
+      rootMargin: "0px"
+    };
+
+    $('document').ready(()=>{
+      let observer1 = new IntersectionObserver((entries)=>{
+        entries.forEach(entry =>{
+          let h2 = $(entry.target)[0].children[1].children[0];
+          if(entry.isIntersecting){
+            $(h2).addClass('splitCharsReverse');
+          }
+        });
+      },options1);
+
+      let features = $('.feature');
+      features.each((index)=> {
+        observer1.observe(features[index]);
+      });
+
+      let observer2 = new IntersectionObserver((entries)=>{
+        entries.forEach(entry =>{
+          console.log(entry);
+          if(entry.isIntersecting){
+            $('#app').addClass('lightTheme');
+          }else{
+            $('#app').removeClass('lightTheme');
+          }
+        });
+      },options2);
+
+      console.log($('#fifthFeature'));
+      observer2.observe($('#fifthFeature')[0]);
+
+    });
+
   }
 }
 </script>
 
 <style scoped lang="scss">
 
-@use '@/assets/style/common';
+@import'@/assets/style/common';
 
 #landing{
   min-height:100vh;
@@ -246,6 +288,7 @@ export default {
           top:5vh;
           width:100%;
           right:10vw;
+          //opacity:0;
         }
         p{
           align-self:flex-end;
@@ -267,17 +310,30 @@ export default {
     }
   }
 
+  .featureImg{
+    width:800px;
+    height:450px;
+    background-color:var(--tertiary);
+    position:relative;
+    overflow:hidden;
+
+    .img{
+      position:absolute;
+      width:100%; 
+      height:20%;
+      background-color:orange;
+    }
+  }
+
   footer{
     padding:1rem;
     position:relative;
     width:100%;
-    background-color:rgb(30,30,30);
-    color:var(--tertiary);
+    background-color:rgba(0,0,0,.3);
+    color:var(--contrary);
     transition:all .25s ease;
     text-align:center;
   }
 }
-
-@import '@/assets/style/media.scss';
 
 </style>

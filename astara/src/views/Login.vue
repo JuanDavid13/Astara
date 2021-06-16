@@ -1,12 +1,17 @@
 <template>
-  <div id="wrap">
-    <logoName :size="2"/>
+  <div id="loginWrap">
+    <nav>
+      <div>
+        <router-link :to="{name: 'Landing'}"><logoName :size="2"/></router-link>
+      </div>
+      <router-link :to="{ name: 'Landing' }"><button class="simpleBtn">Inicio</button></router-link>
+    </nav>
     <div id="contWrap">
       <div id="loginTxt">
-        <h2 class="noselect">
-          <p class="splitWords" data-splitting="words">Order is key</p>
-          <p class="splitWords" data-splitting="words">to control chaos</p>
-        </h2>
+        <h2 class="noselect splitWords" data-splitting="words">Order is key to control chaos </h2>
+        <p>
+          Entra y empieza organiza tus tareas y objetivos para ser más productivo.
+        </p>
       </div>
       <loginForm />
     </div>
@@ -38,37 +43,71 @@ export default {
 </script>
 
 <style lang="scss">
-#wrap{
-  min-height:100vh;
-  display:grid;
-  grid-template-rows:10% 90%;
-  grid-template-columns:1fr;
-
-  background-color:var(--primary);
-  padding:2rem;
-
-  #loginTxt{ font-size:2vw; }
-
-  #contWrap{
+  nav{
+    position:sticky;
+    top:0;
+    padding:1rem 3rem;
+    z-index:99;
     display:flex;
     flex-direction:row;
-    flex-wrap: wrap;
+    justify-content:space-between;
+    align-items:center;
 
-    padding:10vh 0;
-    
-    & > div:first-child{ 
-      flex: 0 0 60%;
-    }
-    & > div:last-child{ 
-      flex: 0 0 40%;
+    & > div:first-child{
+      display:flex;
+      flex-direction:row;
+      //justify-content:space-between;
+      align-items:center;
+      gap:2rem;
+      font-size:2rem;
+      color:var(--gold);
     }
   }
+
+#loginWrap{
+
+  background-color:var(--primary);
+  min-height:100vh;
+
+  #contWrap{
+    //margin-top:4rem;
+    display:grid;
+    grid-template-columns:3fr 2fr;
+    grid-template-rows:1fr;
+
+    min-height:80vh;
+    padding:0 2rem;
+  }
+
+  #loginTxt{
+    height:inherit;
+    display:flex;
+    flex-direction:column;
+    h2{
+      font-size:6vw;
+      margin-bottom:100px;
+      max-width:15ch;
+    }
+
+  }
+
 }
 
 
 @keyframes effect {
   from{ 
     transform: translateY(1em);
+  }
+}
+
+@keyframes effectReverse {
+  from{ 
+    transform: translateY(1em);
+    opacity:0;
+  }
+  to{
+    //transform: translateY(0em);
+    opacity:1;
   }
 }
 .splitWords.splitting .word{
@@ -78,10 +117,16 @@ export default {
 .splitWords{overflow:hidden;}
 
 .splitChars.splitting .char{
-  animation: effect .5s cubic-bezier(.5, 0, .5, 1) both;
+  animation: effectReverse .5s cubic-bezier(.5, 0, .5, 1) both;
   animation-delay: calc(.05s * var(--char-index));
 }
 .splitChars{overflow:hidden;}
 
-@import '@/assets/style/media.scss';
+.splitCharsReverse.splitting .char{
+  animation: effect .5s cubic-bezier(.5, 0, .5, 1) both;
+  animation-delay: calc(.05s * var(--char-index));
+}
+.splitCharsReverse{overflow:hidden;}
+
+
 </style>

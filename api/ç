@@ -3,25 +3,16 @@
     <Error ref="error" />
     <div class="taskCont">
       <div>
-        <lable v-show="!onEdit" class="checkWrap">
-          <input class="checkBox" type="checkbox" v-model="checked">
-          <span class="custCheck" @click="check"></span>
-        </lable>
+        <input @change="check" type="checkbox" v-model="checked">
 
-        <h4 v-show="!onEdit" class="taskName splitWords" data-splitting="words">{{taskCopy.name}}</h4> 
-        <input v-show="onEdit" class="inputEdit" type="text" v-model="taskCopy.name" placeholder="NOMBRE">
+        <span v-show="!onEdit" class="taskName splitChars" data-splitting>{{taskCopy.name}}</span> 
+        <input v-show="onEdit" type="text" v-model="taskCopy.name" :placeholder="taskCopy.name">
 
-        <div v-show="!onEdit" class="taskDeadline">
-          <span class="info">Fecha límite: </span>
-          <span>{{taskCopy.deadline}}</span>
-        </div> 
-        <input v-show="onEdit" class="inputEdit" type="date" v-model="taskCopy.deadline">
+        <span v-show="!onEdit" class="taskDeadline">{{taskCopy.deadline}}</span> 
+        <input v-show="onEdit" type="date" v-model="taskCopy.deadline">
 
-        <div v-show="!onEdit" class="taskDated">
-          <span class="info">Planeado para: </span>
-          <span>{{taskCopy.dated}}</span>
-        </div>
-        <input v-show="onEdit" class="inputEdit" type="date" v-model="taskCopy.dated">
+        <span v-show="!onEdit" class="taskDated">{{taskCopy.dated}}</span>
+        <input v-show="onEdit" type="date" v-model="taskCopy.dated">
       </div>
       <div class="taskBtns">
         <button v-if="!onEdit" @click="edit">Editar</button>
@@ -173,7 +164,7 @@ export default {
 .task{
   position:relative;
   margin-top:15px;
-  height:fit-content;
+  height:4rem;
   padding:15px;
 
   border-top:1px solid var(--tertiary);
@@ -185,44 +176,21 @@ export default {
   align-items:flex-start;
 
   .taskCont{
-    width: 75%;
-    & > div:first-child{
-      display:flex;
-      flex-direction:row;
-      align-items:flex-start;
-      //justify-content:space-between;
-      justify-content:flex-start;
-      gap:1rem;
-      flex-wrap:wrap;
-    }
-
-    .taskName{
-      margin-left:30px;
-      font-weight:bold;
-      text-transform:uppercase;
-      letter-spacing:3px;
-    }
-
-    .info{
-      color:var(--tertiary);
-    }
+    width: 90%;
+    display:flex;
+    gap:1rem;
   }
-
   .taskBtns{
     position:absolute;
     right:15px;
-    top:10px;
+    top:15px;
 
     button{
       border:none;
       background-color:transparent;
       cursor:pointer;
-      color:var(--tertiary);
-
-      &:hover {
-        color:var(--gold);
-      }
     }
   }
+
 }
 </style>

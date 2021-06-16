@@ -1,15 +1,20 @@
 <template>
-  <div>
+  <div id="createTask">
     <Error ref="error" />
     <form @submit.capture="createTask">
       <input type="text" placeholder="Nombre">
-      <label>Fecha límite
+      <label>
+        <span class="info">Fecha límite</span>
         <input type="date" placeholder="Fecha límite">
       </label>
-      <label>Planeo hacerlo:
+      <label>
+        <span class="info">Planeo hacerlo:</span>
         <input type="date" placeholder="fechado para">
       </label>
-      <button type="submit">Añadir</button>
+      <div>
+        <button type="submit">Añadir</button>
+        <button @click="cancel" type="reset">Cancelar</button>
+      </div>
     </form>
   </div>
 </template>
@@ -25,7 +30,7 @@ export default {
   components: {
     Error,
   },
-  emits: ['taskCreated'],
+  emits: ['taskCreated','cancelAddGoal'],
   props:['id'],
   data(){
     return{
@@ -62,6 +67,9 @@ export default {
         this.$emit('taskCreated', true);
       });
     },
+    cancel(){
+      this.$emit('cancelAddGoal');
+    }
   },
   created(){
     this.parentId = this.id;
@@ -71,5 +79,26 @@ export default {
 </script>
 
 <style scoped lang="scss">
+#createTask{
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+  margin-bottom:25px;
 
+  width:40%;
+  form{
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+
+    input {
+      width:100%;
+    }
+
+    .info{
+      color:var(--tertiary);
+    }
+  }
+
+} 
 </style>

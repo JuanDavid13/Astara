@@ -1,14 +1,18 @@
 <template>
-  <div>
+  <div id="createGoal">
     <Error ref="error"/>
     <form @submit.capture="createGoal">
       <input type="text" placeholder="Nombre">
-      <input type="text" placeholder="Descripción">
-      <label> Fecha límite 
+      <label>
+        <span class="info">Fecha límite </span>
         <input type="date">
       </label>
-      <button type="submit">Añadir</button>
-      <button @click="cancelAddGoal">Cancelar</button>
+      <!--<input type="text" placeholder="Descripción">-->
+      <textarea placeholder="Descripción"></textarea>
+      <div>
+        <button type="submit">Añadir</button>
+        <button type="reset" @click="cancelAddGoal">Cancelar</button>
+      </div>
     </form>
   </div>
 </template>
@@ -24,14 +28,9 @@ export default {
     Error,
   },
   emits: ['updateGoals','cancelAddGoal'],
-  data() {
-    return{
-
-    }
-  },
   methods: {
-    cancelAddGoal(){ this.$emit('cancelAddGoal');
-    },
+    cancelAddGoal(){ this.$emit('cancelAddGoal'); },
+    openCreate(){ this.opened = true; },
     async createGoal(e){
       e.preventDefault();
       //let formLenght = e.target.length -1;
@@ -66,6 +65,21 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
+#createGoal {
+  margin-top:25px;
+  form{
+    display:grid;
+    grid-template-rows:1fr minmax(0,min-conent) 1fr;
+    grid-template-columns:repeat(2,1fr);
+    gap:1rem;
+    //width:40%;
+
+    textarea{ grid-column:1/3; }
+  }
+  .info{
+    color:var(--tertiary);
+  }
+}
 
 </style>

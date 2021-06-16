@@ -110,7 +110,6 @@ export default {
 }
 
 #modal{
-  //make shadow a variable in common.scss
   background-color:rgba(0,0,0,.5);
   position:absolute;
   height:100%;

@@ -132,18 +132,19 @@ func DeleteArea(c *fiber.Ctx) error {
 }
 
 func ChangeAreaName(c *fiber.Ctx) error {
-	cl:= c.Locals("claims").(jwt.Claims);
 
 	type response struct { 
-		OldName string `json:"oldName"`; 
+		Area string `json:"area"`; 
 		Name string `json:"name"`; 
 	}
 	res := response{};
 	if err := json.Unmarshal(c.Body(),&res); err != nil{ return c.SendStatus(400); }
 
-	slug := NameToSlug(res.Name);
+	cl:= c.Locals("claims").(jwt.Claims);
+
+	slug := NameToSlug(res.Name); //can obviate this
 	c.Status(200);
-	if !ChangeName(cl.User, cl.Rol, res.OldName, res.Name, slug){
+	if !ChangeName(cl.User, cl.Rol, res.Area, res.Name, slug){
 					return c.JSON(fiber.Map{ "changed":false, });
 	}else{	return c.JSON(fiber.Map{ "changed":true, }); }
 } 

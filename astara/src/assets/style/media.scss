@@ -25,4 +25,44 @@ $movile: 650px;
   header, main{
     padding:2rem  2rem !important;
   }
+
+  #contWrap{
+    grid-template-columns:1fr !important;
+    grid-template-rows:minmax(0,210px) 1fr !important;
+  }
+
+  #loginTxt{
+    height:fit-content !important;
+    h2{
+      font-size:10vw !important;
+      margin-bottom:50px !important;
+    }
+  }
+
+  #formWrap{
+    border:none !important;
+    border-top:1px solid var(--tertiary) !important;
+  }
+
+  .taskCont{
+
+    & > div:first-child{
+      justify-content:flex-start !important;
+      gap:1rem !important;
+      width:100% !important;
+    }
+
+    .taskName{
+      margin-top:15px !important;
+    }
+
+  }
+
+
+  #areaHeader{
+    #areaname{ order:1; }
+    & div:nth-child(2){ order:3; }
+    & div:last-child{order:2;}
+  }
+
 }

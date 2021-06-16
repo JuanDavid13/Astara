@@ -1,19 +1,22 @@
 <template>
-  <Error ref="error" />
-  <button @click="addGoal">+ Goal</button>
-  <CreateGoal v-if="creatingGoal" @updateGoals="getGoals" @cancelAddGoal="cancelAddGoal"/>
-  <div>
-    <transition-group
-      name="search-fade"
-      mode="out-in"
-    >
-    <div id="goal" v-for="(goal, index) in computedGoals" :key="goal.id">
-      <Goal :goal="goal" :data-index="index" @getGoals="getGoals"/>
-    </div>
+  <div id="areaGoals">
+    <Error ref="error" />
+    <button id="addGoal" @click="addGoal">+ Goal</button>
+    <CreateGoal v-if="creatingGoal" @updateGoals="getGoals" @cancelAddGoal="cancelAddGoal"/>
 
-    </transition-group>
+    <div>
+      <transition-group
+        name="search-fade"
+        mode="out-in"
+      >
+      <div id="goal" v-for="(goal, index) in computedGoals" :key="goal.id">
+        <Goal :goal="goal" :data-index="index" @getGoals="getGoals"/>
+      </div>
+
+      </transition-group>
+    </div>
+    <span v-if="!allGoalsLoaded" id="loadGoals">Cargar más</span>
   </div>
-  <span v-if="!allGoalsLoaded" id="loadGoals">Cargar más</span>
 </template>
 
 <script>
@@ -29,6 +32,7 @@ import $ from 'jquery';
 
 export default {
   name: 'AreaGoals',
+  emits: ['onGoals'],
   components: {
     Goal,
     CreateGoal,
@@ -57,7 +61,9 @@ export default {
     }
   },
   methods: {
-    addGoal(){ this.creatingGoal = true; },
+    addGoal(){
+      this.creatingGoal = true;
+    },
     cancelAddGoal(){ this.creatingGoal = false; },
     getGoals(paginated){
       if(paginated == null)
@@ -78,6 +84,8 @@ export default {
     },
   },
   mounted(){
+    this.$emit('onGoals');
+
     const options = {
       root: null,
       threshold: 1,
@@ -102,5 +110,11 @@ export default {
 </script>
 
 <style lang="scss">
-
+#areaGoals{
+  margin-top:25px;
+  #addGoal{
+    border-top:1px solid var(--tertiary);
+    border-bottom:1px solid var(--tertiary);
+  }
+}
 </style>

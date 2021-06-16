@@ -1,38 +1,45 @@
 <template>
   <div class="goal">
     <Error ref="error"/>
-    {{goal.id}}
-    <div class="goalHeading">
-      <!--<input type="checkbox" v-model="userCopy.status">-->
-      <h4 v-if="!onEdit">{{goalCopy.name}}</h4> 
-      <input v-if="onEdit" type="text" v-model="goalCopy.name">
-      <!--<span>{{goalCopy.progress}}</span>-->
-    </div>
-    <p v-if="!onEdit" class="limit">{{goalCopy.deadline}}</p>
-    <input v-if="onEdit" type="date" v-model="goalCopy.deadline" >
+    <div>
+      <div class="goalCont">
+        <div class="goalHeading">
+          <!--<input type="checkbox" v-model="userCopy.status">-->
+          <h4 id="goalName" class="splitWords" v-if="!onEdit" data-splitting="words">{{goalCopy.name}}</h4> 
+          <input v-if="onEdit" type="text" v-model="goalCopy.name">
+        </div>
 
-    <p v-if="!onEdit" class="desc">{{goalCopy.description}}</p>
-    <input v-if="onEdit" type="text" v-model="goalCopy.description" >
+        <div v-if="!onEdit" class="limit">
+          <span class="info">Fecha límite: </span>
+          <span>{{goalCopy.deadline}}</span>
+        </div>
+        <input v-if="onEdit" type="date" v-model="goalCopy.deadline" >
 
-    <div class="actionBtns" >
-      <button v-if="!onEdit" @click="edit">Editar</button>
-      <button v-if="onEdit" @click="submitData">Aceptar</button>
-      <button v-if="onEdit" @click="cancel">Cancelar</button>
-      <button @click="remove">X</button>
-    </div>
-    <div class="nest">
-      <div> <!--buttons part-->
-        <button @click="createNested">Crear tarea</button>
-        <button v-if="goalCopy.tasks.length > 0" @click="viewNested">Ver tareas</button>
+        <p v-if="!onEdit" class="desc info">{{goalCopy.description}}</p>
+        <input v-if="onEdit" type="text" v-model="goalCopy.description" >
       </div>
-      <CreateTask v-if="createTask" :id="goalCopy.id" @taskCreated="taskCreated"/>
-      <div v-if="viewTasks"> <!--nested part-->
-        <div class="nestedTasks" v-for="(task, index) in goalCopy.tasks" :key="task.id">
-          <Task :task="task" :data-index="index"
-            @nodeleted="nodeleted"
-            @deleted="taskRemoved"
-            @getTasks="updateTasks"
-          />
+
+      <div class="actionBtns" >
+        <button v-if="!onEdit" @click="edit">Editar</button>
+        <button v-if="onEdit" @click="submitData">Aceptar</button>
+        <button v-if="onEdit" @click="cancel">Cancelar</button>
+        <button @click="remove">X</button>
+      </div>
+
+      <div class="nest">
+        <div> <!--buttons part-->
+          <button @click="createNested">Crear tarea</button>
+          <button v-if="goalCopy.tasks.length > 0" @click="viewNested">Ver tareas</button>
+        </div>
+        <CreateTask v-if="createTask" :id="goalCopy.id" @taskCreated="taskCreated"/>
+        <div id="nested" v-if="viewTasks"> <!--nested part-->
+          <div class="nestedTasks" v-for="(task, index) in goalCopy.tasks" :key="task.id">
+            <Task :task="task" :data-index="index"
+              @nodeleted="nodeleted"
+              @deleted="taskRemoved"
+              @getTasks="updateTasks"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -40,6 +47,9 @@
 </template>
 
 <script>
+import "splitting/dist/splitting.css";
+import Splitting from "splitting";
+
 import Axios from '@/auth/auth';
 import { GetErrMsg } from '@/js/error.js';
 
@@ -184,6 +194,9 @@ export default {
     if(this.goalCopy.tasks == null)
       this.goalCopy.tasks = [];
   },
+  mounted(){
+    Splitting();
+  },
 }
 
 </script>
@@ -198,22 +211,46 @@ export default {
   max-height:2000px; //trick
   padding:15px;
 
-  border:1px solid var(--tertiary);
-  border-radius:5px;
+  transition:all .25s ease;
+
+  border-top:1px solid var(--tertiary);
 
   display: flex;
   flex-direction:column;
-  justify-content:space-between;
+  justify-content:flex-start;
+
+  .goalCont{
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+    max-width:80%;
+  }
 
   .goalHeading{
     display:flex;
     flex-flow:row nowrap;
 
+    #goalName{
+      font-weight:bold;
+      text-transform:uppercase;
+      letter-spacing:3px;
+    }
+
   }
+
+  .info{
+    color:var(--tertiary);
+  }
+
   .actionBtns{
     position:absolute;
     top:15px;
     right:15px;
+
+    button{
+      color:var(--tertiary);
+    }
+
   }
 
   .nest{
@@ -224,6 +261,10 @@ export default {
 
     & div:first-child button:first-child{
       margin-right:15px;
+    }
+
+    #nested{
+      width:95%;
     }
   }
 }

@@ -1,6 +1,10 @@
 import axios from 'axios'
 import router from '@/router';
 
+/**
+ * Axios instance
+ * @type {axios}
+ */
 const Axios = axios.create({
   baseURL: 'http://localhost:3000/api/v1',
   timeout: 1000,

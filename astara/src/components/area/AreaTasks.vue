@@ -1,23 +1,26 @@
 <template>
-  <Error ref="error" />
-  <button @click="addTask">+ Tarea</button>
-  <CreateTask @taskCreated="getTasks"  />
-  <transition-group
-    name="search-fade"
-    @before-enter="beforeEnter"
-    @enter="enter"
-    @leave="leave"
-    mode="out-in"
-  >
-  <div id="tasks" v-for="(task, index) in computedTasks" :key="task.id">
-    <Task :task="task" :data-index="index"
-      @deleted="getTasks"
-      @nodeleted="nodeleted"
-      @getTasks="getTasks"
-    />
+  <div id="areaTasks">
+    <Error ref="error" />
+    <button id="addTask" @click="addTask">+ Tarea</button>
+    <CreateTask v-if="creatingTask" @taskCreated="getTasks"  @cancelAddGoal="cancelAddGoal"/>
+
+    <transition-group
+      name="search-fade"
+      @before-enter="beforeEnter"
+      @enter="enter"
+      @leave="leave"
+      mode="out-in"
+    >
+    <div id="tasks" v-for="(task, index) in computedTasks" :key="task.id">
+      <Task :task="task" :data-index="index"
+        @deleted="getTasks"
+        @nodeleted="nodeleted"
+        @getTasks="getTasks"
+      />
+    </div>
+    </transition-group>
+    <span id="loadTasks" :class="{ loaderInv: allTasksLoaded }" >Cargar más</span>
   </div>
-  </transition-group>
-  <span id="loadTasks" :class="{ loaderInv: allTasksLoaded }" >Cargar más</span>
 </template>
 
 <script>
@@ -32,6 +35,7 @@ import $ from 'jquery';
 
 export default {
   name: 'AreaTask',
+  emits: ['onTasks'],
   components: {
     Task,
     CreateTask,
@@ -78,6 +82,12 @@ export default {
 
       });
     },
+    addTask(){
+      this.creatingTask = true;
+    },
+    cancelAddGoal(){
+      this.creatingTask = false;
+    },
     nodeleted(){
       console.log('deletedd');
     },
@@ -112,6 +122,8 @@ export default {
     },
   },
   mounted(){
+    this.$emit('onTasks');
+
     const options = {
       root: null,
       threshold: 1,
@@ -134,11 +146,20 @@ export default {
 }
 </script>
 
-<style scoped ="scss">
-#loadTasks{
-  transition:all .25s ease;
-}
+<style scoped lang="scss">
+  #loadTasks{
+    transition:all .25s ease;
+  }
+
   .loaderInv{
     opacity:0;
+  }
+
+  #areaTasks{
+    margin-top:25px;
+    #addTask{
+      border-top:1px solid var(--tertiary);
+      border-bottom:1px solid var(--tertiary);
+    }
   }
 </style>

@@ -17,11 +17,7 @@
         </form>
       </div>
       <div>
-        <div>
-          <div>OOO</div>
-          <a href="#" @click="$emit('openprofile')"><span>{{username}}</span></a>
-          <div>...</div>
-        </div>
+        <a href="#" @click="$emit('openprofile')"><span>{{username}}</span></a>
       </div>
     </div>
   </div>
@@ -85,9 +81,13 @@ import Axios from '@/auth/auth';
 
 .sidebar {
   color:var(--text);
-  background-color:var(--primary);
-  border-right:1px solid var(--secondary);
+  //background-color:transparent;
+  border-right:1px solid var(--tertiary);
   text-align:left;
+
+  max-height:100vh;
+  position:sticky;
+  top:0;
 
   padding:3vh;
 
@@ -102,8 +102,8 @@ import Axios from '@/auth/auth';
   }
 
   & #sidebarWrap{
-    position:sticky;
-    top:1vh;
+    //position:sticky;
+    //top:1vh;
 
     height:100%;
 
@@ -113,11 +113,15 @@ import Axios from '@/auth/auth';
 
     & > div:first-child {
       color:var(--gold);
-      font-size:1.7rem;
+      font-size:1.5rem;
+      letter-spacing:2px;
     }
+
+    *{ width:100%; }
 
 
     #areas{ 
+      margin-top:25px;
       text-align:left; 
       font-size:.9rem;
       overflow-x:hidden;
@@ -135,27 +139,13 @@ import Axios from '@/auth/auth';
       }
     }
 
-    & > div:last-child {
-      display:flex;
-      align-items:flex-end;
-    }
-
-    & > div:last-child > div{
-      height:fit-content;
-      display:grid;
-      grid-template-columns:2fr 4fr 1fr;
-      grid-template-rows:1fr;
-
-      span { overflow:hidden; }
-    }
-
-
   }
 
   #addArea{
     border:none;
     overflow:hidden;
     padding: calc(0.5rem + 1px);
+    border-radius:5px;
 
     &:hover { cursor:pointer; }
     &:focus, &:focus-visible{
@@ -174,8 +164,8 @@ import Axios from '@/auth/auth';
   .area{
     margin-bottom: 5px;
     cursor: pointer;
-
     text-transform:uppercase;
+    letter-spacing:2px;
   }
 }
 </style>

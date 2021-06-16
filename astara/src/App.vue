@@ -51,32 +51,6 @@ html{
   }
 }
 
-.checkBox {
-  position:absolute;
-  height:0;
-  width:0;
-  opacity:0;
-  cursor:pointer;
-}
-
-.custCheck {
-  position: absolute;
-  top:0;
-  left:0;
-  height:20px;
-  width:20px;
-  border:2px solid lightgrey;
-  transition:background-color .25s ease;
-}
-
-.checkWrap {
-  position:relative;
-  cursor:pointer;
-}
-
-.checkWrap input:checked ~ .custCheck{
-  background-color:lightgrey;
-}
 
 .noselect{
   -webkit-user-select:none;
@@ -85,25 +59,44 @@ html{
   user-select:none;
 }
 
-input, button{
-  padding:.5rem;
-  border:1px solid var(--tertiary);
-  border-radius:5px;
+input, textarea{
+  border:none;
+  border-bottom:1px solid var(--tertiary);
+
+  &:focus{
+    outline:none;
+    border-bottom:1px solid var(--gold);
+  }
 }
 
-input {
-  background-color:var(--primary);
+::placeholder{ color:var(--tertiary); }
+::-webkit-placeholder{ color:var(--tertiary); }
+::-moz-input-placeholder{ color:var(--tertiary); }
+::-ms-input-placeholder{ color:var(--tertiary); }
+
+::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity:0.4;
+}
+
+input{
+  height:25px;
+}
+
+input, button, textarea{
+  padding:.5rem;
+  background-color:transparent;
   color:var(--text);
 }
 
 button{
-  background-color:var(--secondary);
+  padding:.5rem 1.5rem;
+  border:none;
   letter-spacing:2px;
-  color:var(--text);
   transition:all .1s ease;
+  cursor:pointer;
 
   &:hover{
-    border:1px solid var(--gold);
     color:var(--gold);
   }
 }
@@ -123,7 +116,40 @@ button{
   display:grid;
   grid-template-rows:1fr;
   grid-template-columns:8fr 2fr;
-
 }
+
+.checkBox {
+  position:absolute;
+  height:0;
+  width:0;
+  opacity:0;
+  cursor:pointer;
+}
+
+.custCheck {
+  position: absolute;
+  top:0;
+  left:0;
+  height:20px;
+  width:20px;
+  border:1px solid var(--tertiary);
+  transition:all .2s ease;
+}
+
+.checkWrap {
+  position:relative;
+  cursor:pointer;
+
+  & .custCheck:hover {
+    border:1px solid var(--gold);
+    background-color:var(--gold);
+  }
+}
+
+.checkWrap input:checked ~ .custCheck{
+  background-color:var(--gold) !important;
+}
+
+@import '@/assets/style/media';
 
 </style>
