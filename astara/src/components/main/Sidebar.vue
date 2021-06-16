@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar">
     <div id="sidebarWrap">
-      <div class="logo noselect">Astara</div>
+      <div class="logo noselect splitChar" data-splitting>Astara</div>
       <div id="areas">
         <p class="noselect splitChar" data-splitting>AREAS</p>
         <router-link :to="{name: 'Main'}">MAIN</router-link>

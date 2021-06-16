@@ -35,6 +35,7 @@ func RouterSetUp(app *fiber.App) {
 			task.Post("/delete",DeleteTask);
 			task.Post("/edit",EditTask);
 			task.Post("/goal-tasks",GetTasksOfGoal);
+			task.Post("/check",CheckTask);
 
 	goal := api.Group("/goal");
 		goal.Use(middleware);

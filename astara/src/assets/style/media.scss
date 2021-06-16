@@ -1,0 +1,28 @@
+$movile: 650px;
+
+@media screen and(max-width:$movile){
+  .feature{
+      grid-template-columns:1fr !important;
+      grid-template-rows:repeat(2, 1fr) !important;
+
+      h2{
+          width: calc($movile-2vw) !important;
+          top:-10vh !important;
+          right:1vw !important;
+          font-size:2rem !important;
+      }
+
+  }
+
+  .reverse{
+    h2{
+      left:1vw !important;
+    }
+    .featureImg{  order:1 !important; }
+    .featureCont{ order:2 !important; }
+  }
+
+  header, main{
+    padding:2rem  2rem !important;
+  }
+}

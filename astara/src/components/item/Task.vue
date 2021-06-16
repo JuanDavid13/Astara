@@ -2,9 +2,8 @@
   <div class="task">
     <Error ref="error" />
     <br />
-    <!--<input type="checkbox" v-model=statusCopy disabled>-->
-    <!--<span>{{task.id}}</span>-->
-    <span>{{taskCopy.status}}</span>
+    <input @change="check" type="checkbox" v-model="checked">
+
     <span v-show="!onEdit" class="taskName">{{taskCopy.name}}</span> 
     <input v-show="onEdit" type="text" v-model="taskCopy.name" :placeholder="taskCopy.name">
 
@@ -48,8 +47,8 @@ export default {
   },
   data(){
     return {
+      checked:false,
       onEdit: false,
-      statusCopy:false,
       taskCopy: {},
       err: false,
       errMsg: "",
@@ -136,6 +135,16 @@ export default {
         }
       });
     },
+    check(){
+      Axios.post('user/task/check',{ id: this.task.id }).then((res)=>{   
+        console.log(res);
+        if(res.data.error){
+          this.$refs.error.setErr(GetErrMsg());
+        }else{
+          this.$emit('getTasks');
+        }
+      });
+    }
   },
   created(){
     this.taskCopy = $.extend(true,{},this.task);

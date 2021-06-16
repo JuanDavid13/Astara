@@ -21,8 +21,9 @@
           <path transform="rotate(-90)" d="m-133.97 91.135a22 22 0 0 1 22.561 20.993" opacity=".998"/>
          </g>
         </svg>
+        <span>Astara</span>
       </div>
-      <router-link :to="{ name: 'Login' }"><button>Entrar</button></router-link>
+      <router-link :to="{ name: 'Login' }"><button class="simpleBtn">Entrar</button></router-link>
     </nav>
     <header>
       <div>
@@ -45,18 +46,19 @@
         <path transform="rotate(-90)" d="m-133.97 91.135a22 22 0 0 1 22.561 20.993" opacity=".998"/>
        </g>
       </svg>
-        <h1>Astara, una nueva app de tareas que te ayudará organizar tu vida.</h1>
+        <h1 id="bannerTxt" class="splitWords" data-splitting="words">Astara, una nueva app de tareas que te ayudará organizar tu vida.</h1>
       </div>
       <div id="centerBtn">
         <button @click="features">Más</button>
       </div>
     </header>
     <main>
+      <hr>
       <div class="feature">
-        <div>
+        <div class="featureImg">
         </div>
         <div class="featureCont">
-          <h2>Crea listas de tareas y objetivos</h2>
+          <h2 class="splitChars" data-splitting>Crea listas de tareas y objetivos</h2>
           <p>
             Ya no necesitara recordar tus tareas, mantén tus objetivos y tareas a un solo click, <br />
             recuerda todas tus tareas de forma sencilla y rápida.
@@ -64,11 +66,12 @@
         </div>
       </div>
 
+      <hr>
       <div class="feature reverse">
-        <div>
+        <div class="featureImg">
         </div>
         <div class="featureCont">
-          <h2>Añade nuevas areas</h2>
+          <h2 class="splitChars" data-splitting>Añade nuevas areas</h2>
           <p>
             Creando areas podrás mantener organizas todos tus objetivos.<br />
             En cada Area podrás encontrar una sección para las tareas y otra para tus objetivos.
@@ -77,33 +80,36 @@
         </div>
       </div>
 
+      <hr>
       <div class="feature">
-        <div>
+        <div class="featureImg">
         </div>
         <div class="featureCont">
-          <h2>Encuentra tus tareas</h2>
+          <h2 class="splitChars" data-splitting>Encuentra tus tareas</h2>
           <p>
             Utiliza la búsqueda para encontrar tus tareas o objetivos.<br />
           </p>
         </div>
       </div>
 
+      <hr>
       <div class="feature reverse">
-        <div>
+        <div class="featureImg">
         </div>
         <div class="featureCont">
-          <h2>Short-Cuts</h2>
+          <h2 class="splitChars" data-splitting>Short-Cuts</h2>
           <p>
             Sé más productivo con los short-cuts.<br />
           </p>
         </div>
       </div>
 
+      <hr>
       <div class="feature">
-        <div>
+        <div class="featureImg">
         </div>
         <div class="featureCont">
-          <h2>White mode</h2>
+          <h2 class="splitChars" data-splitting>White mode</h2>
           <p>
             Para los amantes del white mode.<br />
           </p>
@@ -114,20 +120,26 @@
     </div>
     </main>
     <footer>
-
+      <span>Desarrollado por: Juan David Ramírez Bernal</span>
     </footer>
   </div>
 </template>
 
 <script>
+import "splitting/dist/splitting.css";
+import Splitting from "splitting";
+
 export default {
   name: 'Landing',
+  mounted(){
+    Splitting();
+  }
 }
 </script>
 
 <style scoped lang="scss">
 
-@import '@/assets/style/common';
+@use '@/assets/style/common';
 
 #landing{
   min-height:100vh;
@@ -136,8 +148,12 @@ export default {
 
   transition: background-color .25s ease, color .25s ease;
 
-  header, main, footer{
+  header, main{
     padding:2rem  3rem;
+    color:var(--text);
+    h2{
+      text-transform:uppercase;
+    }
   }
 
   .centerBtn{
@@ -147,29 +163,33 @@ export default {
     button{
       padding: 10px 40px;
       font-size:1rem;
-      background-color:var(--gold);
-      color:var(--primary);
+      background-color:transparent;
+      color:var(--gold);
       border:none;
-      box-shadow: 0 0 10px rgba(0,0,0,.5);
       cursor:pointer;
       transition:all .25s ease;
-      &:hover{
-        transform:scale(1.1);
-        box-shadow: 0 0 20px var(--goldShadow);
-      }
     }
   }
 
   nav{
     position:sticky;
     top:0;
-    background-color:var(--primary);
     padding:1rem 3rem;
     z-index:99;
     display:flex;
     flex-direction:row;
     justify-content:space-between;
     align-items:center;
+
+    & > div:first-child{
+      display:flex;
+      flex-direction:row;
+      //justify-content:space-between;
+      align-items:center;
+      gap:2rem;
+      font-size:2rem;
+      color:var(--gold);
+    }
   }
 
   #logo{
@@ -192,34 +212,72 @@ export default {
   }
 
   header{
-    min-height:100vh;
+    min-height:50vh;
     overflow:hidden;
+
+    #bannerTxt{
+      max-width:35ch;
+      text-align:center;
+    }
+
   }
 
   main{
+    overflow:hidden;
 
     .feature{
-      display:flex;
-      flex-flow:row wrap;
-      justify-content:space-between;
-      align-items:center;
-      gap:2rem;
+      position:relative;
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      grid-template-rows:1fr;
+      grid-gap:2rem;
+      overflow:visible;
+      min-height:50vh;
 
-      & > div{
-        width:50%;
+      .featureCont{
+        height:100%;
+        position:relative;
+        display:flex;
+
+        h2 {
+          font-size:2.5rem;
+          margin-bottom:25px;
+          position:absolute;
+          top:5vh;
+          width:100%;
+          right:10vw;
+        }
+        p{
+          align-self:flex-end;
+          margin-bottom:25px;
+        }
       }
     }
 
     .reverse{
-      flex-flow:row-reverse wrap;
+      .featureImg{
+        order:2;
+      }
+      .featureCont{
+        order:1;
+        h2{
+          left:10vw;
+        }
+      }
     }
   }
 
   footer{
+    padding:1rem;
     position:relative;
-    min-height:20vh;
     width:100%;
     background-color:rgb(30,30,30);
+    color:var(--tertiary);
+    transition:all .25s ease;
+    text-align:center;
   }
 }
+
+@import '@/assets/style/media.scss';
+
 </style>

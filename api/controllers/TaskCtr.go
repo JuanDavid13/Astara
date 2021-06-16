@@ -188,3 +188,31 @@ func GetTasksOfGoal(c *fiber.Ctx) error {
 		"tasks":tasks,
 	});
 }
+
+func CheckTask(c *fiber.Ctx) error {
+	type response struct {
+		TaskId int `json:"id"`;
+	}	
+
+	res := response{};
+
+	err := json.Unmarshal(c.Body(), &res);
+	if err != nil { panic(err); }
+
+	if res.TaskId <= 0 { return c.SendStatus(400); }
+
+	cl := c.Locals("claims").(jwt.Claims);
+	
+	c.Status(200);
+	if !Check_Task(res.TaskId, cl.Rol) {
+		return c.JSON(fiber.Map{
+			"error": true,
+		});
+	}else{
+		return c.JSON(fiber.Map{
+			"error": false,
+			"checked":true,
+		});
+	}
+
+}

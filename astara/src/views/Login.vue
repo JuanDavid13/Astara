@@ -67,11 +67,21 @@ export default {
 
 
 @keyframes effect {
-  from{ transform: translateY(1em); }
+  from{ 
+    transform: translateY(1em);
+  }
 }
 .splitWords.splitting .word{
   animation: effect .5s cubic-bezier(.5, 0, .5, 1) both;
   animation-delay: calc(.05s * var(--word-index));
 }
 .splitWords{overflow:hidden;}
+
+.splitChars.splitting .char{
+  animation: effect .5s cubic-bezier(.5, 0, .5, 1) both;
+  animation-delay: calc(.05s * var(--char-index));
+}
+.splitChars{overflow:hidden;}
+
+@import '@/assets/style/media.scss';
 </style>

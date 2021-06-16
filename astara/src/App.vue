@@ -1,8 +1,4 @@
 <template>
-  <!--<div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>-->
   <router-view/>
 </template>
 
@@ -102,9 +98,8 @@ input {
 
 button{
   background-color:var(--secondary);
-  font-weight:bold;
+  letter-spacing:2px;
   color:var(--text);
-
   transition:all .1s ease;
 
   &:hover{

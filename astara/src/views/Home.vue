@@ -152,4 +152,43 @@ hr{
   opacity:.3;
   margin: 10px 0;
 }
+
+a{
+  text-decoration:none;
+  *{
+    text-decoration:none;
+  }
+}
+
+.simpleBtn{
+  background:transparent;
+  color:var(--text);
+  border:none;
+  font-size:1rem;
+  letter-spacing:2px;
+
+  transition:color .25s ease;
+  cursor:pointer;
+  position:relative;
+
+  &:before{
+    content:"";
+    height:2px;
+    width:0%;
+    background-color: var(--gold);
+    position:absolute;
+    bottom:0;
+    left:0;
+    transition:all .25s ease;
+  }
+
+  &:hover{
+    border:none;
+    &:before{
+      width:100%;
+    }
+  }
+  
+}
+
 </style>

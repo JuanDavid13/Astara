@@ -296,3 +296,19 @@ func GetTasksByGoal(uid, goalId int, rol string) string {
 
 	return string(jsonTasks);
 }
+
+func Check_Task(taskId int, rol string) bool {
+  fmt.Println("Check Task:");
+  db := db.GetDb(rol);
+  
+	query := "UPDATE `Targets` SET `Id_status` = 51 WHERE `Id` = ?";
+
+  stmt, err := db.Prepare(query);
+  if err != nil && err != sql.ErrNoRows { /*return false;*/ panic(err); }
+
+	_, err = stmt.Exec(taskId);
+  defer stmt.Close();
+  if err != nil && err != sql.ErrNoRows { /*return false;*/ panic(err);}
+
+	return true;
+}
