@@ -1,36 +1,44 @@
 <template>
   <div id="main">
+    <Error ref="error" />
     <div>
-      <span>Objetivos principales</span>
-      <!--<div v-for="(goal, index) in mainGoals" :key="goal.id">
-        <MainGoal :goal="goal" />
-      </div>-->
+      <h3 class="splitChars" data-splitting>Objetivos principales</h3>
+      <div v-for="goal in Goals" :key="goal.id">
+        <Goal :goal="goal" />
+      </div>
     </div>
     <div>
-      <span>Tareas</span>
-      <!--<div v-for="(task, index) in mainTasks" :key="task.id">
+      <h3 class="splitChars" data-splitting>Tareas</h3>
+      <div v-for="task in Tasks" :key="task.id">
         <Task :task="task" />
-      </div>-->
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-//import Task from '@/components/item/Task.vue';
-//import MainGoal from '@/components/item/Goal.vue';
+import "splitting/dist/splitting.css";
+import Splitting from "splitting";
 
-//import Axios from '@/auth/auth';
+import { GetErrMsg } from '@/js/error.js';
+import Error from '@/components/error/Error.vue';
+
+import Task from '@/components/item/Task.vue';
+import Goal from '@/components/item/Goal.vue';
+
+import Axios from '@/auth/auth';
 
 export default {
   name: 'Main',
   components: {
-    //Task,
-    //MainGoal,
+    Task,
+    Goal,
+    Error,
   },
   data() {
     return{
-      mainGoals: [],
-      mainTasks: [],
+      Goals: [],
+      Tasks: [],
     }
   },
   methods: {
@@ -39,15 +47,36 @@ export default {
 
       //});
     },
-    getMainGoals(){
-      //Axios.get('/goal').then((res)=>{
+    getGoals(){
+      let route = '/area/main/goals';
+      Axios.get(route).then((res)=>{
+        console.log(res);
+        if(res.data.error){
+          this.$refs.error.setErr(GetErrMsg());
+          return;
+        }
+        this.Goals = JSON.parse(res.data.goals);
 
-      //});
+      });
+    },
+    getTasks(){
+      let route = '/area/main/tasks';
+      Axios.get(route).then((res)=>{
+        if(res.data.error){
+          this.$refs.error.setErr(GetErrMsg());
+          return;
+        }
+        this.Tasks = JSON.parse(res.data.tasks);
+
+      });
     },
   },
   created() {
-    this.getMainTargets();
-    this.getMainGoals();
+    this.getTasks();
+    this.getGoals();
+  },
+  mounted(){
+    Splitting();
   }
 }
 
@@ -59,6 +88,18 @@ export default {
 
 #items div{ height:fit-content; }
 
-#main{ position:relative; }
+#main{ 
+  position:relative; 
+  padding:1rem 2rem;
+
+  h3{
+    letter-spacing: 2px;
+    text-transform:uppercase;
+    font-size:2rem;
+    font-weight:400;
+    font-family: 'Lora', serif;
+  }
+
+}
 
 </style>

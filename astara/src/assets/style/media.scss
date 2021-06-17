@@ -3,7 +3,18 @@ $movile: 650px;
 @media screen and(max-width:$movile){
   .feature{
       grid-template-columns:1fr !important;
-      grid-template-rows:repeat(2, 1fr) !important;
+      grid-template-rows:minmax(0,250px) minmax(200px,1fr) !important;
+
+      .featureImg{
+        max-height:200px !important;
+        width:90vw !important;
+        transform:translateX(-15px) !important;
+
+        .img{
+          max-height:200px !important;
+          width:90vw !important;
+        }
+      }
 
       h2{
           width: calc($movile-2vw) !important;
@@ -63,6 +74,15 @@ $movile: 650px;
     #areaname{ order:1; }
     & div:nth-child(2){ order:3; }
     & div:last-child{order:2;}
+  }
+
+  .home{
+    display:flex !important;
+    flex-direction:column !important;
+  }
+
+  #sidebar{
+    border:none;
   }
 
 }

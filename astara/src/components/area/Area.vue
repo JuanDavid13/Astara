@@ -124,6 +124,7 @@ export default {
   #areaName{
     font-size:2rem;
     text-transform:uppercase;
+    font-family: 'Lora', serif;
   }
 
   #lupa{

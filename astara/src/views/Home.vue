@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div id="home" class="home">
     <Sidebar @openprofile="openProfile" :username="user.username" ref="Sidebar"/>
     <router-view :key="$route.fullPath" @deleteArea="deleteArea" @updateAreaName="updateAreaName"></router-view>
     <div @click="hideModal" id="modal">
@@ -19,6 +19,7 @@
 <script>
 // @ is an alias to /src
 import { setShortCodes } from '@/js/shortcodes';
+import { resizeNav } from '@/js/navbarRes';
 
 import Profile from '@/components/modals/profile.vue';
 import Sidebar from '@/components/main/Sidebar.vue';
@@ -80,6 +81,7 @@ export default {
   },
   mounted(){
     Splitting();
+    resizeNav();
   }
 }
 </script>

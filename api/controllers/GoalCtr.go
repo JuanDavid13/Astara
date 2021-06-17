@@ -70,6 +70,18 @@ func GetPagGoals(c *fiber.Ctx) error {
 
 }
 
+func GetMainGoals(c *fiber.Ctx) error {
+	cl := c.Locals("claims").(jwt.Claims);
+
+	goals := GetMainG(cl.User, cl.Rol);
+
+	return c.JSON(fiber.Map{
+		"error":false,
+		"goals":goals,
+	});
+
+}
+
 //delete
 /*
 func GetAllGoals(c *fiber.Ctx) error {

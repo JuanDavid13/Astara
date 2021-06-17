@@ -2,7 +2,9 @@ import axios from 'axios'
 import router from '@/router';
 
 /**
- * Axios instance
+ * Axios es una instancia de axios, que contiene una configuración global
+ * para realizar llamadas a la API de una mejor forma.
+ *
  * @type {axios}
  */
 const Axios = axios.create({

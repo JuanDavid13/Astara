@@ -88,6 +88,9 @@ export default {
       margin-bottom:100px;
       max-width:15ch;
     }
+    p{
+      font-family: 'Lora', serif;
+    }
 
   }
 

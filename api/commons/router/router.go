@@ -57,12 +57,10 @@ func RouterSetUp(app *fiber.App) {
 		area.Post("/delete",DeleteArea);
 		area.Post("/remove-target",RemoveTarget);
 		area.Post("/edit",ChangeAreaName);
-		
-		//area.Post("/tasks",GetAllTasks); //cambiar por get
-		//area.Post("/paginated-tasks",GetPaginatedTasks);
+		area.Get("/main/goals",GetMainGoals);
+		area.Get("/main/tasks",GetMainTasks);
 
 		area.Get("/:slug/paginated-tasks/:size/:paginated",GetPagTasks);
-
 		area.Get("/:slug/paginated-goals/:size/:paginated",GetPagGoals);
 }
 

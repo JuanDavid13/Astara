@@ -9,6 +9,14 @@
 
 @import '@/assets/style/common';
 
+h1, h2, h3, h4 ,h5 {
+  font-family: 'Roboto', sans-serif;
+}
+
+label span{
+  //font-family: 'Lora', serif;
+}
+
 /*Chrome, Safari, Edge*/
 ::-webkit-scrollbar { width:7px; }
 ::-webkit-scrollbar-track { background-color:var(--primary); }

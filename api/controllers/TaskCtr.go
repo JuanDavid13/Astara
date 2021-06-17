@@ -70,6 +70,18 @@ func GetPagTasks(c *fiber.Ctx) error {
 
 }
 
+func GetMainTasks(c *fiber.Ctx) error {
+	cl := c.Locals("claims").(jwt.Claims);
+
+	tasks := GetMainT(cl.User, cl.Rol);
+
+	return c.JSON(fiber.Map{
+		"error":false,
+		"tasks":tasks,
+	});
+
+}
+
 //delete
 /*
 func GetPaginatedTasks(c *fiber.Ctx) error {

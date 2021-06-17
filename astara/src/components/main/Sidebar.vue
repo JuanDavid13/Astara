@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar">
+  <div id="sidebar" class="sidebar" @click="drop" >
     <div id="sidebarWrap">
       <div class="logo noselect splitChar" data-splitting>Astara</div>
       <div id="areas">
@@ -36,9 +36,25 @@ import Axios from '@/auth/auth';
       return {
         newArea:"",
         areas: [],
+        dropped:false,
       }
     },
     methods: {
+      drop(){
+        if($('#sidebar').hasClass('hiddable')){
+          if(!this.dropped){
+            $('#sidebar').css('height','90vh');
+            $('#sidebarWrap').css('height','90vh');
+            $('#sidebarWrap > div:not(:first-child)').css('height','auto');
+            this.dropped = true;
+          }else{
+            $('#sidebar').css('height','75px');
+            $('#sidebarWrap').css('height','75px');
+            $('#sidebarWrap > div:not(:first-child)').css('height','0');
+            this.dropped = false;
+          }
+        }
+      },
       addArea(e){
         e.preventDefault();
         Axios.post("/area/create",{name:this.newArea}).then((res)=>{
@@ -166,6 +182,30 @@ import Axios from '@/auth/auth';
     cursor: pointer;
     text-transform:uppercase;
     letter-spacing:2px;
+  }
+
+}
+#sidebar.hiddable{
+  height:50px;
+}
+.hiddable {
+  display:flex !important;
+  flex-direction:column;
+
+  background-color:var(--primary);
+  #sidebarWrap {
+      overflow:hidden;
+    #areas{
+      //overflow:hidden;
+    }
+    & > div:first-child{
+      height:50px;
+      cursor:pointer;
+    }
+    & > div:not(:first-child){
+      height:0 !important;
+      //overflow:hidden;
+    }
   }
 }
 </style>

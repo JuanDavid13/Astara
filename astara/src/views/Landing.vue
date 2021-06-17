@@ -40,12 +40,12 @@
       <hr>
       <div class="feature">
         <div class="featureImg" id="firstImg">
-          <div class="img"></div>
+          <img class="img" src="/img/tareasAstara.png" alt="tareas">
         </div>
         <div class="featureCont">
           <h2 class="splitChars" data-splitting>Crea listas de tareas y objetivos</h2>
           <p>
-            Ya no necesitara recordar tus tareas, mantén tus objetivos y tareas a un solo click, <br />
+            Ya no necesitara recordar tus tareas, mantén tus objetivos y tareas a un solo click,
             recuerda todas tus tareas de forma sencilla y rápida.
           </p>
         </div>
@@ -54,7 +54,7 @@
       <hr>
       <div class="feature reverse">
         <div class="featureImg" id="secondImg">
-          <div class="img"></div>
+          <img class="img" src="/img/tareasAstara.png" alt="tareas">
         </div>
         <div class="featureCont">
           <h2 class="splitChars" data-splitting>Añade nuevas areas</h2>
@@ -69,7 +69,7 @@
       <hr>
       <div class="feature">
         <div class="featureImg" id="thirdImg">
-          <div class="img"></div>
+          <img class="img" src="/img/tareasAstara.png" alt="tareas">
         </div>
         <div class="featureCont">
           <h2 class="splitChars" data-splitting>Encuentra tus tareas</h2>
@@ -82,7 +82,7 @@
       <hr>
       <div class="feature reverse" >
         <div class="featureImg" id="fourImg">
-          <div class="img"></div>
+          <img class="img" src="/img/tareasAstara.png" alt="tareas">
         </div>
         <div class="featureCont">
           <h2 class="splitChars" data-splitting>Short-Cuts</h2>
@@ -95,7 +95,7 @@
       <hr>
       <div class="feature" id="fifthFeature">
         <div class="featureImg" id="fifthImg">
-          <div class="img"></div>
+          <img class="img" src="/img/tareasAstara.png" alt="tareas">
         </div>
         <div class="featureCont">
           <h2 class="splitChars" data-splitting>White mode</h2>
@@ -140,7 +140,7 @@ export default {
 
     const options2 = {
       root: null,
-      threshold: 0,
+      threshold: 0.5,
       rootMargin: "0px"
     };
 
@@ -293,6 +293,7 @@ export default {
         p{
           align-self:flex-end;
           margin-bottom:25px;
+          font-family: 'Lora', serif;
         }
       }
     }
@@ -313,15 +314,22 @@ export default {
   .featureImg{
     width:800px;
     height:450px;
-    background-color:var(--tertiary);
+    //background-color:var(--tertiary);
     position:relative;
-    overflow:hidden;
+    //overflow:hidden;
 
     .img{
       position:absolute;
       width:100%; 
-      height:20%;
+      height:auto;
       background-color:orange;
+
+      top:0;
+      left:50%;
+      transform:translateX(-50%);
+      transition:all .2s ease;
+
+      box-shadow:0 0 15px rgba(0,0,0,.2);
     }
   }
 

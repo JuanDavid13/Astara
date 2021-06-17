@@ -28,10 +28,10 @@
 
       <div class="nest">
         <div> <!--buttons part-->
-          <button @click="createNested">Crear tarea</button>
+          <button id="addTask" @click="createNested">Crear tarea</button>
           <button v-if="goalCopy.tasks.length > 0" @click="viewNested">Ver tareas</button>
         </div>
-        <CreateTask v-if="createTask" :id="goalCopy.id" @taskCreated="taskCreated"/>
+        <CreateTask v-if="createTask" :id="goalCopy.id" @taskCreated="taskCreated" @cancelAddTask="cancelAddTask"/>
         <div id="nested" v-if="viewTasks"> <!--nested part-->
           <div class="nestedTasks" v-for="(task, index) in goalCopy.tasks" :key="task.id">
             <Task :task="task" :data-index="index"
@@ -81,6 +81,10 @@ export default {
     }
   },
   methods: {
+    cancelAddTask(){
+      this.createTask = false;
+      $('#addTask').text('Crear tarea');
+    },
     submitData(e){
       if(!this.validateInputs(e))
         return;
@@ -224,6 +228,11 @@ export default {
     flex-direction:column;
     gap:1rem;
     max-width:80%;
+
+    .desc {
+      font-family: 'Lora', serif;
+    }
+
   }
 
   .goalHeading{

@@ -83,6 +83,59 @@ func GetPaginatedTasks(uid, areaId, size int, rol string, paginated bool) string
 	return string(jsonTasks);
 
 }
+
+func GetMainT(uid int, rol string) string {
+  fmt.Println("Getting main tasks:");
+  db := db.GetDb(rol);
+
+	query := "SELECT TR.`Id`, TR.`Id_parent`, TR.`Name`, TR.`Deadline`, TS.`Dated` FROM `Targets` AS TR JOIN `Task` AS TS ON(TR.`Id` = TS.`Id_target`) WHERE TR.`Id_parent` IS NULL AND TR.`Id_usu` = ? AND TR.`Id_parent` IS NULL AND TR.`Id_status` = 50 ORDER BY TR.`Id` DESC LIMIT 3;";
+
+	stmt, err := db.Prepare(query);
+	if err != nil { panic(err); }
+
+	rows, err := stmt.Query(uid);
+	defer stmt.Close();
+
+	var (
+		Id, Id_parent, Children, ChildrenDone sql.NullInt64;
+		Name, Deadline, Dated sql.NullString;
+	)
+
+	tasks := make(map[int]*Task);
+
+	for rows.Next(){
+		err := rows.Scan(&Id, &Id_parent, &Name, &Deadline, &Dated);
+		if err != nil { panic(err); }
+
+		if Id.Valid  || Name.Valid || Deadline.Valid || Children.Valid || ChildrenDone.Valid {
+			task := Task{};
+
+			if !Id.Valid { task.Id = 0; }else{ fmt.Println(Id.Int64);task.Id= int(Id.Int64); }
+			if !Name.Valid { task.Name = ""; }else{ task.Name = Name.String; }
+			if !Deadline.Valid { task.Deadline = ""; }else{ task.Deadline = Deadline.String; }
+			if !Dated.Valid { task.Deadline = ""; }else{ task.Dated = Dated.String; }
+			if !Id_parent.Valid { task.Id_parent = 0; }else{ task.Id_parent = int(Id_parent.Int64); }
+
+			tasks[int(Id.Int64)] = &task;
+		}
+	}
+
+	sortedIds:= make([]int, 0 ,len(tasks));
+	for k := range tasks {
+		sortedIds= append(sortedIds, k);
+	}
+
+	sort.Ints(sortedIds);
+
+	arrayTasks := arrayTasks(sortedIds, tasks);
+
+	jsonTasks, err := json.Marshal(arrayTasks);
+	if err != nil { panic(err); }
+
+	return string(jsonTasks);
+
+}
+
 //delete
 /*
 func GetAllTasksOfArea(uid, areaid int, rol string) string {

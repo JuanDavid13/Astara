@@ -127,6 +127,57 @@ func GetPaginatedGoals(uid, areaId, size int, rol string, paginated bool) string
 	return string(jsonGoals);
 }
 
+func GetMainG(uid int, rol string) string {
+  fmt.Println("Getting main goals:");
+  db := db.GetDb(rol);
+
+	query := "SELECT TR.`Id`, TR.`Name`, G.`Description`, TR.`Deadline`, G.`Children`, G.`ChildrenDone` FROM `Goals` AS G JOIN `Targets` AS TR ON(G.`Id_target` = TR.`Id`) WHERE TR.`Id_usu` = ? AND TR.`Id_parent` IS NULL AND TR.`Id_status` = 50 ORDER BY TR.`Id` DESC LIMIT 2;";
+
+	stmt, err := db.Prepare(query);
+	if err != nil { panic(err); }
+
+	rows, err := stmt.Query(uid);
+	defer stmt.Close();
+
+	var (
+		Id, Children, ChildrenDone sql.NullInt64;
+		Name, Description, Deadline sql.NullString;
+	)
+
+	goals := make(map[int]*Goal);
+
+	for rows.Next(){
+		err := rows.Scan(&Id, &Name, &Description, &Deadline, &Children, &ChildrenDone);
+		if err != nil { panic(err); }
+
+		//if Id.Valid  || Name.Valid || Description.Valid || Children.Valid || ChildrenDone.Valid {
+			goal := Goal{};
+
+			if !Id.Valid { goal.Id = 0; }else{ goal.Id= int(Id.Int64); }
+			if !Name.Valid { goal.Name = ""; }else{ goal.Name = Name.String; }
+			if !Description.Valid { goal.Description = ""; }else{ goal.Description = Description.String; }
+			if !Deadline.Valid { goal.Deadline = ""; }else{ goal.Deadline = Deadline.String; }
+			if !Children.Valid { goal.Children = 0; }else{ goal.Children = int(Children.Int64); }
+			if !ChildrenDone.Valid { goal.Id = 0; }else{ goal.ChildrenDone = int(ChildrenDone.Int64); }
+
+			goals[int(Id.Int64)] = &goal;
+		//}
+	}
+
+	sortedIds:= make([]int, 0 ,len(goals));
+	for k := range goals{
+		sortedIds= append(sortedIds, k);
+	}
+
+	sort.Ints(sortedIds);
+	arrayGoals := arrayGoals(sortedIds, goals);
+
+	jsonGoals, err := json.Marshal(arrayGoals);
+	if err != nil { panic(err); }
+
+	return string(jsonGoals);
+}
+
 //delete
 /*
 func GetAllGoals(uid, areaid int, rol string) string {
