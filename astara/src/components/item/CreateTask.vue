@@ -40,6 +40,14 @@ export default {
     }
   },
   methods: {
+    /**
+    *
+    * Función que crea una nueva tarea.
+    *
+    * @async
+    * @function
+    * @param { DOM event } e - DOM event.
+    */
     async createTask(e){
       e.preventDefault();
       //let formLenght = e.target.length -1;
@@ -70,6 +78,13 @@ export default {
         this.cancel();
       });
     },
+    /**
+    *
+    * Función que emite el evento 'cancelAddTask' para que
+    * el padre re-establezca el estado de "creating task".
+    *
+    * @function
+    */
     cancel(){
       this.$emit('cancelAddTask');
     }

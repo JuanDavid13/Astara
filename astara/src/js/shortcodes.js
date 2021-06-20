@@ -1,6 +1,16 @@
 import $ from 'jquery';
 
+/**
+ * Función que establece los shortcodes.
+ *
+ * @function
+ * @param { context } context - DOM event
+ */
 export function setShortCodes(context){
+
+  // a veces dejo comentarios con código antinguo
+  // solo para recordarme como me estaba complicando la vida.
+  //
   //let target;
   //$('#modal').ready(()=>{ target = $('#modalCont')[0]; });
   //const observer = new MutationObserver((mutations)=>{
@@ -41,17 +51,18 @@ export function setShortCodes(context){
               }
             });
           }break; //repeat for the rest
-          case 71: { //g --> alt + g
-            $('#modal').toggleClass('modalActive'); 
-            context.$data.modalOption = 2;
-          }break;
-          case 65: {
-            $('#modal').toggleClass('modalActive'); 
-            context.$data.modalOption = 3;
-          }break;
+          //estos son otros shortcodes que tengo pensado implementar
+          //
+          //case 71: { //g --> alt + g
+          //  $('#modal').toggleClass('modalActive'); 
+          //  context.$data.modalOption = 2;
+          //}break;
+          //case 65: {
+          //  $('#modal').toggleClass('modalActive'); 
+          //  context.$data.modalOption = 3;
+          //}break;
         }
       }
-
       //observer.disconnect();
   });
 

@@ -42,15 +42,15 @@ export default {
     }
   },
   methods: {
-    getMainTargets(){
-      //Axios.get('/task').then((res)=>{
-
-      //});
-    },
+    /**
+    *
+    * Funcion que carga los objetivos principales en el dashboard.
+    *
+    * @function
+    */
     getGoals(){
       let route = '/area/main/goals';
       Axios.get(route).then((res)=>{
-        console.log(res);
         if(res.data.error){
           this.$refs.error.setErr(GetErrMsg());
           return;
@@ -59,6 +59,12 @@ export default {
 
       });
     },
+    /**
+    *
+    * Funcion que carga las tareas principales en el dashboard.
+    *
+    * @function
+    */
     getTasks(){
       let route = '/area/main/tasks';
       Axios.get(route).then((res)=>{

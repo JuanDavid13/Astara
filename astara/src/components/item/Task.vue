@@ -69,6 +69,13 @@ export default {
     }
   },
   methods: {
+    /**
+    *
+    * Función que envía a la API los datos de la tarea para editarlos.
+    *
+    * @function
+    * @param { DOM event } e - DOM event.
+    */
     submitData(e){
       if(!this.validateInputs(e))
         return;
@@ -92,6 +99,12 @@ export default {
         this.onEdit = false;
       });
     },
+    /**
+    *
+    * Función que falida los inputs del formulario de edición de la tarea.
+    *
+    * @function
+    */
     validateInputs(){
 
       if(this.taskCopy.name.length < 4){
@@ -115,12 +128,25 @@ export default {
 
       return true;
     },
+    /**
+    *
+    * Función que cancela la edición de la tarea.
+    *
+    * @function
+    */
     cancel(){
       this.onEdit = false;
       this.taskCopy.name = this.task.name;
       this.taskCopy.deadline = this.task.deadline;
       this.taskCopy.dated = this.task.dated;
     },
+    /**
+    *
+    * Función que permite la editar la tarea.
+    *
+    * @function
+    * @param { DOM event } e - DOM event.
+    */
     edit(e){
       if($(e.path[0]).text().localeCompare('Editar') === 0)
         this.onEdit = true;
@@ -137,6 +163,12 @@ export default {
       //  $(e.path[2]).children('.taskDated').replaceWith("<input class='taskDated' type='date' value='" + this.taskCopy.dated + "'>");
       //}
     },
+    /**
+    *
+    * Función que elimina una tarea.
+    *
+    * @function
+    */
     remove(){
       Axios.post('/area/remove-target',{id: this.task.id}).then((res)=>{
         if(res.data.error || res.status == 400){
@@ -149,6 +181,12 @@ export default {
         }
       });
     },
+    /**
+    *
+    * Función que checkea una tarea como hecha.
+    *
+    * @function
+    */
     check(){
       Axios.post('user/task/check',{ id: this.task.id }).then((res)=>{   
         if(res.data.error){

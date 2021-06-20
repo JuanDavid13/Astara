@@ -14,10 +14,21 @@ export default{
     }
   },
   methods:{
+    /**
+    * Función que permite la aparición del error con su mensaje.
+    *
+    * @function
+    * @param { string } msg - Mensaje de error.
+    */
     setErr(msg){
       this.message = msg;
       this.error = true;
     },
+    /**
+    * Función que permite la desaparición del error.
+    *
+    * @function
+    */
     closeErr(){
       this.error = false;
       setTimeout(()=>{

@@ -98,6 +98,12 @@ export default {
     }
   },
   methods: {
+    /**
+    *
+    * Función que cierra la sesión del usuario
+    *
+    * @function
+    */
     logOut(){ 
       Axios.get('/auth/logout').then(()=>{ 
         this.$router.push({name:'Login'}) 
@@ -105,20 +111,55 @@ export default {
           $('#app').removeClass('lightTheme');
       }); 
     },
+    /**
+    *
+    * Función que permite el 2 ways data binding para hacer que el nombre
+    * de usuario cambie automáticamente en la sidebar.
+    *
+    * @function
+    */
     changeUserName(){ this.$emit('changeUser',this.userCopy.username); },
+    /**
+    *
+    * Función que cambia el theme del usuario.
+    *
+    * @function
+    * @param { bool } iswhite - true, si el theme es claro, false, si es el oscuro.
+    */
     changeTheme(iswhite){
       if(iswhite) $('#app').addClass('lightTheme');
       else $('#app').removeClass('lightTheme');
     },
+    /**
+    *
+    * Función que comprueba el theme del usuario.
+    *
+    * @function
+    * @param { DOM event } e - DOM event.
+    */
     checkTheme(e){
         if(e.target.checked){ this.changeTheme(true);   this.userCopy.theme = true; }
         else{ this.changeTheme(false);  this.userCopy.theme = false; }
     },
+    /**
+    *
+    * Función auxilar que permite la visibilidad de la contraseña.
+    *
+    * @function
+    */
     togglePwd(){
       let pwdInputs = $('.pwdTgg');
       if($(pwdInputs[0]).attr('type') == "password"){ $(pwdInputs).attr('type','text'); }
       else { $(pwdInputs).attr('type','password'); }
     },
+    /**
+    *
+    * Función que compara las contraseñas una vez introducida la correcta.
+    * Si son iguales manda una petición a la API para cambiarla.
+    * Si no lo son genera un error.
+    *
+    * @function
+    */
     comparePass(){
       if(!this.same){ //the password is not the same
         Axios.post('user/profile/checkpass',{ password: this.userCopy.password }).then((res)=>{
@@ -147,16 +188,38 @@ export default {
         });
       }
     },
+    /**
+    *
+    * Función que valida que ambas contraseñas sean iguales.
+    *
+    * @function
+    */
     checkEqual(){
       if($('#checkNP').val() == $('#newPass').val()) this.setError('noError');
       else this.setError('diffPass');
     },
+    /**
+    * Función auxiliar para crear el update dinámico del nombre de usuario.
+    *
+    * @function
+    * @returns { int } Devuelve nulo si el usuario no ha cambiado,
+    * un valor negativo si el usuario ha cambiado y no es valido 
+    * y devuelve 0 si el valor es valido
+    */
     checkUser(){
       if(this.originalName == this.userCopy.username) return null;
       if(this.userCopy.username == "") return -1
       if(this.userCopy.username.length < 6) return -2
       return 0;
     },
+    /**
+    * Función auxiliar para crear el update dinámico del email.
+    *
+    * @function
+    * @returns { int } Devuelve nulo si el emial no ha cambiado,
+    * un valor negativo si el emial ha cambiado y no es valido 
+    * y devuelve 0 si el valor es valido
+    */
     checkEmail(){
       if(this.user.email == this.userCopy.email) return null; //equal
       if(this.userCopy.email == "") return -1; //deleted
@@ -164,6 +227,12 @@ export default {
       if(this.userCopy.email.indexOf('@') === -1) return -3;
       return 0; //added or updated
     },
+    /**
+    * Función auxiliar para crear el update dinámico.
+    *
+    * @function
+    * @returns { array } changes - Array con los cambios realizados en el perfil.
+    */
     checkInputs(){
       let changes = {
         username:null,
@@ -210,6 +279,12 @@ export default {
 
       return changes;
     },
+    /**
+    * Función que actualiza la informaicón del perfil del usuairo.
+    * Manda una petición a la API con los cambios realizados en el perfil.
+    *
+    * @function
+    */
     submitData(){
       let changes = this.checkInputs();
 
@@ -235,8 +310,13 @@ export default {
           this.closeModal();
         }
       });
-
     },
+    /**
+    * Función que establece los valores iniciales de las variables del componente,
+    * cuando se cierra el modal.
+    *
+    * @function
+    */
     closeModal(){
       //default values;
       this.userCopy.pass = {};
@@ -259,6 +339,12 @@ export default {
   
       $('#modal').removeClass('modalActive');
     },
+    /**
+    * Función que establece los valores iniciales de las variables del componente,
+    * al abrir el modal.
+    *
+    * @function
+    */
     openModal(){
       this.userCopy = $.extend(true,{},this.user);
       this.originalName = this.userCopy.username;

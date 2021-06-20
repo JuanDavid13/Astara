@@ -54,6 +54,11 @@ export default {
     }
   },
   computed: {
+    /**
+    * Método computado que permite la búsqueda de nuevos elementos.
+    *
+    * @function
+    */
     computedGoals(){
       return this.Goals.filter(goal => {
         return goal.name.toLowerCase().indexOf(this.query.toLowerCase()) !== -1;
@@ -61,10 +66,26 @@ export default {
     }
   },
   methods: {
+    /**
+    * Función que establece el estado de "creando objetivo".
+    *
+    * @function
+    */
     addGoal(){
       this.creatingGoal = true;
     },
+    /**
+    * Función que re-establece el estado de "creando objetivo" a su valor normal.
+    *
+    * @function
+    */
     cancelAddGoal(){ this.creatingGoal = false; },
+    /**
+    * Función que pide a la API los objetivos.
+    *
+    * @function
+    * @param { bool } paginated - Si la llamada necesita o no paginación
+    */
     getGoals(paginated){
       if(paginated == null)
         paginated = false;

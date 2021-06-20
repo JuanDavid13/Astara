@@ -81,10 +81,13 @@ export default {
     }
   },
   methods: {
-    cancelAddTask(){
-      this.createTask = false;
-      $('#addTask').text('Crear tarea');
-    },
+    /**
+    *
+    * Función que edita la información de un objetivo.
+    *
+    * @function
+    * @param { DOM event } e - DOM event.
+    */
     submitData(e){
       if(!this.validateInputs(e))
         return;
@@ -103,6 +106,13 @@ export default {
         this.onEdit = false;
       });
     },
+    /**
+    *
+    * Función auxiliar que valida los inputs del formulario, al editar un objetivo.
+    *
+    * @function
+    * @returns { bool } Devuelve true si los inputs son correctos o false si no.
+    */
     validateInputs(){
       if(this.goalCopy.name.length < 4){
         this.$refs.error.setErr(GetErrMsg());
@@ -128,27 +138,59 @@ export default {
 
       return true;
     },
+    /**
+    *
+    * Función que cancela la edición del objetivo.
+    *
+    * @function
+    */
     cancel(){
       this.onEdit = false;
       this.goalCopy.name = this.goal.name;
       this.goalCopy.description = this.goal.description;
       this.goalCopy.deadline = this.goal.deadline;
     },
+    /**
+    *
+    * Función que establece la edición de la información del objetivo.
+    *
+    * @function
+    * @param { DOM event } e - DOM event.
+    */
     edit(e){
       if($(e.path[0]).text().localeCompare('Editar') === 0)
         this.onEdit = true;
       else
         this.$refs.error.setErr(GetErrMsg());
     },
+    /**
+    *
+    * Función que actualiza la información del objetivo si se ha creado una tarea anidada.
+    *
+    * @function
+    */
     taskCreated(){
       this.$emit('getGoals',false);
       this.updateTasks();
       this.createTask = false; 
     },
+    /**
+    *
+    * Función que actualiza la información del objetivo si se ha eliminado una tarea anidada.
+    *
+    * @function
+    */
     taskRemoved(){
       this.$emit('getGoals',false);
       this.updateTasks();
     },
+    /**
+    *
+    * Función que permite la creación de una tarea anidada.
+    *
+    * @function
+    * @param { DOM event } e - DOM event.
+    */
     createNested(e){
       if(!this.createTask){
         this.createTask = true; 
@@ -158,9 +200,22 @@ export default {
       this.createTask = false; 
       $(e.path[0]).text('Crear tarea');
     },
+    /**
+    *
+    * Función que genera un error si no se ha podido eliminar la tarea.
+    *
+    * @function
+    */
     nodeleted(){
       this.$refs.error.setErr(GetErrMsg('taskNoDeleted'));
     },
+    /**
+    *
+    * Función que permite que se muestren las tareas anidadas del objetivo.
+    *
+    * @function
+    * @param { DOM event } e - DOM event.
+    */
     viewNested(e){
       if(!this.viewTasks){
         this.viewTasks = true; 
@@ -169,8 +224,13 @@ export default {
       }
       this.viewTasks = false; 
       $(e.path[0]).text('Ver tareas');
-
     },
+    /**
+    *
+    * Función para la eliminación del objetivo.
+    *
+    * @function
+    */
     remove(){
       Axios.post('/area/remove-target',{ id: this.goal.id }).then((res)=>{
         if(res.data.error){
@@ -184,6 +244,12 @@ export default {
         }
       });
     },
+    /**
+    *
+    * Función que actualiza las tareas anidadas de un objetivo.
+    *
+    * @function
+    */
     updateTasks(){
       Axios.post('/user/task/goal-tasks',{ id: this.goal.id }).then((res)=>{
         if(res.data.error)

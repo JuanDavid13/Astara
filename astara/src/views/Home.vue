@@ -47,21 +47,62 @@ export default {
     }
   },
   methods: {
+    /**
+    * Función auxiliar para la eliminación de un area.
+    *
+    * @function
+    * @param { string } slug - Slug del área a eliminar.
+    */
     deleteArea(slug){ this.$refs.Sidebar.deleteArea(slug); },
+    /**
+    * Función auxiliar para la actualización del nombre del area.
+    *
+    * @function
+    * @param { string } oldName - Nombre antiguo del área.
+    * @param { string } name - Nuevo nombre del area.
+    */
     updateAreaName(oldName, name){ this.$refs.Sidebar.updateAreaName(oldName, name); },
+    /**
+    * Función auxiliar para la actualización del nombre del usuario.
+    *
+    * @function
+    * @param { string } username - Nuevo nombre de usuario.
+    */
     changeUser(username){ this.user.username = username; },
+    /**
+    * Función auxiliar para el cambio de theme.
+    *
+    * @function
+    * @param { bool } theme - 'true' si es claro, 'false' si es oscuro.
+    */
     updateTheme(theme) {this.user.theme = theme},
+    /**
+    * Función para ablir el modal con el perfil de usuario;
+    *
+    * @function
+    */
     openProfile(){
       $('#modal').addClass('modalActive');
       this.modalOption = 1;
       $(document).ready(()=>{ this.$refs.profile.openModal(); });
     },
+    /**
+    * Función para esconder el modal.
+    *
+    * @function
+    * @param { DOM event } e - DOM event.
+    */
     hideModal(e){
       if($('#modal').get(0) == (e.srcElement)){
         $('#modal').removeClass('modalActive');
         this.$refs.profile.closeModal();
       } 
     },
+    /**
+    * Función para cerrar el modal.
+    *
+    * @function
+    */
     closeModal(){
       $('#modal').removeClass('modalActive');
       this.$refs.profile.closeModal();

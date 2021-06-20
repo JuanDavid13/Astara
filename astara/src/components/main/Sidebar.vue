@@ -40,6 +40,12 @@ import Axios from '@/auth/auth';
       }
     },
     methods: {
+      /**
+      *
+      * Función auxiliar para hacer el sidebar responsive.
+      *
+      * @function
+      */
       drop(){
         if($('#sidebar').hasClass('hiddable')){
           if(!this.dropped){
@@ -55,6 +61,13 @@ import Axios from '@/auth/auth';
           }
         }
       },
+      /**
+      *
+      * Función para añadir una nueva área.
+      *
+      * @function
+      * @param { e } e - DOM event.
+      */
       addArea(e){
         e.preventDefault();
         Axios.post("/area/create",{name:this.newArea}).then((res)=>{
@@ -67,18 +80,35 @@ import Axios from '@/auth/auth';
           }
         })
       },
+      /**
+      *
+      * Función que elimina un área del sidebar.
+      *
+      * @function
+      * @param { string } slug - Slug del area a eliminar.
+      */
       deleteArea(slug){
         let pos = this.areas.findIndex(area => area.slug === slug);
-        //let selector = "#areas > div.area:nth-of-type(" + (pos +1) + ")";
-        //$(selector).fadeOut("fast",()=>{
           this.areas.splice(pos,1);
-        //});
-        
       },
+      /**
+      *
+      * Función que actualiza el nombre del area en el sidebar.
+      *
+      * @function
+      * @param { string } oldName - Nombre antiguo del área.
+      * @param { string } name - Nombre nuevo del área.
+      */
       updateAreaName(oldName,name){
         let pos = this.areas.findIndex(area => area.name === oldName);
         this.areas[pos].name = name;
       },
+      /**
+      *
+      * Función que carga todas las areas en el sidebar.
+      *
+      * @function
+      */
       getAreas(){
         Axios.get("/area").then((res)=>{
           this.areas = JSON.parse(res.data); 

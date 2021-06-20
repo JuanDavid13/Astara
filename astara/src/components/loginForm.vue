@@ -65,6 +65,12 @@ export default{
       }
     },
     methods:{
+      /**
+      * Función que valida los inputs del formulario de login.
+      *
+      * @function
+      * @returns { bool } Devuelve 'true' si los valores son validos y 'false' si no.
+      */
       validateInputs(){
         if(this.signUp){
           if(this.user.username == "" || this.user.pass == "" || this.user.checkpass == ""){
@@ -95,6 +101,11 @@ export default{
         }
         return true;
       },
+      /**
+      * Función que logea al usuario o crea uno nuevo.
+      *
+      * @function
+      */
       clicked(){
         if(!this.validateInputs())
           return;
@@ -148,6 +159,12 @@ export default{
           }
         }
       },
+      /**
+      * Función auxliar para cambiar de opción.
+      *
+      * @function
+      * @param { int } option - Opción del formulario.
+      */
       Sign(option){
         if(option==2){
           this.error = false;
@@ -156,12 +173,22 @@ export default{
           this.signUp = false;
           this.clearVal(); }
       },
+      /**
+      * Función que vacía los inputs al cambiar de opción
+      *
+      * @function
+      */
       clearVal(){
         this.user.pass="";
         this.user.checkPass="";
         this.user.email="";
         this.found = false;
       },
+      /**
+      * Función auxiliar para mostrar y ocultar la contraseña.
+      *
+      * @function
+      */
       togglePwd(){
         let pwdInputs = $('.pwdTgg');
         if($(pwdInputs[0]).attr('type') == "password"){ $(pwdInputs).attr('type','text'); }

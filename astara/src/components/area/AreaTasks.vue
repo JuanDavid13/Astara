@@ -56,6 +56,11 @@ export default {
     }
   },
   computed: {
+    /**
+    * Método computado necesario para realizar la búsqueda de las tareas.
+    * 
+    * @function
+    */
     computedTasks(){
       return this.Tasks.filter(task  => {
         return task.name.toLowerCase().indexOf(this.query.toLowerCase()) !== -1;
@@ -63,14 +68,18 @@ export default {
     },
   },
   methods: {
+    /**
+    * Función que pide a la API las tareas.
+    * 
+    * @function
+    * @param { bool } paginated - Si se necesitan nuevas tareas o no.
+    */
     getTasks(paginated){
-      console.log(paginated);
       if(paginated == null)
         paginated = false;
 
       let url = '/area/' + this.$route.params.name + '/paginated-tasks/' + this.Tasks.length + '/' + paginated;
       Axios.get(url).then((res)=>{
-        console.log(res);
         if(res.data.error){
           this.$refs.error.setErr(GetErrMsg());
           return;
@@ -82,15 +91,36 @@ export default {
 
       });
     },
+    /**
+    * Función que establece el estado de "creando tarea" como verdadero.
+    * 
+    * @function
+    */
     addTask(){
       this.creatingTask = true;
     },
+    /**
+    * Función que re-establece el estado de "creando tarea" a su valor normal (false). 
+    * 
+    * @function
+    */
     cancelAddTask(){
       this.creatingTask = false;
     },
+    /**
+    * Función que establece un error si la tarea no ha sido añadida.
+    * 
+    * @function
+    */
     nodeleted(){
-      console.log('deletedd');
+      this.$refs.error.setErr(GetErrMsg());
     },
+    /**
+    * Función auxilar para la animación de entrada las tareas.
+    * 
+    * @function
+    * @param { [node]array } tasks - Array de DOM nodes.
+    */
     beforeEnter(tasks){
       //console.log($(tasks).children(0)[0].dataset.index);
       let index = $(tasks).children(0)[0].dataset.index;
@@ -102,6 +132,12 @@ export default {
         "transition-delay":index*.5+"s",
       });
     },
+    /**
+    * Función auxilar para la animación de las tareas una vez entradas.
+    * 
+    * @function
+    * @param { [node]array } tasks - Array de DOM nodes.
+    */
     enter(tasks){
       $('.areaSection').ready(()=>{
         $(tasks).css({
@@ -112,6 +148,12 @@ export default {
         });
       });
     },
+    /**
+    * Función auxilar para la animación de las tareas antes de dejar la escena.
+    * 
+    * @function
+    * @param { [node]array } tasks - Array de DOM nodes.
+    */
     leave(tasks){
       $(tasks).css({
         "opacity":0,

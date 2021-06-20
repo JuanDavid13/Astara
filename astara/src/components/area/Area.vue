@@ -53,11 +53,34 @@ export default {
     }
   },
   methods: {
+    /**
+    * Función auxiliar que permite el cambio de vista a "goals".
+    *
+    * @function
+    */
     gotoTasks(){ this.onGoals = false; this.onTasks = true; },
+    /**
+    * Función auxiliar que permite el cambio de vista a "tasks".
+    *
+    * @function
+    */
     gotoGoals(){ this.onGoals = true; this.onTasks = false; },
+    /**
+    * Función que genera un slug a partir del nombre.
+    *
+    * @function
+    * @returns { string } Slug - Slug del área.
+    */
     getSlugfromName(name){ 
       return name.replace(" ","-"); 
     },
+    /**
+    * Función para la eliminar un área.
+    * Manda una petición a la API con el nombre actual del area.
+    * No necesita ningún parámetro.
+    *
+    * @function
+    */
     deleteArea(){
       Axios.post("/area/delete",{slug:this.$route.params.name}).then((res)=>{
         if(res.data.deleted){
@@ -66,6 +89,13 @@ export default {
         }
       });
     },
+    /**
+    * Función para la editar el nombre del área.
+    * Manda una petición a la API con el nombre antiguao y nuevo del area.
+    * No necesita ningún parámetro.
+    *
+    * @function
+    */
     editAreaName(e){
       if(this.onEdit){
         this.onEdit = false;
@@ -80,7 +110,6 @@ export default {
           area: this.$route.params.name,
           name: this.AreaNameCopy
         }).then((res)=>{
-          console.log(res);
           if(!res.data.changed)
             this.$refs.error.setErr(GetErrMsg());
           else{
@@ -93,14 +122,26 @@ export default {
       }else{
         this.onEdit = true;
         $(e.target).text('Aceptar');
-        
       }
     },
+    /**
+    * Función auxiliar para dejar de editar el nombre del área.
+    * No necesita ningún parámetro.
+    *
+    * @function
+    */
     cancelEdit(){
       this.onEdit = false;
       this.AreaNameCopy = this.AreaName;
     }
   },
+    /**
+    * Función que recoge información relativa al área.
+    * No necesita ningún parámetro.
+    *
+    * @async
+    * @function
+    */
   async created() {
     let data = await AreaCorrespond(this.$router.currentRoute._value.params.name);
     this.deleteable = data.deleteable;

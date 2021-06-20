@@ -1,5 +1,10 @@
 import $ from 'jquery';
 
+/**
+ * Función auxiliar para el effecto parallax de las imágenes de la Landing page.
+ *
+ * @function
+ */
 export function parallax(){
   $(window).scroll(()=>{
     let windowsoff = $(window).scrollTop();
@@ -12,7 +17,7 @@ export function parallax(){
     $('#secondImg .img').css('top',((windowsoff-secondImgoff)+500)*.15 + 'px');
 
     let thirdImgoff = $('#thirdImg .img').offset().top;
-    $('#thirdImg .img').css('top',((windowsoff-thirdImgoff)+500)*.15 + 'px');
+    $('#thirdImg .img').css('top',((windowsoff-thirdImgoff)+400)*.15 + 'px');
 
     let  fourImgoff = $('#fourImg .img').offset().top;
     $('#fourImg .img').css('top',((windowsoff-fourImgoff)+500)*.15 + 'px');

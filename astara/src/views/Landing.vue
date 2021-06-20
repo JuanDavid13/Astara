@@ -30,9 +30,9 @@
         <path transform="rotate(-90)" d="m-133.97 91.135a22 22 0 0 1 22.561 20.993" opacity=".998"/>
        </g>
       </svg>
-        <h1 id="bannerTxt" class="splitWords" data-splitting="words">Astara, una nueva app de tareas que te ayudará organizar tu vida.</h1>
+        <h1 id="bannerTxt" class="splitWords" data-splitting="words">Astara, una nueva app de tareas que te ayudará a organizar tu vida.</h1>
       </div>
-      <div id="centerBtn">
+      <div class="centerBtn">
         <button @click="features">Más</button>
       </div>
     </header>
@@ -46,7 +46,7 @@
           <h2 class="splitChars" data-splitting>Crea listas de tareas y objetivos</h2>
           <p>
             Ya no necesitara recordar tus tareas, mantén tus objetivos y tareas a un solo click,
-            recuerda todas tus tareas de forma sencilla y rápida.
+            recuerda todas tus tareas de forma sencilla y rápida. Jamás se te olvidará algo.
           </p>
         </div>
       </div>
@@ -54,12 +54,12 @@
       <hr>
       <div class="feature reverse">
         <div class="featureImg" id="secondImg">
-          <img class="img" src="/img/tareasAstara.png" alt="tareas">
+          <img class="img" src="/img/tasks.png" alt="tareas">
         </div>
         <div class="featureCont">
           <h2 class="splitChars" data-splitting>Añade nuevas areas</h2>
           <p>
-            Creando areas podrás mantener organizas todos tus objetivos.<br />
+            Creando areas podrás mantener organizas todos tus objetivos.
             En cada Area podrás encontrar una sección para las tareas y otra para tus objetivos.
             Mantente organizado en todo momento, con las aras.
           </p>
@@ -69,12 +69,12 @@
       <hr>
       <div class="feature">
         <div class="featureImg" id="thirdImg">
-          <img class="img" src="/img/tareasAstara.png" alt="tareas">
+          <img class="img" src="/img/goals.png" alt="tareas">
         </div>
         <div class="featureCont">
           <h2 class="splitChars" data-splitting>Encuentra tus tareas</h2>
           <p>
-            Utiliza la búsqueda para encontrar tus tareas o objetivos.<br />
+            Utiliza la búsqueda para encontrar tus tareas o objetivos. Encuentra tus objetivos de manera rápida y sencilla. No pierdas tiempo y encuentra tus objetivos rápidamente.
           </p>
         </div>
       </div>
@@ -82,12 +82,12 @@
       <hr>
       <div class="feature reverse" >
         <div class="featureImg" id="fourImg">
-          <img class="img" src="/img/tareasAstara.png" alt="tareas">
+          <img class="img" src="/img/shortcut.png" alt="tareas">
         </div>
         <div class="featureCont">
           <h2 class="splitChars" data-splitting>Short-Cuts</h2>
           <p>
-            Sé más productivo con los short-cuts.<br />
+            Sé más productivo con los short-cuts. Usa atajos de teclado para agilizar tus tareas, se más rápido y productivo. Abre ventanas, edita el perfil, y mucho más.
           </p>
         </div>
       </div>
@@ -95,17 +95,17 @@
       <hr>
       <div class="feature" id="fifthFeature">
         <div class="featureImg" id="fifthImg">
-          <img class="img" src="/img/tareasAstara.png" alt="tareas">
+          <img class="img" src="/img/white.png" alt="tareas">
         </div>
         <div class="featureCont">
           <h2 class="splitChars" data-splitting>White mode</h2>
           <p>
-            Para los amantes del white mode.<br />
+            Para los amantes del white mode. Ahora tienes la opción de usar la aplicación en white modo. Disfruta de la aplicación de forma clara y sencilla. 
           </p>
         </div>
       </div>
     <div class="centerBtn">
-      <button><router-link :to="{ name: 'Login' }">Entrar</router-link></button>
+      <button id="enter" ><router-link :to="{ name: 'Login' }">Entrar</router-link></button>
     </div>
     </main>
     <footer>
@@ -161,7 +161,6 @@ export default {
 
       let observer2 = new IntersectionObserver((entries)=>{
         entries.forEach(entry =>{
-          console.log(entry);
           if(entry.isIntersecting){
             $('#app').addClass('lightTheme');
           }else{
@@ -170,7 +169,6 @@ export default {
         });
       },options2);
 
-      console.log($('#fifthFeature'));
       observer2.observe($('#fifthFeature')[0]);
 
     });
@@ -199,6 +197,8 @@ export default {
   }
 
   .centerBtn{
+    margin-top:25px;
+    width:100%;
     display:grid;
     place-content:center;
     
@@ -260,6 +260,8 @@ export default {
     #bannerTxt{
       max-width:35ch;
       text-align:center;
+      font-size:3rem;
+      margin:0 auto;
     }
 
   }
@@ -327,7 +329,7 @@ export default {
       top:0;
       left:50%;
       transform:translateX(-50%);
-      transition:all .2s ease;
+      //transition:all .2s ease;
 
       box-shadow:0 0 15px rgba(0,0,0,.2);
     }
@@ -341,6 +343,16 @@ export default {
     color:var(--contrary);
     transition:all .25s ease;
     text-align:center;
+  }
+}
+
+#enter{
+  a{
+    border-top:1px solid var(--text);
+    border-bottom:1px solid var(--text);
+    padding: 10px 20px;
+    color:var(--text);
+    text-decoration:none;
   }
 }
 

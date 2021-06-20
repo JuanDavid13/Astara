@@ -1,4 +1,11 @@
 //group them
+/**
+ * Función auxiliar que controlar los mensajes de error.
+ *
+ * @function
+ * @param { string } errorName - Nombre del error
+ * @returns { string } Devuelve el mensaje de error
+*/
 export function GetErrMsg(errorName) {
   switch(errorName) {
     case 'lackInput':{ return "Debe de completar todos los campos obligatorios"; }

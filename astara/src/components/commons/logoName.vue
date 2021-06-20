@@ -19,7 +19,17 @@ export default {
   name:'logoName',
   props: ['size'],
   computed: {
+    /**
+    * Funcion auxilar para establecer el tamaño del elemento.
+    *
+    * @function
+    */
     logoSize(){ return this.size + 1 +"rem"; },
+    /**
+    * Funcion auxilar para establecer el tamaño del texto del elemento.
+    *
+    * @function
+    */
     fontSize(){ return "font-size: " + this.size + "rem;"; },
   }
 }

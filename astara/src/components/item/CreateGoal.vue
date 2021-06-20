@@ -31,8 +31,22 @@ export default {
   },
   emits: ['updateGoals','cancelAddGoal'],
   methods: {
+    /**
+    *
+    * Función que emite el evento 'cancelAddGoal' para que
+    * el padre re-establezca el estado de "creating goal".
+    *
+    * @function
+    */
     cancelAddGoal(){ this.$emit('cancelAddGoal'); },
-    //openCreate(){ this.opened = true; },
+    /**
+    *
+    * Función que crea un nuevo objetivo.
+    *
+    * @async
+    * @function
+    * @param { DOM event } e - DOM event.
+    */
     async createGoal(e){
       e.preventDefault();
 
