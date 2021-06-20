@@ -390,7 +390,7 @@ En la terminal del frontend "astara/", ejecuta el comando
   
 ## Documentation
 
-[Documentación](https://github.com/JuanDavid13/Astara)
+[Documentación](https://github.com/JuanDavid13/Astara/blob/main/Memoria%20Projecto%20Astara%20(4).pdf)
 
   
 ## FAQ
@@ -405,7 +405,7 @@ Astara está montado sobre un servidor Nginx, comprado en DigitalOcean.
 Se puede acceder a la página a través de [astarapp.site](http://astarapp.site/).
 El servidor contiene instalado [Git](https://git-scm.com/), [Golang](https://golang.org/), y mysql-server.
 
-Para más información revisa la [documentación](https://githug.com/JuanDavid13/Astara)
+Para más información revisa la [documentación](https://github.com/JuanDavid13/Astara/blob/main/Memoria%20Projecto%20Astara%20(4).pdf)
 
 #### ¿Qué va a pasar con Astara?
 
